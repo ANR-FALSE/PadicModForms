@@ -17,7 +17,7 @@ The project is intended to contribute reusable arithmetic infrastructure to `mat
 ## The mathematics
 
 In Serre’s point of view, a *p*-adic modular form is a power series
-*f*(*q*) ∈ **Q**\_*p*\[\[*q*\]\]
+*f*(*q*) ∈ **Q**\_*p*⟦*q*⟧
 which arises as the coefficientwise limit of a sequence of classical modular forms. One of the key facts is that, for a nonzero *f*, the corresponding sequence of classical weights converges in *p*-adic weight space. This makes it possible to attach a well-defined *p*-adic weight to *f*.
 
 A central example is provided by Eisenstein series. Their Fourier coefficients interpolate in *p*-adic families, giving rise to a family over weight space whose constant term defines the *p*-adic zeta function. A major long-term objective is to formalize these constructions in sufficient generality to support later developments in *p*-adic *L*-functions and ordinary *p*-adic families.
