@@ -2,6 +2,7 @@ name: Lean Action CI
 
 on:
   push:
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -13,11 +14,23 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
       - uses: leanprover-community/docgen-action@v1
         with:
           blueprint: false
-          build-page: false
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
