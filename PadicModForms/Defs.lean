@@ -1,4 +1,6 @@
-import Mathlib
+import Mathlib.NumberTheory.ModularForms.QExpansion
+import Mathlib.NumberTheory.Padics.PadicIntegers
+import Mathlib.Topology.Algebra.Group.CompactOpen
 
 open PowerSeries ModularFormClass Filter
 
