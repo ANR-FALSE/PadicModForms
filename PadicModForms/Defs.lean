@@ -24,11 +24,13 @@ notation "X_[" p "]" => ContinuousMonoidHom ℤ_[p]ˣ ℤ_[p]ˣ
 def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop⟩
 
 theorem w_tendsto {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S : pAdicModularFormStruct n f) :
-  ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) := sorry
+    ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) := by
+  sorry
 
 theorem limit_unique {f : ℚ_[p]⟦X⟧} (S S' : pAdicModularFormStruct n f) {x x' : X_[p]}
-  (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
-  (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' := sorry
+    (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
+    (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' := by
+  sorry
 
 open Classical in
 noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm n) : X_[p] :=
