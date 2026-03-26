@@ -1,6 +1,11 @@
-import Mathlib.NumberTheory.ModularForms.QExpansion
-import Mathlib.NumberTheory.Padics.PadicIntegers
-import Mathlib.Topology.Algebra.Group.CompactOpen
+module
+
+public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.Topology.Algebra.Group.CompactOpen
+
+public import PadicModForms.WeightSpace.Defs
+
+@[expose] public section
 
 open PowerSeries ModularFormClass Filter
 
@@ -20,20 +25,3 @@ def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModula
 def ModularFormClass.isPAdicModularForm {k : ℤ} (f : ModularForm (CongruenceSubgroup.Gamma 1) k) :=
     ∃ g : ℚ⟦X⟧, PowerSeries.isPAdicModularForm n (g.map (algebraMap ℚ ℚ_[p])) ∧
     qExpansion 1 f = g.map (algebraMap ℚ ℂ)
-
-notation "X_[" p "]" => ContinuousMonoidHom ℤ_[p]ˣ ℤ_[p]ˣ
-
-def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop⟩
-
-theorem w_tendsto {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S : pAdicModularFormStruct n f) :
-    ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) := by
-  sorry
-
-theorem limit_unique {f : ℚ_[p]⟦X⟧} (S S' : pAdicModularFormStruct n f) {x x' : X_[p]}
-    (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
-    (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' := by
-  sorry
-
-open Classical in
-noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm n) : X_[p] :=
-  if hf0 : f = 0 then (ι 0) else (w_tendsto n hf0 (choice hf)).choose
