@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Riccardo Brasca. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Riccardo Brasca
+-/
+
 module
 
 public import Mathlib.NumberTheory.ModularForms.QExpansion
@@ -5,9 +11,15 @@ public import Mathlib.Topology.Algebra.Group.CompactOpen
 
 public import PadicModForms.WeightSpace.Defs
 
+/-!
+# p-adic modular forms
+
+This file defines p-adic modular forms as limits of classical modular forms.
+-/
+
 @[expose] public section
 
-open PowerSeries ModularFormClass Filter
+open UpperHalfPlane PowerSeries ModularFormClass Filter
 
 open scoped Topology
 
