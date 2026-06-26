@@ -6,7 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
+public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.Topology.Algebra.IsUniformGroup.Constructions
+public import Mathlib.Topology.Algebra.LinearTopology
+public import Mathlib.Topology.Algebra.UniformConvergence
 
 /-!
 # The topology of uniform convergence on power series
@@ -35,7 +38,7 @@ variable (R) in
 /-- The coefficient map `f ↦ (n ↦ coeff n f)` as an additive monoid homomorphism
 `R⟦X⟧ →+ (ℕ →ᵤ R)`. -/
 noncomputable def coeffAddMonoidHom : R⟦X⟧ →+ UniformFun ℕ R where
-  toFun f := UniformFun.ofFun fun n ↦ coeff n f
+  toFun f := UniformFun.ofFun (coeff · f)
   map_zero' := rfl
   map_add' _ _ := rfl
 
@@ -47,7 +50,7 @@ variable [UniformSpace R]
 
 /-- The uniform structure of uniform convergence (in the degree) of the coefficients on `R⟦X⟧`,
 pulled back from `ℕ →ᵤ R` along the coefficient map. -/
-noncomputable scoped instance : UniformSpace (R⟦X⟧) :=
+noncomputable scoped instance uniformSpace : UniformSpace (R⟦X⟧) :=
   .comap (fun f ↦ UniformFun.ofFun fun n ↦ coeff n f) inferInstance
 
 /-- A net `F` of power series converges to `f` in the topology of uniform convergence iff the
@@ -128,3 +131,13 @@ instance [IsLinearTopology R R] [IsLinearTopology Rᵐᵒᵖ R] : IsTopologicalS
 end WithUniformConvergence
 
 end PowerSeries
+
+/- Enable the uniform convergence topology on power series with
+`open PowerSeriesUniformConvergence` or `open scoped PowerSeriesUniformConvergence`. -/
+namespace PowerSeriesUniformConvergence
+
+attribute [scoped instance] PowerSeries.WithUniformConvergence.uniformSpace
+
+end PowerSeriesUniformConvergence
+
+#min_imports
