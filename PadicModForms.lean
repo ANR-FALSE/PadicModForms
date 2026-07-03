@@ -1,4 +1,5 @@
 import PadicModForms.Defs
+import PadicModForms.EisensteinSeries.Defs
 import PadicModForms.EisensteinSeries.Reduction
 import PadicModForms.PowerSeries.PAdic
 import PadicModForms.PowerSeries.Topology
