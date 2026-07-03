@@ -14,7 +14,7 @@ public import PadicModForms.WeightSpace.Defs
 /-!
 # p-adic modular forms
 
-This file defines p-adic modular forms as limits of classical modular forms.
+This file defines `p`-adic modular forms as limits of classical modular forms.
 -/
 
 @[expose] public section
@@ -34,6 +34,11 @@ structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
 
 def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct n f)
 
-def ModularFormClass.isPAdicModularForm {k : ℤ} (f : ModularForm (CongruenceSubgroup.Gamma 1) k) :=
-    ∃ g : ℚ⟦X⟧, PowerSeries.isPAdicModularForm n (g.map (algebraMap ℚ ℚ_[p])) ∧
-    qExpansion 1 f = g.map (algebraMap ℚ ℂ)
+theorem powerSeries_isPAdicModularForm_of_qExpansion_eq_map {g : ℚ⟦X⟧}
+    (hg : ∃ (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma n) k),
+      qExpansion n f = g.map (algebraMap ℚ ℂ)) :
+    PowerSeries.isPAdicModularForm n (g.map (algebraMap ℚ ℚ_[p])) := by
+  rcases hg with ⟨k, f, hg⟩
+  refine ⟨⟨fun _ ↦ g, fun _ ↦ k, fun i ↦ ⟨f, hg⟩, fun u hu ↦ ?_⟩⟩
+  filter_upwards with i n
+  simpa using refl_mem_uniformity hu
