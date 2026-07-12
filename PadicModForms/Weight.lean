@@ -30,5 +30,5 @@ theorem limit_unique {f : ℚ_[p]⟦X⟧} (S S' : pAdicModularFormStruct n f) {x
   sorry
 
 open Classical in
-noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm n) : X_[p] :=
+noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm p n) : X_[p] :=
   if hf0 : f = 0 then (ι 0) else (w_tendsto n hf0 (choice hf)).choose

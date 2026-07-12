@@ -139,5 +139,3 @@ namespace PowerSeriesUniformConvergence
 attribute [scoped instance] PowerSeries.WithUniformConvergence.uniformSpace
 
 end PowerSeriesUniformConvergence
-
-#min_imports
