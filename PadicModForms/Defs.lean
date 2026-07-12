@@ -32,12 +32,16 @@ structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
     qExpansion n g = (F i).map (algebraMap ℚ ℂ)
   tendsTo : TendstoUniformly (fun i n ↦ (↑(coeff n (F i)) : ℚ_[p])) (coeff · f) atTop
 
+variable (p)
+
 def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct n f)
+
+def PAdicModularForms (n : ℕ) := {f // isPAdicModularForm p n f}
 
 theorem powerSeries_isPAdicModularForm_of_qExpansion_eq_map {g : ℚ⟦X⟧}
     (hg : ∃ (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma n) k),
       qExpansion n f = g.map (algebraMap ℚ ℂ)) :
-    PowerSeries.isPAdicModularForm n (g.map (algebraMap ℚ ℚ_[p])) := by
+    PowerSeries.isPAdicModularForm p n (g.map (algebraMap ℚ ℚ_[p])) := by
   rcases hg with ⟨k, f, hg⟩
   refine ⟨⟨fun _ ↦ g, fun _ ↦ k, fun i ↦ ⟨f, hg⟩, fun u hu ↦ ?_⟩⟩
   filter_upwards with i n
