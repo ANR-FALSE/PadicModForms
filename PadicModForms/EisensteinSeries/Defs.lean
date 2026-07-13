@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
-public import PadicModForms.Defs
+public import PadicModForms.Defs.Modular
 
 /-!
 # Eisenstein series
