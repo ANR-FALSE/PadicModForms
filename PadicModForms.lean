@@ -9,5 +9,5 @@ import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.PowerSeries.PAdic
-import PadicModForms.Weight
 import PadicModForms.WeightSpace.Defs
+import PadicModForms.WeightSpace.Weight
