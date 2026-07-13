@@ -125,6 +125,7 @@ private lemma hasSum_E2_coeff (z : ℍ) : HasSum (fun m : ℕ ↦
 /-- The coefficients of the ordinary level-one `q`-expansion of `E2`. -/
 lemma E2_qExpansion_coeff (m : ℕ) :
     (qExpansion 1 E2).coeff m = if m = 0 then 1 else -24 * (σ 1 m : ℂ) :=
+  let E2c : C(ℍ, ℂ) := ⟨E2, E2_mdifferentiable.continuous⟩
   (UpperHalfPlane.qExpansion_coeff_unique E2c one_pos (UpperHalfPlane.analyticAt_cuspFunction_zero
     one_pos E2_periodic E2_mdifferentiable E2_isBoundedAtImInfty) hasSum_E2_coeff m).symm
 
