@@ -10,6 +10,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 public import PadicModForms.Defs.Modular
+public import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.Bernoulli
 
 /-!
@@ -26,74 +27,92 @@ variable {p : ℕ} [Fact p.Prime] (n : ℕ)
 
 namespace EisensteinSeries
 
-/-- Serre's series `P = E_2 = 1 - 24 * sum_{n >= 1} sigma_1(n) q^n`, regarded as
-a power series over `Q_p`. -/
-noncomputable def P : ℚ_[p]⟦X⟧ := mk fun n ↦ if n = 0 then 1 else -24 * σ 1 n
+/-- The rational `q`-expansion with the coefficient formula of the normalized Eisenstein series
+of weight `k`. -/
+noncomputable def E_rat (k : ℕ) : ℚ⟦X⟧ :=
+  mk fun n ↦ if n = 0 then 1 else -(2 * k / bernoulli k : ℚ) * σ (k - 1) n
 
-/-- Serre's series `Q = E_4 = 1 + 240 * sum_{n >= 1} sigma_3(n) q^n`, regarded as
-a power series over `Q_p`. -/
-noncomputable def Q : ℚ_[p]⟦X⟧ := mk fun n ↦ if n = 0 then 1 else 240 * σ 3 n
+/-- `P = E_2, regarded as a power series over `Q_p`. -/
+noncomputable def P : ℚ_[p]⟦X⟧ := (E_rat 2).map (algebraMap ℚ ℚ_[p])
 
-/-- The rational `q`-expansion of Serre's series `Q = E_4`. -/
-noncomputable def Q_rat : ℚ⟦X⟧ := mk fun n ↦ if n = 0 then 1 else 240 * σ 3 n
+/-- `Q = E_4, regarded as a power series over `Q_p`. -/
+noncomputable def Q : ℚ_[p]⟦X⟧ := (E_rat 4).map (algebraMap ℚ ℚ_[p])
 
-/-- Serre's series `R = E_6 = 1 - 504 * sum_{n >= 1} sigma_5(n) q^n`, regarded as
-a power series over `Q_p`. -/
-noncomputable def R : ℚ_[p]⟦X⟧ := mk fun n ↦ if n = 0 then 1 else -504 * σ 5 n
+/-- `R = E_6 , regarded as a power series over `Q_p`. -/
+noncomputable def R : ℚ_[p]⟦X⟧ := (E_rat 6).map (algebraMap ℚ ℚ_[p])
 
-/-- The rational `q`-expansion of Serre's series `R = E_6`. -/
-noncomputable def R_rat : ℚ⟦X⟧ := mk fun n ↦ if n = 0 then 1 else -504 * σ 5 n
-
-@[simp] theorem coeff_P : coeff n P = if n = 0 then 1 else (-24 : ℚ_[p]) * σ 1 n :=
+@[simp] theorem coeff_E_rat (k : ℕ) :
+    coeff n (E_rat k) = if n = 0 then 1 else -(2 * k / bernoulli k : ℚ) * σ (k - 1) n :=
   coeff_mk ..
 
-@[simp] theorem coeff_Q : coeff n Q = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n :=
-  coeff_mk ..
+/-- `E_rat 2` is the rational Fourier expansion of `E2`. -/
+theorem E2_eq_tsum_E_rat (z : ℍ) :
+    E2 z = ((coeff 0 (E_rat 2) : ℚ) : ℂ) +
+      ∑' n : ℕ+, ((coeff n (E_rat 2) : ℚ) : ℂ) *
+        Function.Periodic.qParam 1 z ^ (n : ℕ) := by
+  simp only [E2_eq_tsum_cexp, coeff_E_rat, ↓reduceIte, Rat.cast_one, PNat.ne_zero, Nat.cast_ofNat,
+    bernoulli_two, div_inv_eq_mul, Nat.add_one_sub_one, neg_mul, Rat.cast_neg, Rat.cast_mul,
+    Rat.cast_ofNat, Rat.cast_natCast, Function.Periodic.qParam, Complex.ofReal_one, div_one,
+    ← tsum_mul_left, sub_eq_add_neg, ← tsum_neg]
+  congr 1
+  exact tsum_congr (fun n ↦ by ring)
 
-@[simp] theorem coeff_R : coeff n R = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n :=
-  coeff_mk ..
+/-- The ordinary level-one `q`-expansion of `E2` is the scalar extension of `E_rat 2` to `ℂ`. -/
+theorem qExpansion_E2_eq_E_rat_map : qExpansion 1 EisensteinSeries.E2 =
+    (EisensteinSeries.E_rat 2).map (algebraMap ℚ ℂ) := by
+  ext m
+  rw [PowerSeries.coeff_map, E2_qExpansion_coeff]
+  by_cases hm : m = 0
+  · simp [hm]
+  · simp [E_rat, hm, bernoulli_two]
+    norm_num
 
-@[simp] theorem coeff_Q_rat : coeff n Q_rat = if n = 0 then 1 else (240 : ℚ) * σ 3 n :=
-  coeff_mk ..
-
-@[simp] theorem coeff_R_rat : coeff n R_rat = if n = 0 then 1 else -(504 : ℚ) * σ 5 n :=
-  coeff_mk ..
-
-@[simp] theorem map_Q_rat : Q_rat.map (algebraMap ℚ ℚ_[p]) = Q := by
-  ext n
-  by_cases hn : n = 0 <;> simp [Q_rat, Q, hn]
-
-@[simp] theorem map_R_rat : R_rat.map (algebraMap ℚ ℚ_[p]) = R := by
-  ext n
-  by_cases hn : n = 0 <;> simp [R_rat, R, hn]
-
-theorem qExpansion_E_four_eq_Q_rat_map :
-    qExpansion 1 ModularForm.E₄ = Q_rat.map (algebraMap ℚ ℂ) := by
-  ext n
-  rw [PowerSeries.coeff_map, EisensteinSeries.E_qExpansion_coeff (by norm_num) ⟨2, rfl⟩ n]
+@[simp] theorem coeff_P : coeff n P = if n = 0 then 1 else (-24 : ℚ_[p]) * σ 1 n := by
   by_cases hn : n = 0
-  · simp [Q_rat, hn]
-  · simp [Q_rat, hn, bernoulli_four]
+  · simp [P, hn]
+  · simp [P, hn, bernoulli_two]
+    norm_num
+
+@[simp] theorem coeff_Q : coeff n Q = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n := by
+  by_cases hn : n = 0
+  · simp [Q, hn]
+  · simp [Q, hn, bernoulli_four]
     ring
 
-theorem qExpansion_E_six_eq_R_rat_map :
-    qExpansion 1 ModularForm.E₆ = R_rat.map (algebraMap ℚ ℂ) := by
-  ext n
-  rw [PowerSeries.coeff_map]
-  rw [EisensteinSeries.E_qExpansion_coeff (by norm_num) ⟨3, rfl⟩ n]
+@[simp] theorem coeff_R : coeff n R = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n := by
   by_cases hn : n = 0
-  · simp [R_rat, hn]
-  · simp [R_rat, hn, bernoulli_six]
-    ring
+  · simp [R, hn]
+  · simp [R, hn, bernoulli_six]
+    norm_num
+
+variable {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k)
+
+include hk2 in
+/-- For even `k ≥ 3`, `E_rat k` maps to the `q`-expansion of mathlib's normalized Eisenstein
+series `ModularForm.E hk`. -/
+theorem qExpansion_E_eq_E_rat_map :
+    qExpansion 1 (ModularForm.E hk) = (E_rat k).map (algebraMap ℚ ℂ) := by
+  ext n
+  rw [PowerSeries.coeff_map, EisensteinSeries.E_qExpansion_coeff hk hk2 n]
+  by_cases hn : n = 0 <;> simp [E_rat, hn]
+
+include hk hk2 in
+/-- The rational series `E_rat k` is a classical modular form whenever mathlib's normalized
+Eisenstein series of weight `k` is available. -/
+theorem E_rat_isModularForm : (E_rat k).isModularForm k :=
+  ⟨ModularForm.E hk, qExpansion_E_eq_E_rat_map hk hk2⟩
+
+variable (p)
+
+include hk hk2 in
+theorem E_rat_map_isPAdicModularForm :
+    PowerSeries.isPAdicModularForm p ((E_rat k).map (algebraMap ℚ ℚ_[p])) :=
+  powerSeries_isPAdicModularForm_of_qExpansion_eq_map p ⟨k, E_rat_isModularForm hk hk2⟩
 
 theorem Q_isPAdicModularForm : PowerSeries.isPAdicModularForm p Q := by
-  rw [← map_Q_rat]
-  exact powerSeries_isPAdicModularForm_of_qExpansion_eq_map p (g := Q_rat) <|
-    ⟨4, ModularForm.E₄, by simpa using qExpansion_E_four_eq_Q_rat_map⟩
+  simpa [Q] using E_rat_map_isPAdicModularForm p (k := 4) (by norm_num) ⟨2, rfl⟩
 
 theorem R_isPAdicModularForm : PowerSeries.isPAdicModularForm p R := by
-  rw [← map_R_rat]
-  exact powerSeries_isPAdicModularForm_of_qExpansion_eq_map p (g := R_rat) <|
-    ⟨6, ModularForm.E₆, by simpa using qExpansion_E_six_eq_R_rat_map⟩
+  simpa [R] using E_rat_map_isPAdicModularForm p (k := 6) (by norm_num) ⟨3, rfl⟩
 
 end EisensteinSeries
