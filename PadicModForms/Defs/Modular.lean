@@ -21,27 +21,29 @@ This file defines `p`-adic modular forms as limits of classical modular forms.
 
 open UpperHalfPlane PowerSeries ModularFormClass Filter
 
-open scoped Topology
+open scoped MatrixGroups Topology
 
-variable {p : ℕ} [Fact p.Prime] (n : ℕ)
+variable {p : ℕ} [Fact p.Prime]
+
+/-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
+classical modular form of level one and weight `k`. -/
+def PowerSeries.isModularForm (k : ℤ) (f : ℚ⟦X⟧) : Prop :=
+  ∃ g : ModularForm 𝒮ℒ k, qExpansion 1 g = f.map (algebraMap ℚ ℂ)
 
 structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
   F : ℕ → ℚ⟦X⟧
   w : ℕ → ℤ
-  modF : ∀ i, ∃ (g : ModularForm (CongruenceSubgroup.Gamma n) (w i)),
-    qExpansion n g = (F i).map (algebraMap ℚ ℂ)
+  modF : ∀ i, (F i).isModularForm (w i)
   tendsTo : TendstoUniformly (fun i n ↦ (↑(coeff n (F i)) : ℚ_[p])) (coeff · f) atTop
 
 variable (p)
 
-def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct n f)
+def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct f)
 
-def PAdicModularForms (n : ℕ) := {f // isPAdicModularForm p n f}
+def PAdicModularForms := {f // isPAdicModularForm p f}
 
 theorem powerSeries_isPAdicModularForm_of_qExpansion_eq_map {g : ℚ⟦X⟧}
-    (hg : ∃ (k : ℤ) (f : ModularForm (CongruenceSubgroup.Gamma n) k),
-      qExpansion n f = g.map (algebraMap ℚ ℂ)) :
-    PowerSeries.isPAdicModularForm p n (g.map (algebraMap ℚ ℚ_[p])) := by
+    (hg : ∃ k : ℤ, g.isModularForm k) : isPAdicModularForm p (g.map (algebraMap _ _)) := by
   rcases hg with ⟨k, f, hg⟩
   refine ⟨⟨fun _ ↦ g, fun _ ↦ k, fun i ↦ ⟨f, hg⟩, fun u hu ↦ ?_⟩⟩
   filter_upwards with i n

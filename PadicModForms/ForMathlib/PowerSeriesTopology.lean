@@ -34,6 +34,7 @@ namespace WithUniformConvergence
 
 variable {R : Type*} [Ring R]
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 variable (R) in
 /-- The coefficient map `f ↦ (n ↦ coeff n f)` as an additive monoid homomorphism
 `R⟦X⟧ →+ (ℕ →ᵤ R)`. -/
@@ -42,17 +43,20 @@ noncomputable def coeffAddMonoidHom : R⟦X⟧ →+ UniformFun ℕ R where
   map_zero' := rfl
   map_add' _ _ := rfl
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 @[simp]
 theorem coeffAddMonoidHom_apply (f : R⟦X⟧) :
     coeffAddMonoidHom _ f = UniformFun.ofFun fun n ↦ coeff n f := rfl
 
 variable [UniformSpace R]
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- The uniform structure of uniform convergence (in the degree) of the coefficients on `R⟦X⟧`,
 pulled back from `ℕ →ᵤ R` along the coefficient map. -/
 noncomputable scoped instance uniformSpace : UniformSpace (R⟦X⟧) :=
   .comap (fun f ↦ UniformFun.ofFun fun n ↦ coeff n f) inferInstance
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- A net `F` of power series converges to `f` in the topology of uniform convergence iff the
 coefficient sequences `n ↦ coeff n (F i)` converge to `n ↦ coeff n f` uniformly in `n`. -/
 theorem tendsto_iff_tendstoUniformly {ι : Type*} {l : Filter ι} {F : ι → R⟦X⟧} {f : R⟦X⟧} :
@@ -60,22 +64,26 @@ theorem tendsto_iff_tendstoUniformly {ι : Type*} {l : Filter ι} {F : ι → R�
   rw [(isUniformInducing_iff_uniformSpace.mpr rfl).isInducing.tendsto_nhds_iff]
   exact UniformFun.tendsto_iff_tendstoUniformly
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- Addition on `R⟦X⟧` is continuous for the topology of uniform convergence of the coefficients.
 It is pulled back along the (additive, inducing) coefficient map from `ℕ →ᵤ R`, where addition is
 continuous because `R` is a uniform additive group. -/
 instance [IsUniformAddGroup R] : ContinuousAdd R⟦X⟧ :=
   (isUniformInducing_iff_uniformSpace.mpr rfl).isInducing.continuousAdd (coeffAddMonoidHom R)
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- The coefficient map is inducing for the topology of uniform convergence of the coefficients. -/
 theorem isInducing_coeffAddMonoidHom : Topology.IsInducing (coeffAddMonoidHom R) :=
   (isUniformInducing_iff_uniformSpace.mpr rfl).isInducing
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- The neighbourhood filter of `0 : R⟦X⟧` is the comap of the neighbourhood filter at `0` along
 the coefficient map. -/
 theorem nhds_zero_eq_comap_coeffAddMonoidHom :
     𝓝 (0 : R⟦X⟧) = Filter.comap (coeffAddMonoidHom R) (𝓝 0) := by
   rw [(isInducing_coeffAddMonoidHom (R := R)).nhds_eq_comap 0, map_zero]
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- A neighbourhood basis of `0` in `R⟦X⟧`: for each neighbourhood `W` of `0` in `R`, the set of
 power series all of whose coefficients lie in `W`. -/
 theorem hasBasis_nhds_zero :
@@ -87,6 +95,7 @@ theorem hasBasis_nhds_zero :
   obtain ⟨V, hV, hVW⟩ := hW
   exact ⟨V, hV, fun f hf n ↦ hVW (hf n)⟩
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- For each neighbourhood `W` of `0` in `R`, the set of power series with all coefficients in `W`
 is a neighbourhood of `0` in `R⟦X⟧`. -/
 theorem setOf_forall_coeff_mem_nhds {W : Set R} (hW : W ∈ 𝓝 (0 : R)) :
@@ -95,10 +104,12 @@ theorem setOf_forall_coeff_mem_nhds {W : Set R} (hW : W ∈ 𝓝 (0 : R)) :
 
 variable [IsUniformAddGroup R]
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- `R⟦X⟧` is a uniform additive group for the topology of uniform convergence of coefficients. -/
 instance : IsUniformAddGroup R⟦X⟧ :=
   (isUniformInducing_iff_uniformSpace.2 rfl).isUniformAddGroup (coeffAddMonoidHom _)
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- `R⟦X⟧` is a topological ring for the topology of uniform convergence of coefficients. -/
 theorem isTopologicalRing [IsLinearTopology R R] [IsLinearTopology Rᵐᵒᵖ R] :
     IsTopologicalRing R⟦X⟧ := by
@@ -124,6 +135,7 @@ theorem isTopologicalRing [IsLinearTopology R R] [IsLinearTopology Rᵐᵒᵖ R]
     refine hIW (Submodule.sum_mem _ fun q _ ↦ ?_)
     simpa using I.smul_mem (MulOpposite.op (coeff q.2 x₀)) (hx q.1)
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 instance [IsLinearTopology R R] [IsLinearTopology Rᵐᵒᵖ R] : IsTopologicalSemiring R⟦X⟧ :=
   haveI := isTopologicalRing (R := R)
   inferInstance
@@ -136,6 +148,7 @@ end PowerSeries
 `open PowerSeriesUniformConvergence` or `open scoped PowerSeriesUniformConvergence`. -/
 namespace PowerSeriesUniformConvergence
 
+-- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 attribute [scoped instance] PowerSeries.WithUniformConvergence.uniformSpace
 
 end PowerSeriesUniformConvergence
