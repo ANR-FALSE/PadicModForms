@@ -3,6 +3,7 @@ import PadicModForms.Defs.Modular
 import PadicModForms.EisensteinSeries.Defs
 import PadicModForms.EisensteinSeries.Reduction
 import PadicModForms.ForMathlib.Bernoulli
+import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.EInt
 import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.Padic
