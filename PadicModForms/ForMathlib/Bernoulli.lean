@@ -20,11 +20,8 @@ open Finset
 
 -- should go to Mathlib.NumberTheory.Bernoulli
 @[simp]
-theorem bernoulli'_five : bernoulli' 5 = 0 := by
-  have h₂ : Nat.choose 5 2 = 10 := by decide
-  have h₃ : Nat.choose 5 3 = 10 := by decide
-  rw [bernoulli'_def]
-  norm_num [sum_range_succ, sum_range_zero, h₂, h₃]
+theorem bernoulli'_five : bernoulli' 5 = 0 :=
+  bernoulli'_eq_zero_of_odd (by decide) (by decide)
 
 -- should go to Mathlib.NumberTheory.Bernoulli
 @[simp]

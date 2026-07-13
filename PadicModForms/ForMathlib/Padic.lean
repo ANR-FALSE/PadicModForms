@@ -31,8 +31,7 @@ theorem intCast_le_addValuation_iff_norm_le_pow (k : ℤ) (x : ℚ_[p]) :
 -- should go to Mathlib.NumberTheory.Padics.PadicNumbers
 theorem zero_le_addValuation_iff_norm_le_one (x : ℚ_[p]) :
     0 ≤ (Padic.addValuation x : EInt) ↔ ‖x‖ ≤ 1 := by
-  by_cases hx : x = 0 <;>
-  simp_all [Padic.norm_le_one_iff_val_nonneg]
+  by_cases hx : x = 0 <;> simp_all [Padic.norm_le_one_iff_val_nonneg]
 
 -- should go to Mathlib.NumberTheory.Padics.PadicNumbers
 variable (p) in

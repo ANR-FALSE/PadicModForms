@@ -91,8 +91,7 @@ theorem hasBasis_nhds_zero :
   rw [nhds_zero_eq_comap_coeffAddMonoidHom]
   refine ((UniformFun.hasBasis_nhds ℕ R 0).comap _).to_hasBasis
     (fun V hV ↦ ⟨_, UniformSpace.ball_mem_nhds 0 hV, fun f hf ↦ fun n ↦ hf n⟩) (fun W hW ↦ ?_?_)
-  rw [UniformSpace.mem_nhds_iff] at hW
-  obtain ⟨V, hV, hVW⟩ := hW
+  obtain ⟨V, hV, hVW⟩ := UniformSpace.mem_nhds_iff.1 hW
   exact ⟨V, hV, fun f hf n ↦ hVW (hf n)⟩
 
 -- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)

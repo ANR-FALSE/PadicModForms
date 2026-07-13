@@ -5,7 +5,6 @@ import PadicModForms.EisensteinSeries.Reduction
 import PadicModForms.ForMathlib.Bernoulli
 import PadicModForms.ForMathlib.EInt
 import PadicModForms.ForMathlib.IntLocalization
-import PadicModForms.ForMathlib.ModularForms
 import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.SpecificLimits
