@@ -68,7 +68,7 @@ namespace ModP
 
 /-- The normalized Eisenstein series of weight `p - 1` over the localization of `ℤ` at `p`. -/
 noncomputable abbrev E (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
-  E_int (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) (dvd_refl (p - 1))
+  E_int (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
 
 end ModP
 
