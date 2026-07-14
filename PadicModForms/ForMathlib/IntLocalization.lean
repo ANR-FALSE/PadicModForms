@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Analysis.Normed.Field.Lemmas
 public import Mathlib.Data.Nat.Prime.Int
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+import Mathlib.Data.ZMod.Units
+import Mathlib.RingTheory.Int.Basic
 
 /-!
 # The localization of `ℤ` at a prime number
@@ -69,3 +71,20 @@ noncomputable def pLocalInt.toZMod : pLocalInt p →+* ZMod p :=
   IsLocalization.lift (M := (span {(p : ℤ)}).primeCompl) (g := Int.castRingHom (ZMod p))
     fun y ↦ isUnit_iff_ne_zero.2 fun hy ↦
       y.2 (mem_span_singleton.2 ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 hy))
+
+/-- The reduction map from the localization of `ℤ` at `p` to `ℤ/p^mℤ`. -/
+noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m) :=
+  IsLocalization.lift (M := (span {(p : ℤ)}).primeCompl)
+    (g := Int.castRingHom (ZMod (p ^ m))) fun y ↦ by
+      refine (ZMod.coe_int_isUnit_iff_isCoprime _ _).2 (Int.isCoprime_iff_nat_coprime.2 ?_)
+      exact Nat.Coprime.pow_left _ <| hp.out.coprime_iff_not_dvd.mpr fun hpy ↦
+        y.2 <| mem_span_singleton.2 (by rwa [Int.natCast_dvd])
+
+@[simp]
+theorem pLocalInt.toZModPow_pow (m : ℕ) : pLocalInt.toZModPow m ((p : pLocalInt p) ^ m) = 0 := by
+  simp [map_natCast, ← Nat.cast_pow]
+
+theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
+  (hx : (p : pLocalInt p) ^ m ∣ x) : pLocalInt.toZModPow m x = 0 := by
+  obtain ⟨y, rfl⟩ := hx
+  rw [map_mul, pLocalInt.toZModPow_pow, zero_mul]
