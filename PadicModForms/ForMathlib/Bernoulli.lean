@@ -7,6 +7,8 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.NumberTheory.Bernoulli
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 
 /-!
 # Values of Bernoulli numbers
@@ -17,6 +19,15 @@ Explicit values of `bernoulli'` and `bernoulli` beyond the ones computed in math
 @[expose] public section
 
 open Finset
+
+variable {k : ℕ}
+
+theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k ≠ 0 :=
+    fun h ↦ by
+  rcases hk2 with ⟨m, rfl⟩
+  refine riemannZeta_ne_zero_of_one_lt_re (s := 2 * m) (by norm_cast; omega) ?_
+  rw [← two_mul] at h
+  simpa [h] using riemannZeta_two_mul_nat (k := m) (by omega)
 
 -- should go to Mathlib.NumberTheory.Bernoulli
 @[simp]
