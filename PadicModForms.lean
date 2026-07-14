@@ -1,5 +1,7 @@
 import PadicModForms.Defs.ModP
 import PadicModForms.Defs.Modular
+import PadicModForms.EisensteinSeries.Basic
+import PadicModForms.EisensteinSeries.Congruences
 import PadicModForms.EisensteinSeries.Defs
 import PadicModForms.EisensteinSeries.Reduction
 import PadicModForms.ForMathlib.Bernoulli
