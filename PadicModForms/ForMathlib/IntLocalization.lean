@@ -6,7 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Analysis.Normed.Field.Lemmas
+public import Mathlib.Data.Nat.Prime.Int
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 
 /-!
 # The localization of `ℤ` at a prime number
