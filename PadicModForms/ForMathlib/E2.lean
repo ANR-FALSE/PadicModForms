@@ -114,7 +114,7 @@ private lemma hasSum_E2_coeff (z : ℍ) : HasSum (fun m : ℕ ↦
     simp only [Periodic.qParam, ofReal_one, div_one]
     ring
   rw [← hasSum_nat_add_iff' 1]
-  simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte, smul_eq_mul,
+  simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, reduceIte, smul_eq_mul,
     Finset.range_one, ite_mul, one_mul, Finset.sum_singleton, pow_zero, hval]
   convert! (hS.mul_left (-24)).hasSum using 1
   · funext i
