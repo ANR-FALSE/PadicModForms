@@ -11,6 +11,7 @@ public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 public import PadicModForms.Defs.Modular
 public import PadicModForms.ForMathlib.E2
+public import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.Bernoulli
 
 /-!
@@ -95,6 +96,29 @@ theorem qExpansion_E2_eq_E_rat_map : qExpansion 1 EisensteinSeries.E2 =
     norm_num
 
 variable {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k)
+
+include hk hk2 in
+/-- The coefficients of `E_rat k` are `p`-integral if `p - 1 ∣ k`. -/
+theorem coeff_E_rat_mem_pLocalInt (hpk : p - 1 ∣ k) (n : ℕ) : coeff n (E_rat k) ∈ pLocalInt p := by
+  by_cases hn : n = 0
+  · simp [hn]
+  · have hk_mem : (k : ℚ) ∈ pLocalInt p := by simp
+    have htwo_mem : (2 : ℚ) ∈ pLocalInt p := by simp
+    have hsigma_mem : (σ (k - 1) n : ℚ) ∈ pLocalInt p := by simp
+    grind [coeff_E_rat, div_eq_mul_inv, inv_bernoulli_mem_pLocalInt, mul_mem, neg_mem]
+
+/-- The normalized Eisenstein series `E_k` over the localization of `ℤ` at `p`. -/
+noncomputable def E_int (hpk : p - 1 ∣ k) : (pLocalInt p)⟦X⟧ :=
+  (E_rat k).toSubring (pLocalInt p).toSubring (coeff_E_rat_mem_pLocalInt hk hk2 hpk)
+
+@[simp]
+theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalInt p) =
+      if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
+  rw [E_int, coeff_toSubring, coeff_E_rat]
+
+/-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to `E_rat`. -/
+theorem E_int_map (hpk : p - 1 ∣ k) : (E_int hk hk2 hpk).map (algebraMap _ ℚ) = E_rat k := by
+  ext; simp [coeff_E_int, coeff_E_rat]
 
 include hk hk2 in
 /-- If `k ≥ 3` is even, then `G_k` is `-B_k / (2k)` times the normalized Eisenstein series `E_k`. -/
