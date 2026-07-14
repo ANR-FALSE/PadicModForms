@@ -26,9 +26,9 @@ variable {k : ℕ}
 theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k ≠ 0 :=
     fun h ↦ by
   rcases hk2 with ⟨m, rfl⟩
-  refine riemannZeta_ne_zero_of_one_lt_re (s := 2 * m) (by norm_cast; omega) ?_
+  refine riemannZeta_ne_zero_of_one_lt_re (s := 2 * m) (by norm_cast; lia) ?_
   rw [← two_mul] at h
-  simpa [h] using riemannZeta_two_mul_nat (k := m) (by omega)
+  simpa [h] using riemannZeta_two_mul_nat (k := m) (by lia)
 
 /-- If `k` is positive and even, and `p - 1 ∣ k`, then the denominator of `Bₖ⁻¹` is
 not divisible by `p`. -/
@@ -48,8 +48,8 @@ theorem not_dvd_den_inv_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.
   have hpS : p ∈ S := by
     simp only [S, mem_filter, mem_range]
     refine ⟨?_, hp, hpk⟩
-    have hp_le : p - 1 ≤ 2 * m := Nat.le_of_dvd (by omega) hpk
-    omega
+    have hp_le : p - 1 ≤ 2 * m := Nat.le_of_dvd (by lia) hpk
+    lia
   have hrest : (∑ q ∈ S.erase p, (1 : ℚ) / q).den.Coprime p := by
     refine Nat.Coprime.of_dvd_left (Rat.den_sum_dvd_prod_den _ _) ?_
     refine Nat.Coprime.prod_left fun q hq ↦ ?_
@@ -82,8 +82,8 @@ theorem dvd_den_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.Prime)
   have hpS : p ∈ S := by
     simp only [S, mem_filter, mem_range]
     refine ⟨?_, hp, hpk⟩
-    have hp_le : p - 1 ≤ 2 * m := Nat.le_of_dvd (by omega) hpk
-    omega
+    have hp_le : p - 1 ≤ 2 * m := Nat.le_of_dvd (by lia) hpk
+    lia
   have hrest : (∑ q ∈ S.erase p, (1 : ℚ) / q).den.Coprime p := by
     refine Nat.Coprime.of_dvd_left (Rat.den_sum_dvd_prod_den _ _) ?_
     refine Nat.Coprime.prod_left fun q hq ↦ ?_
@@ -106,7 +106,28 @@ theorem dvd_den_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.Prime)
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral. -/
 theorem inv_bernoulli_mem_pLocalInt {p : ℕ} [hp : Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p :=
-  (mem_pLocalInt_iff p).2 <| not_dvd_den_inv_bernoulli (by omega) hk2 hp.out hpk
+  (mem_pLocalInt_iff p).2 <| not_dvd_den_inv_bernoulli (by lia) hk2 hp.out hpk
+
+/-- If `p - 1 ∣ k`, then `p` divides `Bₖ⁻¹` in the localization of `ℤ` at `p`. -/
+theorem p_dvd_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
+    (hpk : p - 1 ∣ k) : (p : pLocalInt p) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ := by
+  let q := (bernoulli k)⁻¹
+  have hpnum : (p : ℤ) ∣ q.num := by
+    rw [Rat.num_inv]
+    exact dvd_mul_of_dvd_right (by exact_mod_cast (dvd_den_bernoulli (by lia) hk2 Fact.out hpk)) _
+  have hqden : ¬ p ∣ q.den := by
+    simpa [q] using not_dvd_den_inv_bernoulli (by lia) hk2 Fact.out hpk
+  let qden : (span {(p : ℤ)}).primeCompl := ⟨q.den, fun h ↦ hqden <| by
+    exact_mod_cast mem_span_singleton.mp h⟩
+  have hq : (⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩) =
+      IsLocalization.mk' (pLocalInt p) q.num qden := by
+    simpa [IsLocalization.eq_mk'_iff_mul_eq] using Subtype.ext (Rat.mul_den_eq_num q)
+  obtain ⟨z, hz⟩ := hpnum
+  refine ⟨IsLocalization.mk' (pLocalInt p) z qden, ?_⟩
+  rw [show (⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+    ⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ by rfl, hq, hz,
+    ← IsLocalization.mul_mk'_eq_mk'_of_mul]
+  norm_num
 
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` reduces to zero
 modulo `p`. -/
@@ -114,20 +135,17 @@ theorem toZMod_inv_bernoulli_eq_zero {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk
     (hpk : p - 1 ∣ k) :
     pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 := by
   let q := (bernoulli k)⁻¹
-  have hpden : p ∣ (bernoulli k).den := dvd_den_bernoulli (by omega) hk2 Fact.out hpk
   have hpnum : (p : ℤ) ∣ q.num := by
-    dsimp only [q]
     rw [Rat.num_inv]
-    exact dvd_mul_of_dvd_right (by exact_mod_cast hpden) _
+    exact dvd_mul_of_dvd_right (by exact_mod_cast (dvd_den_bernoulli (by lia) hk2 Fact.out hpk)) _
   have hqden : ¬ p ∣ q.den := by
-    simpa [q] using not_dvd_den_inv_bernoulli (by omega) hk2 Fact.out hpk
+    simpa [q] using not_dvd_den_inv_bernoulli (by lia) hk2 Fact.out hpk
   let qden : (span {(p : ℤ)}).primeCompl := ⟨q.den, fun h ↦ hqden <| by
     exact_mod_cast mem_span_singleton.mp h⟩
-  have hq : (⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+  have hq : (⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩) =
       IsLocalization.mk' (pLocalInt p) q.num qden := by
     rw [IsLocalization.eq_mk'_iff_mul_eq]
-    apply Subtype.ext
-    exact Rat.mul_den_eq_num q
+    exact Subtype.ext (Rat.mul_den_eq_num q)
   rw [show (⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
       ⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ by rfl, hq]
   change IsLocalization.lift _ (IsLocalization.mk' (pLocalInt p) q.num qden) = 0
