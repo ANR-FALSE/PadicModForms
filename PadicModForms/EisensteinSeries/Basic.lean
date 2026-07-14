@@ -128,8 +128,7 @@ theorem qExpansion_E_eq_E_rat_map : qExpansion 1 (E hk) = (E_rat k).map (algebra
 include hk hk2 in
 /-- If `k ≥ 3` is even, then the scalar extension of `G_rat k` is the `q`-expansion of
 `-B_k / (2k)` times the normalized Eisenstein series. -/
-theorem qExpansion_G_eq_G_rat_map :
-    qExpansion 1 ((-bernoulli k / (2 * k) : ℂ) • E hk) =
+theorem qExpansion_G_eq_G_rat_map : qExpansion 1 ((-bernoulli k / (2 * k) : ℂ) • E hk) =
       (G_rat k).map (algebraMap ℚ ℂ) := by
   have hk0C : (k : ℂ) ≠ 0 := by exact_mod_cast (by positivity)
   have hB := bernoulli_ne_zero_of_even hk hk2
@@ -146,6 +145,15 @@ include hk hk2 in
 /-- The rational series `E_rat k` is a classical modular form if `k ≥ 3` is even. -/
 theorem E_rat_isModularForm : (E_rat k).isModularForm k :=
   ⟨E hk, qExpansion_E_eq_E_rat_map hk hk2⟩
+
+namespace ModP
+
+/-- The scalar extension of `E` to `ℚ` is a modular form of weight `p - 1`. -/
+theorem E_isModularForm (hp : 5 ≤ p) : ((E hp).map (algebraMap _ ℚ)).isModularForm (p - 1) := by
+  simpa [E_int_map, Nat.cast_sub (by lia : 1 ≤ p)] using
+    E_rat_isModularForm (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))
+
+end ModP
 
 include hk hk2 in
 /-- The rational series `G_rat k` is a classical modular if `k ≥ 3` is even. -/
