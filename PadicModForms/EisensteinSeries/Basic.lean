@@ -79,23 +79,17 @@ theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalIn
       if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
   rw [E_int, coeff_toSubring, coeff_E_rat]
 
-/-- The constant coefficient of `E_int` is one. -/
+/-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
 theorem coeff_E_int_zero (hpk : p - 1 ∣ k) : coeff 0 (E_int hk hk2 hpk) = 1 := by
-  exact Subtype.ext <| by
-    simp only [coeff_E_int, reduceIte, OneMemClass.coe_one]
+  exact Subtype.ext <| by simp only [coeff_E_int, reduceIte, OneMemClass.coe_one]
 
 /-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
 theorem coeff_E_int_of_ne_zero (hpk : p - 1 ∣ k) {m : ℕ} (hm : m ≠ 0) :
     coeff m (E_int hk hk2 hpk) =
-      -(2 * k) *
-        ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ * σ (k - 1) m := by
-  apply Subtype.ext
-  simp only [coeff_E_int, hm, if_false, div_eq_mul_inv, NegMemClass.coe_neg,
-    MulMemClass.coe_mul, SubringClass.coe_natCast]
-  have htwo : ((2 : pLocalInt p) : ℚ) = 2 := map_ofNat (pLocalInt p).subtype 2
-  rw [htwo]
-  ring
+      -(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ * σ (k - 1) m := Subtype.ext <| by
+  simp [coeff_E_int, hm, div_eq_mul_inv, show ((2 : pLocalInt p) : ℚ) = 2 from
+    map_ofNat (pLocalInt p).subtype 2]
 
 /-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to `E_rat`. -/
 theorem E_int_map (hpk : p - 1 ∣ k) : (E_int hk hk2 hpk).map (algebraMap _ ℚ) = E_rat k := by
