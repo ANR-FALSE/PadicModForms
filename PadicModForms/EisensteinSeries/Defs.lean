@@ -120,6 +120,21 @@ theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalIn
 theorem E_int_map (hpk : p - 1 ∣ k) : (E_int hk hk2 hpk).map (algebraMap _ ℚ) = E_rat k := by
   ext; simp [coeff_E_int, coeff_E_rat]
 
+namespace ModP
+
+/-- The normalized Eisenstein series of weight `p - 1` over the localization of `ℤ` at `p`. -/
+noncomputable abbrev E (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
+  E_int (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) (dvd_refl (p - 1))
+
+/-- The coefficients of `E`. -/
+@[simp]
+theorem coeff_E (hp : 5 ≤ p) (m : ℕ) : (coeff m (E hp) : pLocalInt p) =
+    if m = 0 then 1 else -(2 * (p - 1) / bernoulli (p - 1)) * σ (p - 2) m := by
+  rw [E, coeff_E_int, Nat.cast_sub (by lia : 1 ≤ p)]
+  congr 2
+
+end ModP
+
 include hk hk2 in
 /-- If `k ≥ 3` is even, then `G_k` is `-B_k / (2k)` times the normalized Eisenstein series `E_k`. -/
 theorem G_rat_eq_smul_E_rat : G_rat k = -(bernoulli k / (2 * k) : ℚ) • E_rat k := by
