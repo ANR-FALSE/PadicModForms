@@ -19,7 +19,7 @@ Explicit values of `bernoulli'` and `bernoulli` beyond the ones computed in math
 
 @[expose] public section
 
-open Finset
+open Finset Ideal
 
 variable {k : ℕ}
 
@@ -69,10 +69,70 @@ theorem not_dvd_den_inv_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.
     exact Nat.Coprime.of_dvd_left (Rat.sub_den_dvd _ _) (hzB_cop.mul_left hrest)
   exact (hp.coprime_iff_not_dvd.mp hpterm_cop.symm) (by simp [hp.ne_zero])
 
+/-- If `k` is positive and even, and `p - 1 ∣ k`, then `p` divides the denominator of
+`Bₖ`. -/
+theorem dvd_den_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.Prime)
+    (hpk : p - 1 ∣ k) : p ∣ (bernoulli k).den := by
+  rcases hk2 with ⟨m, rfl⟩
+  rw [← two_mul] at hk hpk ⊢
+  by_contra hpden
+  have hBcop : (bernoulli (2 * m)).den.Coprime p :=
+    (hp.coprime_iff_not_dvd.mpr hpden).symm
+  let S := (range (2 * m + 2)).filter fun q ↦ q.Prime ∧ (q - 1) ∣ 2 * m
+  have hpS : p ∈ S := by
+    simp only [S, mem_filter, mem_range]
+    refine ⟨?_, hp, hpk⟩
+    have hp_le : p - 1 ≤ 2 * m := Nat.le_of_dvd (by omega) hpk
+    omega
+  have hrest : (∑ q ∈ S.erase p, (1 : ℚ) / q).den.Coprime p := by
+    refine Nat.Coprime.of_dvd_left (Rat.den_sum_dvd_prod_den _ _) ?_
+    refine Nat.Coprime.prod_left fun q hq ↦ ?_
+    have hq_prime : q.Prime := (mem_filter.mp (mem_of_mem_erase hq)).2.1
+    rw [show ((1 : ℚ) / q).den = q by simp [hq_prime.ne_zero]]
+    exact (Nat.coprime_primes hq_prime hp).mpr (mem_erase.mp hq).1
+  have hVS := Bernoulli.vonStaudt_clausen m
+  change bernoulli (2 * m) + ∑ q ∈ S, (1 : ℚ) / q ∈ Set.range Int.cast at hVS
+  obtain ⟨z, hz⟩ := hVS
+  have hz_cop : ((z : ℚ).den).Coprime p := by simp
+  have hzB_cop : ((z : ℚ) - bernoulli (2 * m)).den.Coprime p :=
+    Nat.Coprime.of_dvd_left (Rat.sub_den_dvd _ _) (hz_cop.mul_left hBcop)
+  have hpterm_cop : ((1 : ℚ) / p).den.Coprime p := by
+    rw [← add_sum_erase _ _ hpS] at hz
+    rw [show (1 : ℚ) / p = (z : ℚ) - bernoulli (2 * m) -
+        ∑ q ∈ S.erase p, (1 : ℚ) / q by linarith [hz]]
+    exact Nat.Coprime.of_dvd_left (Rat.sub_den_dvd _ _) (hzB_cop.mul_left hrest)
+  exact (hp.coprime_iff_not_dvd.mp hpterm_cop.symm) (by simp [hp.ne_zero])
+
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral. -/
 theorem inv_bernoulli_mem_pLocalInt {p : ℕ} [hp : Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p :=
   (mem_pLocalInt_iff p).2 <| not_dvd_den_inv_bernoulli (by omega) hk2 hp.out hpk
+
+/-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` reduces to zero
+modulo `p`. -/
+theorem toZMod_inv_bernoulli_eq_zero {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
+    (hpk : p - 1 ∣ k) :
+    pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 := by
+  let q := (bernoulli k)⁻¹
+  have hpden : p ∣ (bernoulli k).den := dvd_den_bernoulli (by omega) hk2 Fact.out hpk
+  have hpnum : (p : ℤ) ∣ q.num := by
+    dsimp only [q]
+    rw [Rat.num_inv]
+    exact dvd_mul_of_dvd_right (by exact_mod_cast hpden) _
+  have hqden : ¬ p ∣ q.den := by
+    simpa [q] using not_dvd_den_inv_bernoulli (by omega) hk2 Fact.out hpk
+  let qden : (span {(p : ℤ)}).primeCompl := ⟨q.den, fun h ↦ hqden <| by
+    exact_mod_cast mem_span_singleton.mp h⟩
+  have hq : (⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+      IsLocalization.mk' (pLocalInt p) q.num qden := by
+    rw [IsLocalization.eq_mk'_iff_mul_eq]
+    apply Subtype.ext
+    exact Rat.mul_den_eq_num q
+  rw [show (⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+      ⟨q, by simpa [q] using inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ by rfl, hq]
+  change IsLocalization.lift _ (IsLocalization.mk' (pLocalInt p) q.num qden) = 0
+  rw [IsLocalization.lift_mk'_spec]
+  simpa using (ZMod.intCast_zmod_eq_zero_iff_dvd q.num p).2 hpnum
 
 -- should go to Mathlib.NumberTheory.Bernoulli
 @[simp]
