@@ -32,17 +32,17 @@ instance : GradedMonoid rationalModularForms where
   mul_mem _ _ _ _ hf hg := IsModularForm.mul hf hg
 
 /-- The graded ring of level-one rational modular forms. -/
-abbrev GradedRationalModularForms := ⨁ i, RationalModularForm i
+abbrev GradedRationalModularForms := ⨁ i, rationalModularForms i
 
 /-! ## Rational Eisenstein series and evaluation -/
 
 /-- The rational `q`-expansion of `E₄`, regarded as a rational modular form of weight four. -/
-def E₄Rat : RationalModularForm 4 :=
+def E₄Rat : rationalModularForms 4 :=
   ⟨E_rat 4, by
     sorry⟩
 
 /-- The rational `q`-expansion of `E₆`, regarded as a rational modular form of weight six. -/
-def E₆Rat : RationalModularForm 6 :=
+def E₆Rat : rationalModularForms 6 :=
   ⟨E_rat 6, by
     sorry⟩
 
@@ -59,16 +59,17 @@ to `E₆`. -/
 def evalE₄E₆Rat :
     MvPolynomial (Fin 2) ℚ →ₐ[ℚ] GradedRationalModularForms :=
   MvPolynomial.aeval
-    ![of RationalModularForm 4 E₄Rat, of RationalModularForm 6 E₆Rat]
+    ![of (fun i ↦ rationalModularForms i) 4 E₄Rat,
+      of (fun i ↦ rationalModularForms i) 6 E₆Rat]
 
 @[simp]
 theorem evalE₄E₆Rat_X0 :
-    evalE₄E₆Rat (MvPolynomial.X 0) = of RationalModularForm 4 E₄Rat := by
+    evalE₄E₆Rat (MvPolynomial.X 0) = of (fun i ↦ rationalModularForms i) 4 E₄Rat := by
   sorry
 
 @[simp]
 theorem evalE₄E₆Rat_X1 :
-    evalE₄E₆Rat (MvPolynomial.X 1) = of RationalModularForm 6 E₆Rat := by
+    evalE₄E₆Rat (MvPolynomial.X 1) = of (fun i ↦ rationalModularForms i) 6 E₆Rat := by
   sorry
 
 theorem evalE₄E₆Rat_C (a : ℚ) :
@@ -78,7 +79,8 @@ theorem evalE₄E₆Rat_C (a : ℚ) :
 
 theorem evalE₄E₆Rat_monomial (a b : ℕ) :
     evalE₄E₆Rat (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b) =
-      of RationalModularForm 4 E₄Rat ^ a * of RationalModularForm 6 E₆Rat ^ b := by
+      of (fun i ↦ rationalModularForms i) 4 E₄Rat ^ a *
+        of (fun i ↦ rationalModularForms i) 6 E₆Rat ^ b := by
   sorry
 
 /-- Forgetting the weight gives the `q`-expansion homomorphism from the graded ring of rational
@@ -89,7 +91,7 @@ def rationalQExpansion :
 
 @[simp]
 theorem rationalQExpansion_of (k : ℤ) (f : rationalModularForms k) :
-    rationalQExpansion (of RationalModularForm k f) = f := by
+    rationalQExpansion (of (fun i ↦ rationalModularForms i) k f) = f := by
   sorry
 
 /-- Polynomial evaluation directly in rational power series at the rational `q`-expansions of
@@ -223,7 +225,7 @@ theorem evalE₄E₆Rat_eq_of_isWeightedHomogeneous
     {n : ℕ} {P : MvPolynomial (Fin 2) ℚ}
     (hP : P.IsWeightedHomogeneous E₄E₆Weights n) :
     evalE₄E₆Rat P =
-      of RationalModularForm (n : ℤ)
+      of (fun i ↦ rationalModularForms i) (n : ℤ)
         ⟨evalE₄E₆RatQExpansion P,
           isModularForm_evalE₄E₆RatQExpansion_of_isWeightedHomogeneous hP⟩ := by
   sorry
@@ -241,7 +243,7 @@ the corresponding component of the graded ring. -/
 theorem exists_evalE₄E₆Rat_eq_of_isModularForm
     {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
     ∃ P : MvPolynomial (Fin 2) ℚ,
-      evalE₄E₆Rat P = of RationalModularForm k ⟨f, hf⟩ := by
+      evalE₄E₆Rat P = of (fun i ↦ rationalModularForms i) k ⟨f, hf⟩ := by
   sorry
 
 /-! ## The rational graded-ring isomorphism -/
@@ -261,8 +263,8 @@ def rationalModularFormsEquivMvPolynomial :
 forms as a `ℚ`-algebra. -/
 theorem E₄E₆Rat_generate :
     Algebra.adjoin ℚ
-      ({of RationalModularForm 4 E₄Rat, of RationalModularForm 6 E₆Rat} :
-        Set GradedRationalModularForms) = ⊤ := by
+      ({of (fun i ↦ rationalModularForms i) 4 E₄Rat,
+          of (fun i ↦ rationalModularForms i) 6 E₆Rat} : Set GradedRationalModularForms) = ⊤ := by
   sorry
 
 end PowerSeries

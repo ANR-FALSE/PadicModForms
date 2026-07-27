@@ -67,7 +67,4 @@ theorem mem_rationalModularForms {k : ℤ} {f : ℚ⟦X⟧} :
     f ∈ rationalModularForms k ↔ f.isModularForm k :=
   Iff.rfl
 
-/-- Rational modular forms of a fixed weight, as a type. -/
-abbrev RationalModularForm (k : ℤ) : Type _ := rationalModularForms k
-
 end PowerSeries
