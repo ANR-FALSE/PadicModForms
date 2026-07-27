@@ -14,57 +14,56 @@ public import PadicModForms.Rational.Defs
 This file gives rational modular forms of a fixed weight their linear structure.
 -/
 
-@[expose] public noncomputable section
-
-open UpperHalfPlane ModularForm ModularFormClass MatrixGroups
-
-open scoped MatrixGroups
+@[expose] public section
 
 namespace PowerSeries
 
-/-- The zero power series is a rational modular form of every weight. -/
-theorem zero_isModularForm (k : ℤ) : (0 : ℚ⟦X⟧).isModularForm k := by
-  sorry
+theorem zero_isModularForm (k : ℤ) : isModularForm k 0 :=
+  ⟨0, by simpa using UpperHalfPlane.qExpansion_zero 1⟩
 
-/-- The sum of two rational modular forms of the same weight is modular of that weight. -/
-theorem IsModularForm.add {k : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm k) : (f + g).isModularForm k := by
-  sorry
+variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
 
-/-- The negative of a rational modular form is modular of the same weight. -/
-theorem IsModularForm.neg {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
-    (-f).isModularForm k := by
-  sorry
+theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 :=
+  ⟨1, by simpa using UpperHalfPlane.qExpansion_one 1⟩
 
-/-- The difference of two rational modular forms of the same weight is modular of that weight. -/
-theorem IsModularForm.sub {k : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm k) : (f - g).isModularForm k := by
-  sorry
+include hf
 
-/-- A rational scalar multiple of a rational modular form is modular of the same weight. -/
-theorem IsModularForm.smul {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) (a : ℚ) :
-    (a • f).isModularForm k := by
-  sorry
+theorem IsModularForm.neg : (-f).isModularForm k := by
+  obtain ⟨F, hF⟩ := hf
+  exact ⟨-F, by simp [ModularForm.qExpansion_neg one_pos one_mem_strictPeriods_SL, hF]⟩
 
-/-- The constant power series `1` is a rational modular form of weight zero. -/
-theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 := by
-  sorry
+theorem IsModularForm.smul (a : ℚ) : (a • f).isModularForm k := by
+  obtain ⟨F, hF⟩ := hf
+  exact ⟨(a : ℂ) • F, by simp [ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL, hF,
+    smul_eq_C_mul]⟩
 
-/-- The product of rational modular forms of weights `k` and `l` is modular of weight `k + l`. -/
-theorem IsModularForm.mul {k l : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm l) : (f * g).isModularForm (k + l) := by
-  sorry
+theorem IsModularForm.mul (hg : g.isModularForm l) : (f * g).isModularForm (k + l) := by
+  obtain ⟨F, hF⟩ := hf
+  obtain ⟨G, hG⟩ := hg
+  exact ⟨F.mul G, by
+    simp only [ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL, hF, hG, map_mul]⟩
 
-/-- Rational modular forms of weight `k`, as a submodule of rational power series. -/
+include hg
+
+theorem IsModularForm.add : (f + g).isModularForm k := by
+  obtain ⟨F, hF⟩ := hf
+  obtain ⟨G, hG⟩ := hg
+  exact ⟨F + G, by simp [ModularForm.qExpansion_add one_pos one_mem_strictPeriods_SL, hF, hG]⟩
+
+theorem IsModularForm.sub : (f - g).isModularForm k := by
+  obtain ⟨F, hF⟩ := hf
+  obtain ⟨G, hG⟩ := hg
+  exact ⟨F - G, by simp [ModularForm.qExpansion_sub one_pos one_mem_strictPeriods_SL, hF, hG]⟩
+
 def rationalModularForms (k : ℤ) : Submodule ℚ ℚ⟦X⟧ where
   carrier := {f | f.isModularForm k}
   zero_mem' := zero_isModularForm k
   add_mem' hf hg := IsModularForm.add hf hg
   smul_mem' a _ hf := IsModularForm.smul hf a
 
+omit hf hg
+
 @[simp]
-theorem mem_rationalModularForms {k : ℤ} {f : ℚ⟦X⟧} :
-    f ∈ rationalModularForms k ↔ f.isModularForm k :=
-  Iff.rfl
+theorem mem_rationalModularForms : f ∈ rationalModularForms k ↔ f.isModularForm k := .rfl
 
 end PowerSeries
