@@ -46,10 +46,10 @@ theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
   let B_i : pLocalInt p := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩
   have hB : (p : pLocalInt p) ∣ B_i := by simpa [B_i] using p_dvd_inv_bernoulli hk hk2 hpk
   have hpnk : p ^ (m - 1) ∣ k := (dvd_mul_left _ _).trans hkm
-  have hkpow : (p : pLocalInt p) ^ (m - 1) ∣ (k : pLocalInt p) := by
+  have hkpow : (p : pLocalInt p) ^ (m - 1) ∣ k := by
     obtain ⟨c, hc⟩ := hpnk
-    exact ⟨(c : pLocalInt p), Subtype.ext (by norm_num [hc])⟩
-  have hscalar : (p : pLocalInt p) ^ m ∣ (2 * k : pLocalInt p) * B_i := by
+    exact ⟨c, Subtype.ext (by norm_num [hc])⟩
+  have hscalar : (p : pLocalInt p) ^ m ∣ 2 * k * B_i := by
     obtain ⟨a, ha⟩ := hkpow
     obtain ⟨b, hb⟩ := hB
     refine ⟨2 * a * b, ?_⟩
@@ -69,12 +69,11 @@ theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (h
     (E_int (p := 2) hk hk2 (by simp)).map (pLocalInt.toZModPow m) = 1 := by
   let hpk : 2 - 1 ∣ k := by simp
   let B_i : pLocalInt 2 := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩
-  have hB : (2 : pLocalInt 2) ∣ B_i := by simpa [B_i] using p_dvd_inv_bernoulli hk hk2 hpk
-  have hkpow : (2 : pLocalInt 2) ^ (m - 2) ∣ (k : pLocalInt 2) := by
+  have hB : 2 ∣ B_i := by simpa [B_i] using p_dvd_inv_bernoulli hk hk2 hpk
+  have hkpow : 2 ^ (m - 2) ∣ (k : pLocalInt 2) := by
     obtain ⟨c, hc⟩ := hkm
-    refine ⟨(c : pLocalInt 2), Subtype.ext (by norm_num [hc])⟩
-  have hscalar :
-      (2 : pLocalInt 2) ^ m ∣ (2 * k : pLocalInt 2) * B_i := by
+    exact ⟨c, Subtype.ext (by norm_num [hc])⟩
+  have hscalar : 2 ^ m ∣ 2 * k * B_i := by
     obtain ⟨a, ha⟩ := hkpow
     obtain ⟨b, hb⟩ := hB
     refine ⟨a * b, ?_⟩
