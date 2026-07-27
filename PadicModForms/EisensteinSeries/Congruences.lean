@@ -78,8 +78,8 @@ theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (h
     obtain ⟨a, ha⟩ := hkpow
     obtain ⟨b, hb⟩ := hB
     refine ⟨a * b, ?_⟩
-    calc _ = 2 ^ (m - 2 + 2) * a * b := by grind
-      _ = _ := by grind
+    calc _ = 2 ^ (m - 2 + 2) * a * b := by rw [ha, hb]; ring
+      _ = _ := by rw [show m - 2 + 2 = m by lia]; ring
   have hscalar_map : pLocalInt.toZModPow m ((2 * k : pLocalInt 2) * B_i) = 0 :=
     pLocalInt.toZModPow_eq_zero_of_dvd hscalar
   ext n

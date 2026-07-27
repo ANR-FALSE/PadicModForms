@@ -67,8 +67,10 @@ theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} {f : ℚ
 
 theorem v_nonneg_iff {f : ℚ_[p]⟦X⟧} : 0 ≤ v f ↔ ∃ g : ℤ_[p]⟦X⟧, g.map (algebraMap _ _) = f := by
   refine ⟨fun hf ↦ ?_, ?_⟩
-  · exact ⟨.mk fun n ↦ ⟨coeff n f, (zero_le_addValuation_iff_norm_le_one _).1 (le_v_iff.1 hf n)⟩,
-      ext fun n ↦ by simp⟩
+  · let a : ℕ → ℤ_[p] := fun n ↦
+      ⟨coeff n f, (zero_le_addValuation_iff_norm_le_one _).1 (le_v_iff.1 hf n)⟩
+    exact ⟨.mk a, ext fun n ↦ by
+      rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PadicInt.algebraMap_apply]⟩
   · rintro ⟨g, rfl⟩
     exact le_v_iff.2 fun n ↦ (zero_le_addValuation_iff_norm_le_one _).2
       (by simpa using (coeff n g).2)

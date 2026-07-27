@@ -158,8 +158,12 @@ open Finsupp
 `monomial d₀ (coeff d₀ φ)`. -/
 theorem eq_monomial_of_support_subset_singleton {R : Type*} [CommSemiring R] {φ : MvPolynomial σ R}
     {d₀ : σ →₀ ℕ} (h : ∀ d ∈ φ.support, d = d₀) :
-    φ = monomial d₀ (coeff d₀ φ) :=
-  Finsupp.support_subset_singleton.mp fun d hd ↦ Finset.mem_singleton.mpr (h d hd)
+    φ = monomial d₀ (coeff d₀ φ) := by
+  apply MvPolynomial.ext
+  intro d
+  change φ.coeff d = (Finsupp.single d₀ (φ.coeff d₀)) d
+  exact DFunLike.congr_fun
+    (Finsupp.support_subset_singleton.mp fun e he ↦ Finset.mem_singleton.mpr (h e he)) d
 
 namespace IsWeightedHomogeneous
 
@@ -289,8 +293,8 @@ private lemma monomial_qExpansion_coeff_zero_eq_one {n a b : ℕ} (hab : 4 * a +
     directSum_of_E₄_pow_mul_E₆_pow_apply hab, map_mul, map_pow, map_pow,
     ModularForm.qExpansionRingHom_apply, ModularForm.qExpansionRingHom_apply,
     PowerSeries.coeff_mul]
-  simp [Finset.antidiagonal_zero, PowerSeries.coeff_pow,
-    E_qExpansion_coeff_zero _ ⟨2, rfl⟩, E_qExpansion_coeff_zero _ ⟨3, rfl⟩]
+  simp [PowerSeries.coeff_pow, E_qExpansion_coeff_zero _ ⟨2, rfl⟩,
+    E_qExpansion_coeff_zero _ ⟨3, rfl⟩]
 
 private lemma cuspForm_eq_discriminant_mul {n : ℕ} (g : ModularForm 𝒮ℒ ↑n)
     (hg : ModularForm.IsCuspForm g) :
@@ -534,8 +538,7 @@ private lemma evalE₄E₆_discriminantPoly_mul_coeff_zero {n : ℕ} (hn12 : 12 
       ((f.mul g : ModularForm 𝒮ℒ (12 + ((n - 12 : ℕ) : ℤ))) : ℍ → ℂ) from
         funext fun z ↦ ModularForm.cast_apply hcast _ z,
     ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL f g, PowerSeries.coeff_mul]
-  simp [Finset.antidiagonal_zero,
-    (ModularForm.isCuspForm_iff_coeffZero_eq_zero f).mp ⟨CuspForm.discriminant, rfl⟩]
+  simp [(ModularForm.isCuspForm_iff_coeffZero_eq_zero f).mp ⟨CuspForm.discriminant, rfl⟩]
 
 private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (Fin 2) ℂ)
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n)

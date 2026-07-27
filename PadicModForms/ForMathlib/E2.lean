@@ -68,13 +68,17 @@ lemma E2_sub_one_isZeroAtImInfty : IsZeroAtImInfty (E2 · - 1) := by
       exact Periodic.norm_qParam_le_of_one_half_le_im hz
   simpa using h.const_mul (-24)
 
+private lemma denom_T (z : ℍ) : UpperHalfPlane.denom ModularGroup.T z = 1 := by
+  rw [ModularGroup.denom_apply, ModularGroup.coe_T]
+  norm_num
+
 private lemma E2_periodic : Periodic (E2 ∘ UpperHalfPlane.ofComplex) 1 := by
   have hT : E2 ∣[(2 : ℤ)] ModularGroup.T = E2 := by
     simpa [D2_T] using E2_slash_action ModularGroup.T
   have hvadd (z : ℍ) : E2 ((1 : ℝ) +ᵥ z) = E2 z := by
     have hz := congrFun hT z
-    rw [ModularForm.SL_slash_apply, UpperHalfPlane.modular_T_smul] at hz
-    simpa [ModularGroup.T, ModularGroup.denom_apply] using hz
+    rw [ModularForm.SL_slash_apply, UpperHalfPlane.modular_T_smul, denom_T] at hz
+    simpa using hz
   intro z
   by_cases hz : 0 < z.im
   · have hz1 : 0 < (z + 1).im := by simpa using hz
