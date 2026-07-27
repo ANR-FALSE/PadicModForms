@@ -55,7 +55,7 @@ theorem IsModularForm.sub : (f - g).isModularForm k := by
   obtain ⟨G, hG⟩ := hg
   exact ⟨F - G, by simp [ModularForm.qExpansion_sub one_pos one_mem_strictPeriods_SL, hF, hG]⟩
 
-def rationalModularForms (k : ℤ) : Submodule ℚ ℚ⟦X⟧ where
+def _root_.rationalModularForms (k : ℤ) : Submodule ℚ ℚ⟦X⟧ where
   carrier := {f | f.isModularForm k}
   zero_mem' := zero_isModularForm k
   add_mem' hf hg := IsModularForm.add hf hg
