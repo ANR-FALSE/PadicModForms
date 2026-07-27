@@ -6,7 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.Defs.Modular
+public import PadicModForms.Basic.Modular
 
 /-!
 # Weights of p-adic modular forms

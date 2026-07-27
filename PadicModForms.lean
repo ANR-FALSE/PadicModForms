@@ -1,5 +1,6 @@
-import PadicModForms.Defs.ModP
-import PadicModForms.Defs.Modular
+import PadicModForms.Basic.ModP
+import PadicModForms.Basic.Modular
+import PadicModForms.Basic.Rational
 import PadicModForms.EisensteinSeries.Basic
 import PadicModForms.EisensteinSeries.Congruences
 import PadicModForms.EisensteinSeries.Defs

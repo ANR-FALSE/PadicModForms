@@ -9,7 +9,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
-public import PadicModForms.Defs.Modular
 public import PadicModForms.ForMathlib.E2
 public import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.Bernoulli

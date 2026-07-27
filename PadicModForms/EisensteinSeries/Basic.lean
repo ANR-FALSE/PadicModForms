@@ -6,6 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
+public import PadicModForms.Basic.Modular
 public import PadicModForms.EisensteinSeries.Defs
 public import PadicModForms.ForMathlib.Bernoulli
 

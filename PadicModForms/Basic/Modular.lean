@@ -6,9 +6,9 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.Topology.Algebra.Group.CompactOpen
 
+public import PadicModForms.Basic.Rational
 public import PadicModForms.WeightSpace.Defs
 
 /-!
@@ -24,11 +24,6 @@ open UpperHalfPlane PowerSeries ModularFormClass Filter
 open scoped MatrixGroups Topology
 
 variable {p : ℕ} [Fact p.Prime]
-
-/-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
-classical modular form of level one and weight `k`. -/
-def PowerSeries.isModularForm (k : ℤ) (f : ℚ⟦X⟧) : Prop :=
-  ∃ g : ModularForm 𝒮ℒ k, qExpansion 1 g = f.map (algebraMap ℚ ℂ)
 
 structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
   F : ℕ → ℚ⟦X⟧

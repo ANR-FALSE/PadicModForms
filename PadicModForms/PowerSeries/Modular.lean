@@ -6,7 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.Defs.Modular
+public import PadicModForms.Basic.Rational
 public import PadicModForms.PowerSeries.PAdic
 
 /-!
