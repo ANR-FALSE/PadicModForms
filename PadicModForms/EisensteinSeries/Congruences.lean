@@ -90,7 +90,7 @@ theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (h
   simp [hn, hcoeff, map_mul, map_neg, hscalar_map]
 
 /-- The normalized Eisenstein series of weight `p - 1` is congruent to `1` modulo `p`. -/
-theorem E_p_sub_one_mod_p (hp : 5 ≤ p) : (E hp).map pLocalInt.toZMod = 1 := by
-  exact E_int_mod_p (by lia) (Hp.out.even_sub_one (by lia)) dvd_rfl
+theorem E_p_sub_one_mod_p (hp : 5 ≤ p) : (E hp).map pLocalInt.toZMod = 1 :=
+  E_int_mod_p (by lia) (Hp.out.even_sub_one (by lia)) (by rfl)
 
 end EisensteinSeries
