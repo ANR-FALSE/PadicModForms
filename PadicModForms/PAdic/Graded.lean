@@ -6,12 +6,13 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.Basic.Modular
+public import PadicModForms.PAdic.Basic
 
 /-!
 # Weights of p-adic modular forms
 
-This file defines the weight of a nonzero p-adic modular form as a limit in weight space.
+This file relates the classical integral weights in a presentation of a nonzero p-adic modular
+form to its limiting p-adic weight.
 -/
 
 @[expose] public section
@@ -31,5 +32,6 @@ theorem limit_unique {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S S' : pAdicModularFor
   sorry
 
 open Classical in
+/-- The p-adic weight of a p-adic modular form. -/
 noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm p) : X_[p] :=
-  if hf0 : f = 0 then (ι 0) else (w_tendsto hf0 (choice hf)).choose
+  if hf0 : f = 0 then ι 0 else (w_tendsto hf0 (choice hf)).choose

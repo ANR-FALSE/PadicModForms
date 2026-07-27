@@ -6,8 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.EisensteinSeries.Basic
-import PadicModForms.ForMathlib.Bernoulli
+public import PadicModForms.ModP.Basic
 
 /-!
 # Congruences for Eisenstein series
@@ -65,7 +64,8 @@ theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
   simp [hn, hcoeff, map_mul, map_neg, hscalar_map]
 
 /-- If `2 ^ (m - 2) ∣ k`, then `E_k` is congruent to `1` modulo `2 ^ m`. -/
-theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (hkm : 2 ^ (m - 2) ∣ k) :
+theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
+    (hkm : 2 ^ (m - 2) ∣ k) :
     (E_int (p := 2) hk hk2 (by simp)).map (pLocalInt.toZModPow m) = 1 := by
   let hpk : 2 - 1 ∣ k := by simp
   let B_i : pLocalInt 2 := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩

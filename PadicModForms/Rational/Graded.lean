@@ -8,100 +8,31 @@ module
 
 public import Mathlib.Algebra.DirectSum.Internal
 
-public import PadicModForms.EisensteinSeries.Defs
 public import PadicModForms.ForMathlib.«38813»
+public import PadicModForms.Rational.Eisenstein
 
 /-!
-# Rational modular forms
+# The graded ring of rational modular forms
 
-This file defines rational modular forms in terms of their `q`-expansions and develops their
-basic algebraic structure. It also upgrades the presentation of the graded ring of complex
-level-one modular forms as `ℂ[E₄, E₆]` to rational modular forms.
-
-The main steps are:
-
-* show that rational modular forms of a fixed weight form a submodule of `ℚ⟦X⟧`, and that
-  these submodules form a graded ring;
-* define evaluation at the rational `q`-expansions of `E₄` and `E₆`;
-* compare rational evaluation, after extending scalars to `ℂ`, with
-  `ModularForm.evalE₄E₆`;
-* descend the coefficients of a complex polynomial whose evaluated `q`-expansion is rational;
-* identify the graded ring of rational modular forms with `ℚ[X₀, X₁]`.
+This file develops the graded algebra of rational modular forms and gives the planned
+identification with `ℚ[E₄, E₆]`.
 -/
 
 @[expose] public noncomputable section
 
-open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries
+open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries SetLike DirectSum
 
 open scoped MatrixGroups
 
 namespace PowerSeries
 
-/-! ## Rational modular forms -/
-
-/-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
-classical modular form of level one and weight `k`. -/
-def isModularForm (k : ℤ) (f : ℚ⟦X⟧) : Prop :=
-  ∃ g : ModularForm 𝒮ℒ k, qExpansion 1 g = f.map (algebraMap ℚ ℂ)
-
-/-! ## The graded pieces of rational modular forms -/
-
-/-- The zero power series is a rational modular form of every weight. -/
-theorem zero_isModularForm (k : ℤ) : (0 : ℚ⟦X⟧).isModularForm k := by
-  sorry
-
-/-- The sum of two rational modular forms of the same weight is modular of that weight. -/
-theorem IsModularForm.add {k : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm k) : (f + g).isModularForm k := by
-  sorry
-
-/-- The negative of a rational modular form is modular of the same weight. -/
-theorem IsModularForm.neg {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
-    (-f).isModularForm k := by
-  sorry
-
-/-- The difference of two rational modular forms of the same weight is modular of that weight. -/
-theorem IsModularForm.sub {k : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm k) : (f - g).isModularForm k := by
-  sorry
-
-/-- A rational scalar multiple of a rational modular form is modular of the same weight. -/
-theorem IsModularForm.smul {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) (a : ℚ) :
-    (a • f).isModularForm k := by
-  sorry
-
-/-- The constant power series `1` is a rational modular form of weight zero. -/
-theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 := by
-  sorry
-
-/-- The product of rational modular forms of weights `k` and `l` is modular of weight `k + l`. -/
-theorem IsModularForm.mul {k l : ℤ} {f g : ℚ⟦X⟧}
-    (hf : f.isModularForm k) (hg : g.isModularForm l) : (f * g).isModularForm (k + l) := by
-  sorry
-
-/-- Rational modular forms of weight `k`, as a submodule of rational power series. -/
-def rationalModularForms (k : ℤ) : Submodule ℚ ℚ⟦X⟧ where
-  carrier := {f | f.isModularForm k}
-  zero_mem' := zero_isModularForm k
-  add_mem' hf hg := IsModularForm.add hf hg
-  smul_mem' a _ hf := IsModularForm.smul hf a
-
-@[simp]
-theorem mem_rationalModularForms {k : ℤ} {f : ℚ⟦X⟧} :
-    f ∈ rationalModularForms k ↔ f.isModularForm k :=
-  Iff.rfl
-
 /-- The submodules of rational modular forms form a graded monoid under multiplication. -/
-instance rationalModularForms.instGradedMonoid :
-    SetLike.GradedMonoid rationalModularForms where
+instance : GradedMonoid rationalModularForms where
   one_mem := one_isModularForm
   mul_mem _ _ _ _ hf hg := IsModularForm.mul hf hg
 
-/-- Rational modular forms of a fixed weight, as a type. -/
-abbrev RationalModularForm (k : ℤ) := ↥(rationalModularForms k)
-
 /-- The graded ring of level-one rational modular forms. -/
-abbrev GradedRationalModularForms := DirectSum ℤ RationalModularForm
+abbrev GradedRationalModularForms := ⨁ i, RationalModularForm i
 
 /-! ## Rational Eisenstein series and evaluation -/
 
@@ -128,17 +59,16 @@ to `E₆`. -/
 def evalE₄E₆Rat :
     MvPolynomial (Fin 2) ℚ →ₐ[ℚ] GradedRationalModularForms :=
   MvPolynomial.aeval
-    ![DirectSum.of RationalModularForm 4 E₄Rat,
-      DirectSum.of RationalModularForm 6 E₆Rat]
+    ![of RationalModularForm 4 E₄Rat, of RationalModularForm 6 E₆Rat]
 
 @[simp]
 theorem evalE₄E₆Rat_X0 :
-    evalE₄E₆Rat (MvPolynomial.X 0) = DirectSum.of RationalModularForm 4 E₄Rat := by
+    evalE₄E₆Rat (MvPolynomial.X 0) = of RationalModularForm 4 E₄Rat := by
   sorry
 
 @[simp]
 theorem evalE₄E₆Rat_X1 :
-    evalE₄E₆Rat (MvPolynomial.X 1) = DirectSum.of RationalModularForm 6 E₆Rat := by
+    evalE₄E₆Rat (MvPolynomial.X 1) = of RationalModularForm 6 E₆Rat := by
   sorry
 
 theorem evalE₄E₆Rat_C (a : ℚ) :
@@ -148,19 +78,18 @@ theorem evalE₄E₆Rat_C (a : ℚ) :
 
 theorem evalE₄E₆Rat_monomial (a b : ℕ) :
     evalE₄E₆Rat (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b) =
-      DirectSum.of RationalModularForm 4 E₄Rat ^ a *
-        DirectSum.of RationalModularForm 6 E₆Rat ^ b := by
+      of RationalModularForm 4 E₄Rat ^ a * of RationalModularForm 6 E₆Rat ^ b := by
   sorry
 
 /-- Forgetting the weight gives the `q`-expansion homomorphism from the graded ring of rational
 modular forms to rational power series. -/
 def rationalQExpansion :
     GradedRationalModularForms →ₐ[ℚ] ℚ⟦X⟧ :=
-  DirectSum.coeAlgHom rationalModularForms
+  coeAlgHom rationalModularForms
 
 @[simp]
 theorem rationalQExpansion_of (k : ℤ) (f : rationalModularForms k) :
-    rationalQExpansion (DirectSum.of RationalModularForm k f) = f := by
+    rationalQExpansion (of RationalModularForm k f) = f := by
   sorry
 
 /-- Polynomial evaluation directly in rational power series at the rational `q`-expansions of
@@ -294,7 +223,7 @@ theorem evalE₄E₆Rat_eq_of_isWeightedHomogeneous
     {n : ℕ} {P : MvPolynomial (Fin 2) ℚ}
     (hP : P.IsWeightedHomogeneous E₄E₆Weights n) :
     evalE₄E₆Rat P =
-      DirectSum.of RationalModularForm (n : ℤ)
+      of RationalModularForm (n : ℤ)
         ⟨evalE₄E₆RatQExpansion P,
           isModularForm_evalE₄E₆RatQExpansion_of_isWeightedHomogeneous hP⟩ := by
   sorry
@@ -312,7 +241,7 @@ the corresponding component of the graded ring. -/
 theorem exists_evalE₄E₆Rat_eq_of_isModularForm
     {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
     ∃ P : MvPolynomial (Fin 2) ℚ,
-      evalE₄E₆Rat P = DirectSum.of RationalModularForm k ⟨f, hf⟩ := by
+      evalE₄E₆Rat P = of RationalModularForm k ⟨f, hf⟩ := by
   sorry
 
 /-! ## The rational graded-ring isomorphism -/
@@ -332,8 +261,7 @@ def rationalModularFormsEquivMvPolynomial :
 forms as a `ℚ`-algebra. -/
 theorem E₄E₆Rat_generate :
     Algebra.adjoin ℚ
-      ({DirectSum.of RationalModularForm 4 E₄Rat,
-          DirectSum.of RationalModularForm 6 E₆Rat} :
+      ({of RationalModularForm 4 E₄Rat, of RationalModularForm 6 E₆Rat} :
         Set GradedRationalModularForms) = ⊤ := by
   sorry
 

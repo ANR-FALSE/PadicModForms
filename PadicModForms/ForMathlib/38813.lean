@@ -20,7 +20,7 @@ small prerequisite lemmas from that PR which are not available in the pinned mat
 
 @[expose] public noncomputable section
 
-open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries
+open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries DirectSum
 
 namespace MvPolynomial
 
@@ -215,7 +215,7 @@ sending `X₀ ↦ E₄`, `X₁ ↦ E₆`, and proves it is surjective.
 
 @[expose] public noncomputable section
 
-open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries
+open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries DirectSum
 
 namespace ModularForm
 
@@ -233,7 +233,7 @@ private theorem of_eq_sub_add_smul {ι : Type*} [DecidableEq ι] {R : Type*} [Se
 /-- Evaluation homomorphism sending `ℂ[X₀, X₁]` to the graded ring of level 1 modular forms
 via `X₀ ↦ E₄` and `X₁ ↦ E₆`. -/
 noncomputable def evalE₄E₆ :
-    MvPolynomial (Fin 2) ℂ →ₐ[ℂ] DirectSum ℤ (ModularForm 𝒮ℒ) :=
+    MvPolynomial (Fin 2) ℂ →ₐ[ℂ] ⨁ k : ℤ, ModularForm 𝒮ℒ k :=
   MvPolynomial.aeval
     ![DirectSum.of (ModularForm 𝒮ℒ) 4 E₄, DirectSum.of (ModularForm 𝒮ℒ) 6 E₆]
 
@@ -248,7 +248,7 @@ lemma evalE₄E₆_X1 :
   simp [evalE₄E₆]
 
 lemma evalE₄E₆_C (c : ℂ) :
-    evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c :=
+    evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (⨁ k : ℤ, ModularForm 𝒮ℒ k) c :=
   MvPolynomial.aeval_C _ c
 
 lemma evalE₄E₆_monomial (a b : ℕ) :
@@ -588,7 +588,7 @@ private lemma per_weight_injective_zero
       fin_cases i <;> simp <;> lia)
   rw [hpc, MvPolynomial.monomial_zero'] at heval ⊢
   rw [evalE₄E₆_C, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
-    show (1 : DirectSum ℤ (ModularForm 𝒮ℒ)) (0 : ℤ) = (1 : ModularForm 𝒮ℒ 0) from by
+    show (1 : ⨁ k : ℤ, ModularForm 𝒮ℒ k) (0 : ℤ) = (1 : ModularForm 𝒮ℒ 0) from by
       conv_lhs => rw [← DirectSum.of_zero_one (ModularForm 𝒮ℒ)]
       exact DirectSum.of_eq_same _ _] at heval
   rcases smul_eq_zero.mp heval with hc | h1z
@@ -823,7 +823,7 @@ theorem evalE₄E₆_injective : Function.Injective evalE₄E₆ := by
 /-- The graded ring of level-1 modular forms is isomorphic to the polynomial ring
 `ℂ[X₀, X₁]` via evaluation at `E₄` and `E₆`. -/
 noncomputable def modularFormsEquivMvPolynomial :
-    MvPolynomial (Fin 2) ℂ ≃ₐ[ℂ] DirectSum ℤ (ModularForm 𝒮ℒ) :=
+    MvPolynomial (Fin 2) ℂ ≃ₐ[ℂ] ⨁ k : ℤ, ModularForm 𝒮ℒ k :=
   AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩
 
 /-- `E₄` and `E₆` generate the entire graded ring of level 1 modular forms as an
@@ -831,7 +831,7 @@ noncomputable def modularFormsEquivMvPolynomial :
 theorem E₄E₆_generate :
     Algebra.adjoin ℂ ({DirectSum.of (ModularForm 𝒮ℒ) 4 E₄,
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆} :
-      Set (DirectSum ℤ (ModularForm 𝒮ℒ))) = ⊤ := by
+      Set (⨁ k : ℤ, ModularForm 𝒮ℒ k)) = ⊤ := by
   rw [show ({DirectSum.of (ModularForm 𝒮ℒ) 4 E₄,
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆} : Set _) =
       Set.range (![DirectSum.of _ 4 E₄, DirectSum.of _ 6 E₆] : Fin 2 → _)
@@ -841,7 +841,7 @@ theorem E₄E₆_generate :
 
 /-- The graded ring of level-1 modular forms is an integral domain, being isomorphic (via
 `modularFormsEquivMvPolynomial`) to the polynomial ring `ℂ[X₀, X₁]`. -/
-instance : IsDomain (DirectSum ℤ (ModularForm 𝒮ℒ)) :=
+instance : IsDomain (⨁ k : ℤ, ModularForm 𝒮ℒ k) :=
   modularFormsEquivMvPolynomial.symm.toMulEquiv.isDomain _
 
 end ModularForm
