@@ -1,11 +1,12 @@
 import PadicModForms.ForMathlib.Bernoulli
-import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.EInt
 import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeriesTopology
+import PadicModForms.ForMathlib.QExpansion
 import PadicModForms.ForMathlib.SpecificLimits
+import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
 import PadicModForms.ModP.Congruences
 import PadicModForms.ModP.Defs
