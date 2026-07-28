@@ -85,7 +85,7 @@ theorem IsScalarExtensionInjective.comap (M₀ : Submodule A M)
       IsScalarExtensionInjective.linearIndependent M₀ _ hgA)
 
 /-- The pullback gives an equivalence when it spans the source after extending scalars. -/
-theorem IsScalarExtensionEquiv.comap (M₀ : Submodule A M) [IsScalarExtensionEquiv B M₀]
+theorem IsScalarExtensionEquiv.comap (M₀ : Submodule A M) [IsScalarExtensionInjective B M₀]
     {f : N →ₗ[B] M} (hf : Function.Injective f)
     (hspan : span B (M₀.comap (f.restrictScalars A) : Set N) = ⊤) :
     IsScalarExtensionEquiv B (M₀.comap (f.restrictScalars A)) where
