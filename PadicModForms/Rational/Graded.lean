@@ -7,15 +7,19 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.DirectSum.Internal
+public import Mathlib.Algebra.Algebra.Hom.Rat
+public import Mathlib.Algebra.Module.LinearMap.Rat
+public import Mathlib.RingTheory.MvPolynomial.Tower
 
 public import PadicModForms.ForMathlib.«38813»
+public import PadicModForms.ForMathlib.QExpansion
 public import PadicModForms.Rational.Eisenstein
 
 /-!
 # The graded ring of rational modular forms
 
-This file develops the graded algebra of rational modular forms and gives the planned
-identification with `ℚ[E₄, E₆]`.
+This file develops the graded algebra of rational modular forms and gives the identification with
+`ℚ[E₄, E₆]`.
 -/
 
 @[expose] public noncomputable section
@@ -31,12 +35,13 @@ instance : GradedMonoid rationalModularForms where
   one_mem := PowerSeries.one_isModularForm
   mul_mem _ _ := PowerSeries.IsModularForm.mul
 
-/-- The graded ring of level-one rational modular forms. -/
-abbrev _root_.GradedRationalModularForms := ⨁ i, rationalModularForms i
+variable {k : ℕ} {n m : ℤ}
 
-/-! ## Rational Eisenstein series and evaluation -/
+instance : Module ℚ (ModularForm 𝒮ℒ n) :=
+  Function.Injective.module ℚ coeHom DFunLike.coe_injective fun _ _ => rfl
 
-variable {k : ℕ}
+instance : Algebra ℚ (⨁ k : ℤ, ModularForm 𝒮ℒ k) :=
+  Algebra.ofModule (fun _ _ _ => by rw [smul_mul_assoc]) fun _ _ _ => by rw [mul_smul_comm]
 
 /-- The rational `q`-expansion of `Eₖ`, regarded as a rational modular form of weight `k`. -/
 def ERat (hk : 3 ≤ k) (hk2 : Even k) : rationalModularForms k :=
@@ -45,25 +50,21 @@ def ERat (hk : 3 ≤ k) (hk2 : Even k) : rationalModularForms k :=
 @[simp]
 theorem coe_ERat (hk : 3 ≤ k) (hk2 : Even k) : (ERat hk hk2 : ℚ⟦X⟧) = E_rat k := rfl
 
-def E₄Rat : rationalModularForms 4 :=
-  ERat (by norm_num) ⟨2, rfl⟩
+def E₄Rat : rationalModularForms 4 := ERat (by norm_num) ⟨2, rfl⟩
 
-def E₆Rat : rationalModularForms 6 :=
-  ERat (by norm_num) ⟨3, rfl⟩
+def E₆Rat : rationalModularForms 6 := ERat (by norm_num) ⟨3, rfl⟩
 
 /-- Evaluation in the graded ring of rational modular forms, sending `X₀` to `E₄` and `X₁`
 to `E₆`. -/
-def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] GradedRationalModularForms :=
+def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
   aeval ![of _ 4 E₄Rat, of _ 6 E₆Rat]
 
 @[simp]
-theorem evalE₄E₆Rat_X0 :
-    evalE₄E₆Rat (X 0) = of _ 4 E₄Rat := by
+theorem evalE₄E₆Rat_X0 : evalE₄E₆Rat (X 0) = of _ 4 E₄Rat := by
   simp [evalE₄E₆Rat]
 
 @[simp]
-theorem evalE₄E₆Rat_X1 :
-    evalE₄E₆Rat (X 1) = of _ 6 E₆Rat := by
+theorem evalE₄E₆Rat_X1 : evalE₄E₆Rat (X 1) = of _ 6 E₆Rat := by
   simp [evalE₄E₆Rat]
 
 theorem evalE₄E₆Rat_C (a : ℚ) : evalE₄E₆Rat (C a) = algebraMap ℚ _ a := by
@@ -75,21 +76,116 @@ theorem evalE₄E₆Rat_monomial (a b : ℕ) :
 
 /-- Forgetting the weight gives the `q`-expansion homomorphism from the graded ring of rational
 modular forms to rational power series. -/
-@[simps!]
-def rationalQExpansion : GradedRationalModularForms →ₐ[ℚ] ℚ⟦X⟧ :=
-  coeAlgHom rationalModularForms
+def rationalQExpansion : (⨁ i, rationalModularForms i) →ₐ[ℚ] ℚ⟦X⟧ := coeAlgHom rationalModularForms
+
+variable (f g : rationalModularForms n)
 
 @[simp]
-theorem rationalQExpansion_of {k : ℤ} (f : rationalModularForms k) :
-    rationalQExpansion (of _ k f) = f :=
+theorem rationalQExpansion_of : rationalQExpansion (of _ n f) = f :=
   coeAlgHom_of ..
 
-/-! ## Comparison with complex modular forms -/
-
-/-- Extending `ERat` to `ℂ` gives the `q`-expansion of the complex Eisenstein series. -/
 theorem ERat_map_complex (hk : 3 ≤ k) (hk2 : Even k) :
     (ERat hk hk2 : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 (E hk) := by
   simpa using (qExpansion_E_eq_E_rat_map hk hk2).symm
+
+def rationalModularFormToComplexAux : ModularForm 𝒮ℒ n := f.property.choose
+
+@[simp]
+theorem qExpansion_rationalModularFormToComplexAux :
+    qExpansion 1 (rationalModularFormToComplexAux f) = (f : ℚ⟦X⟧).map (algebraMap ℚ ℂ) :=
+  f.property.choose_spec
+
+theorem rationalModularFormToComplexAux_add : rationalModularFormToComplexAux (f + g) =
+      rationalModularFormToComplexAux f + rationalModularFormToComplexAux g := by
+  simp [← qExpansion_inj one_pos one_mem_strictPeriods_SL, ModularForm.qExpansion_add one_pos
+    one_mem_strictPeriods_SL]
+
+/-- The complex modular form whose `q`-expansion is the rational modular form. -/
+def rationalModularFormToComplex : rationalModularForms n →ₗ[ℚ] ModularForm 𝒮ℒ n :=
+  (AddMonoidHom.mk' (rationalModularFormToComplexAux)
+    (rationalModularFormToComplexAux_add (n := n))).toRatLinearMap
+
+@[simp]
+theorem qExpansion_rationalModularFormToComplex :
+    qExpansion 1 (rationalModularFormToComplex f) = (f : ℚ⟦X⟧).map (algebraMap ℚ ℂ) :=
+  qExpansion_rationalModularFormToComplexAux f
+
+@[simp]
+private theorem rationalModularForms_gOne_eq_one :
+    (1 : GradedMonoid (fun n ↦ ↥(rationalModularForms n))).2 = 1 := rfl
+
+@[simp]
+theorem rationalModularFormToComplex_one :
+    rationalModularFormToComplex 1 = (1 : ModularForm 𝒮ℒ 0) :=
+  (qExpansion_inj one_pos one_mem_strictPeriods_SL).1 (by simp [qExpansion_one 1])
+
+open GradedMonoid
+
+@[simp]
+theorem rationalModularFormToComplex_mul (g : rationalModularForms m) :
+    rationalModularFormToComplex (GMul.mul (A := fun n ↦ rationalModularForms n) f g) =
+      (rationalModularFormToComplex f).mul (rationalModularFormToComplex g) := by
+  refine (qExpansion_inj one_pos one_mem_strictPeriods_SL).1 ?_
+  simpa using (ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL
+    (rationalModularFormToComplex f) (rationalModularFormToComplex g)).symm
+
+theorem rationalModularFormsToComplex_gOne :
+    of _ 0 (rationalModularFormToComplex (GOne.one (A := fun n ↦ rationalModularForms n))) = 1 := by
+  simp [← GradedMonoid.snd_one]
+
+theorem rationalModularFormsToComplex_gMul (g : rationalModularForms m) :
+    of _ (n + m) (rationalModularFormToComplex
+        (GMul.mul (A := fun k ↦ rationalModularForms k) f g)) =
+      of _ n (rationalModularFormToComplex f) * of _ m (rationalModularFormToComplex g) := by
+  rw [rationalModularFormToComplex_mul, of_mul_of]
+  exact congrArg (of (ModularForm 𝒮ℒ) (n + m)) rfl
+
+/-- The underlying ring homomorphism for scalar extension from rational to complex modular forms. -/
+def rationalModularFormsToComplexRingHom :
+    (⨁ i, rationalModularForms i) →+* ⨁ k : ℤ, ModularForm 𝒮ℒ k :=
+  toSemiring (fun m ↦ (of (fun n ↦ ModularForm 𝒮ℒ n) m).comp
+      (rationalModularFormToComplex).toAddMonoidHom)
+    rationalModularFormsToComplex_gOne rationalModularFormsToComplex_gMul
+
+/-- The underlying scalar-extension ring homomorphism on homogeneous elements. -/
+@[simp]
+theorem rationalModularFormsToComplexRingHom_of :
+    rationalModularFormsToComplexRingHom (of _ n f) =
+      of _ n (rationalModularFormToComplex f) :=
+  toSemiring_of ..
+
+/-- Scalar extension from the graded ring of rational modular forms to the graded ring of
+complex modular forms. -/
+def rationalModularFormsToComplex :
+    (⨁ i, rationalModularForms i) →ₐ[ℚ] ⨁ k : ℤ, ModularForm 𝒮ℒ k :=
+  RingHom.toRatAlgHom (R := ⨁ i, rationalModularForms i)
+    (S := ⨁ k : ℤ, ModularForm 𝒮ℒ k) rationalModularFormsToComplexRingHom
+
+@[simp]
+theorem rationalModularFormsToComplex_of :
+    rationalModularFormsToComplex (of _ n f) = of _ n (rationalModularFormToComplex f) :=
+  rationalModularFormsToComplexRingHom_of f
+
+/-- The rational algebra structure on complex graded modular forms is compatible with its
+complex algebra structure. -/
+@[simp]
+theorem algebraMap_rat_eq_complex (a : ℚ) :
+    algebraMap ℚ (⨁ k : ℤ, ModularForm 𝒮ℒ k) a = algebraMap ℂ (⨁ k : ℤ, ModularForm 𝒮ℒ k) a := by
+  simpa [Algebra.algebraMap_eq_smul_one] using ratCast_smul_eq ℚ ℂ a 1
+
+@[simp]
+theorem rationalModularFormToComplex_ERat (hk : 3 ≤ k) (hk2 : Even k) :
+    rationalModularFormToComplex (ERat hk hk2) = E hk := by
+  rw [← qExpansion_inj one_pos one_mem_strictPeriods_SL, qExpansion_rationalModularFormToComplex,
+    ERat_map_complex]
+
+@[simp]
+theorem rationalModularFormToComplex_E₄Rat : rationalModularFormToComplex E₄Rat = E₄ :=
+  rationalModularFormToComplex_ERat (by norm_num) ⟨2, rfl⟩
+
+@[simp]
+theorem rationalModularFormToComplex_E₆Rat : rationalModularFormToComplex E₆Rat = E₆ :=
+  rationalModularFormToComplex_ERat (by norm_num) ⟨3, rfl⟩
 
 theorem rationalQExpansion_evalE₄E₆Rat_map_C (a : ℚ) :
     (rationalQExpansion (evalE₄E₆Rat (C a))).map (algebraMap ℚ ℂ) =
@@ -129,32 +225,36 @@ theorem rationalQExpansion_evalE₄E₆Rat_map_X (i : Fin 2) :
 theorem rationalQExpansion_evalE₄E₆Rat_map (P : MvPolynomial (Fin 2) ℚ) :
     (rationalQExpansion (evalE₄E₆Rat P)).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ (P.map (algebraMap ℚ ℂ))) := by
-  induction P using MvPolynomial.induction_on with
+  induction P using induction_on with
   | C a => exact rationalQExpansion_evalE₄E₆Rat_map_C a
   | add P Q hP hQ =>
-    simpa only [map_add] using congrArg₂ (· + ·) hP hQ
+    simpa using congrArg₂ (· + ·) hP hQ
   | mul_X P i hP =>
     simpa using congrArg₂ (· * ·) hP (rationalQExpansion_evalE₄E₆Rat_map_X i)
 
-theorem map_complex_injective : Function.Injective (map (σ := Fin 2) (algebraMap ℚ ℂ)) := by
-  sorry
-
-theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := by
-  sorry
-
-/-! ## Rational descent -/
+/-- The scalar-extension square for evaluation at `E₄` and `E₆` commutes. -/
+theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) ℚ) :
+    rationalModularFormsToComplex (evalE₄E₆Rat P) = evalE₄E₆ (P.map (algebraMap ℚ ℂ)) := by
+  rw [evalE₄E₆Rat, comp_aeval_apply, evalE₄E₆, aeval_map_algebraMap]
+  congr 2
+  funext i
+  fin_cases i <;> simp
 
 /-- The rational `q`-expansion associated with the monomial of exponent vector `d`. -/
-def E₄E₆MonomialQExpansion (d : Fin 2 →₀ ℕ) : ℚ⟦X⟧ :=
-  E_rat 4 ^ d 0 * E_rat 6 ^ d 1
+def E₄E₆MonomialQExpansion (d : Fin 2 →₀ ℕ) : ℚ⟦X⟧ := E_rat 4 ^ d 0 * E_rat 6 ^ d 1
+
+@[simp]
+theorem E₄E₆MonomialQExpansion_eq (d : Fin 2 →₀ ℕ) :
+    E₄E₆MonomialQExpansion d = (E₄Rat : ℚ⟦X⟧) ^ d 0 * (E₆Rat : ℚ⟦X⟧) ^ d 1 := rfl
 
 /-- Extending a rational monomial `q`-expansion to `ℂ` agrees with evaluating the corresponding
 monomial in the complex modular forms `E₄` and `E₆` and taking its `q`-expansion. -/
 theorem E₄E₆MonomialQExpansion_map_complex (d : Fin 2 →₀ ℕ) :
-    (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ) =
-      ModularForm.qExpansionRingHom (h := 1) one_pos one_mem_strictPeriods_SL
-        (ModularForm.evalE₄E₆ (monomial d 1)) := by
-  sorry
+    (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ) = qExpansionRingHom 1 one_pos
+      one_mem_strictPeriods_SL (evalE₄E₆ (monomial d 1)) :=
+  calc _ = (rationalQExpansion _).map _ := congrArg (PowerSeries.map _) (by simp [monomial_fin_two])
+    _ = qExpansionRingHom 1 one_pos _ _ := rationalQExpansion_evalE₄E₆Rat_map (monomial d 1)
+    _ = _ := by simp
 
 /-- The complex scalar extensions of the rational monomial `q`-expansions in `E₄` and `E₆` are
 linearly independent. -/
@@ -163,12 +263,15 @@ theorem E₄E₆MonomialQExpansion_linearIndependent :
       (fun d : Fin 2 →₀ ℕ ↦ (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ)) := by
   sorry
 
+theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := fun P Q hPQ ↦ by
+  refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
+  simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
+
 /-- Finitely many coefficients detect all linear combinations of a finite linearly independent
 family of rational power series. -/
 theorem exists_coeff_finset_detecting_linear_combinations
     {ι : Type*} [Fintype ι] (v : ι → ℚ⟦X⟧) (hv : LinearIndependent ℚ v) :
-    ∃ s : Finset ℕ,
-      Function.Injective fun c : ι → ℚ ↦
+    ∃ s : Finset ℕ, Function.Injective fun c : ι → ℚ ↦
         fun n : s ↦ PowerSeries.coeff n (∑ i, c i • v i) := by
   sorry
 
@@ -184,16 +287,68 @@ theorem exists_rat_coefficients_of_sum_map_eq
 
 /-- A complex polynomial whose evaluation at `E₄` and `E₆` has rational `q`-expansion has
 rational coefficients. -/
-theorem exists_ratPolynomial_of_evalE₄E₆_qExpansion_eq_map
-    (P : MvPolynomial (Fin 2) ℂ) (f : ℚ⟦X⟧)
-    (hP :
-      ModularForm.qExpansionRingHom (h := 1) one_pos one_mem_strictPeriods_SL
-          (ModularForm.evalE₄E₆ P) =
-        f.map (algebraMap ℚ ℂ)) :
+theorem exists_ratPolynomial_of_evalE₄E₆_qExpansion_eq_map (P : MvPolynomial (Fin 2) ℂ)
+    (hP : ∃ f : ℚ⟦X⟧, qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ P) =
+      f.map (algebraMap ℚ ℂ)) :
     ∃ Q : MvPolynomial (Fin 2) ℚ, Q.map (algebraMap ℚ ℂ) = P := by
-  sorry
-
-/-! ## Fixed weights -/
+  classical
+  obtain ⟨f, hP⟩ := hP
+  let v : P.support → ℚ⟦X⟧ := fun d ↦ E₄E₆MonomialQExpansion d
+  let c : P.support → ℂ := fun d ↦ P.coeff d
+  have hv : LinearIndependent ℂ (fun d ↦ (v d).map (algebraMap ℚ ℂ)) := by
+    simpa [v, Function.comp_def] using
+      E₄E₆MonomialQExpansion_linearIndependent.comp Subtype.val Subtype.val_injective
+  have hC (a : ℂ) :
+      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ (C a)) =
+        PowerSeries.C a := by
+    calc _ = qExpansion 1 (const a) := by simp [algebraMap_apply]; rfl
+      _ = qExpansion 1 (a • (1 : ModularForm 𝒮ℒ 0)) := by congr 2; ext; simp
+      _ = a • qExpansion 1 (1 : ModularForm 𝒮ℒ 0) :=
+        ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL _ _
+      _ = PowerSeries.C a := by rw [ModularForm.qExpansion_one]; simp [Algebra.smul_def]
+  have hsum : ∑ d, c d • (v d).map (algebraMap ℚ ℂ) = f.map (algebraMap ℚ ℂ) := by
+    rw [← hP]
+    calc
+      ∑ d, c d • (v d).map (algebraMap ℚ ℂ) =
+          ∑ d : P.support, qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
+            (evalE₄E₆ (monomial d (P.coeff d))) := by
+              apply Finset.sum_congr rfl
+              intro d _
+              simp only [c, v, E₄E₆MonomialQExpansion_map_complex]
+              rw [show monomial (d : Fin 2 →₀ ℕ) (P.coeff d) =
+                C (P.coeff d) * monomial d 1 by
+                  simpa using
+                    (C_mul_monomial (a := P.coeff d) (a' := 1) (s := (d : Fin 2 →₀ ℕ))).symm]
+              rw [map_mul, map_mul, hC]
+              rw [Algebra.smul_def, PowerSeries.algebraMap_eq]
+      _ = qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
+          (evalE₄E₆ (∑ d : P.support, monomial d (P.coeff d))) := by simp
+      _ = qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ P) := by
+        congr 2
+        calc
+          (∑ d : P.support, monomial d (P.coeff d)) =
+              ∑ d ∈ P.support, monomial d (P.coeff d) :=
+            (Finset.sum_subtype (p := fun d ↦ d ∈ P.support) P.support (by simp)
+              (fun d ↦ monomial d (P.coeff d))).symm
+          _ = P := P.support_sum_monomial_coeff
+  obtain ⟨a, ha⟩ := exists_rat_coefficients_of_sum_map_eq v hv c f hsum
+  refine ⟨∑ d : P.support, monomial d (a d), ?_⟩
+  rw [map_sum]
+  calc
+    ∑ d : P.support, (monomial d (a d)).map (algebraMap ℚ ℂ) =
+        ∑ d : P.support, monomial d (P.coeff d) := by
+          apply Finset.sum_congr rfl
+          intro d _
+          rw [map_monomial]
+          congr 1
+          exact (congrFun ha d).symm
+    _ = P := by
+      calc
+        (∑ d : P.support, monomial d (P.coeff d)) =
+            ∑ d ∈ P.support, monomial d (P.coeff d) :=
+          (Finset.sum_subtype (p := fun d ↦ d ∈ P.support) P.support (by simp)
+            (fun d ↦ monomial d (P.coeff d))).symm
+        _ = P := P.support_sum_monomial_coeff
 
 /-- The weights assigned to the variables corresponding to `E₄` and `E₆`. -/
 abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
@@ -242,16 +397,13 @@ theorem evalE₄E₆Rat_surjective :
 
 /-- The graded ring of rational level-one modular forms is isomorphic to `ℚ[X₀, X₁]`. -/
 def rationalModularFormsEquivMvPolynomial :
-    MvPolynomial (Fin 2) ℚ ≃ₐ[ℚ] GradedRationalModularForms :=
-  AlgEquiv.ofBijective evalE₄E₆Rat
-    ⟨evalE₄E₆Rat_injective, evalE₄E₆Rat_surjective⟩
+    MvPolynomial (Fin 2) ℚ ≃ₐ[ℚ] ⨁ i, rationalModularForms i :=
+  AlgEquiv.ofBijective evalE₄E₆Rat ⟨evalE₄E₆Rat_injective, evalE₄E₆Rat_surjective⟩
 
 /-- The rational modular forms `E₄` and `E₆` generate the graded ring of rational modular
 forms as a `ℚ`-algebra. -/
 theorem E₄E₆Rat_generate :
-    Algebra.adjoin ℚ
-      ({of (fun i ↦ rationalModularForms i) 4 E₄Rat,
-          of (fun i ↦ rationalModularForms i) 6 E₆Rat} : Set GradedRationalModularForms) = ⊤ := by
+    Algebra.adjoin ℚ ({of _ 4 E₄Rat, of _ 6 E₆Rat} : Set (⨁ i, rationalModularForms i)) = ⊤ := by
   sorry
 
 end ModularForm
