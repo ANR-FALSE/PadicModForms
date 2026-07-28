@@ -8,7 +8,7 @@ module
 
 public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.ModP.Defs
-public import PadicModForms.Rational.Eisenstein
+public import PadicModForms.Rational.Basic
 
 /-!
 # Integral and mod-`p` Eisenstein series

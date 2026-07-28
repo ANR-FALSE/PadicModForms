@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.Topology.Algebra.Group.CompactOpen
 
-public import PadicModForms.Rational.Defs
+public import PadicModForms.Rational.Basic
 
 /-!
 # p-adic modular forms

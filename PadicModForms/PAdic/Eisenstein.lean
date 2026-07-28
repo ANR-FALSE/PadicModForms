@@ -8,7 +8,7 @@ module
 
 public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.PAdic.Basic
-public import PadicModForms.Rational.Eisenstein
+public import PadicModForms.Rational.Basic
 
 /-!
 # p-adic Eisenstein series

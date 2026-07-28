@@ -7,7 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.IntLocalization
-public import PadicModForms.Rational.Defs
+public import PadicModForms.Rational.Basic
 
 /-!
 # Modular forms modulo `p`
