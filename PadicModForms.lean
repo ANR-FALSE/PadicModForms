@@ -5,6 +5,7 @@ import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
+import PadicModForms.ForMathlib.ScalarExtension
 import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
