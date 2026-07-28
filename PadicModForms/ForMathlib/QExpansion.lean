@@ -20,7 +20,21 @@ open UpperHalfPlane
 
 namespace ModularForm
 
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ}
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ} {k : ℤ}
+
+noncomputable instance [Γ.HasDetOne] : Module ℚ (ModularForm Γ k) :=
+  fast_instance% Function.Injective.module ℚ coeHom DFunLike.coe_injective fun _ _ ↦ rfl
+
+/-- The `q`-expansion map as a complex-linear map on modular forms of fixed weight. -/
+def qExpansionLinearMap [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ) :
+    ModularForm Γ k →ₗ[ℂ] PowerSeries ℂ where
+  toFun := fun f ↦ qExpansion h f
+  map_add' f g := by simpa using ModularForm.qExpansion_add hh hΓ f g
+  map_smul' a f := by simpa using ModularForm.qExpansion_smul hh hΓ a f
+
+@[simp]
+theorem qExpansionLinearMap_apply [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
+    (k : ℤ) (f : ModularForm Γ k) : qExpansionLinearMap hh hΓ k f = qExpansion h f := rfl
 
 @[simp]
 theorem qExpansionAddHom_apply (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ)
