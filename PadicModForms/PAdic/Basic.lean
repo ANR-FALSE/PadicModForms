@@ -25,18 +25,17 @@ way in which a classical rational modular form gives a p-adic modular form.
 
 @[expose] public section
 
-open Filter Topology PowerSeries Padic
+open Filter Topology PowerSeries Padic ModularForm
 
 open scoped PowerSeriesUniformConvergence
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
 /-- A classical rational modular form gives a p-adic modular form after extending scalars. -/
-theorem powerSeries_isPAdicModularForm_of_qExpansion_eq_map (p : ℕ) [Fact p.Prime]
-    {g : ℚ⟦X⟧} (hg : ∃ k : ℤ, g.isModularForm k) :
-    g.map (algebraMap ℚ ℚ_[p]) |>.isPAdicModularForm p := by
-  rcases hg with ⟨k, f, hg⟩
-  refine ⟨⟨fun _ ↦ g, fun _ ↦ k, fun i ↦ ⟨f, hg⟩, fun u hu ↦ ?_⟩⟩
+theorem rationalQExpansion_isPAdicModularForm (p : ℕ) [Fact p.Prime] {k : ℤ}
+    (F : rationalModularForms k) :
+    (rationalQExpansion F).map (algebraMap ℚ ℚ_[p]) |>.isPAdicModularForm p := by
+  refine ⟨⟨fun _ ↦ k, fun _ ↦ F, fun u hu ↦ ?_⟩⟩
   filter_upwards with i n
   simpa using refl_mem_uniformity hu
 
@@ -109,8 +108,8 @@ end PowerSeries.Padic
 namespace PowerSeries
 
 /-- The p-adic valuations of the coefficients of a rational modular form are bounded below. -/
-theorem isModularForm_v_ne_bot {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
-    Padic.v (f.map (algebraMap ℚ ℚ_[p])) ≠ ⊥ := by
+theorem rationalQExpansion_v_ne_bot {k : ℤ} (F : rationalModularForms k) :
+    Padic.v ((rationalQExpansion F).map (algebraMap ℚ ℚ_[p])) ≠ ⊥ := by
   sorry
 
 end PowerSeries

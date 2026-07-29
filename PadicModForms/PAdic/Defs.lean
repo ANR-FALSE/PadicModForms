@@ -20,7 +20,7 @@ modular forms.
 
 @[expose] public section
 
-open UpperHalfPlane PowerSeries ModularFormClass Filter
+open UpperHalfPlane PowerSeries ModularFormClass Filter ModularForm
 
 open scoped MatrixGroups Topology
 
@@ -35,17 +35,15 @@ noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop
 /-- A presentation of a p-adic modular form by classical rational modular forms whose
 coefficients converge uniformly. -/
 structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
-  F : ℕ → ℚ⟦X⟧
   w : ℕ → ℤ
-  modF : ∀ i, (F i).isModularForm (w i)
-  tendsTo : TendstoUniformly (fun i n ↦ (↑(coeff n (F i)) : ℚ_[p])) (coeff · f) atTop
+  F : (i : ℕ) → rationalModularForms (w i)
+  tendsTo : TendstoUniformly (fun i n ↦ ↑(coeff n (rationalQExpansion (F i)))) (coeff · f) atTop
 
 variable (p)
 
-/-- A p-adic power series is a p-adic modular form if it admits a presentation by classical
+/-- A `p`-adic power series is a `p`-adic modular form if it admits a presentation by classical
 rational modular forms. -/
-def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) :=
-  Nonempty (pAdicModularFormStruct f)
+def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct f)
 
 /-- The type of p-adic modular forms. -/
 def PAdicModularForms := {f // PowerSeries.isPAdicModularForm p f}

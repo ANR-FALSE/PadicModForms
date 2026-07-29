@@ -116,7 +116,7 @@ theorem algebraMap_rat_eq_complex (a : ℚ) :
   rfl
 
 theorem rationalQExpansion_evalE₄E₆Rat_map_C (a : ℚ) :
-    (rationalQExpansion (evalE₄E₆Rat (C a))).map (algebraMap ℚ ℂ) =
+    (rationalQExpansionAlgHom (evalE₄E₆Rat (C a))).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
         (evalE₄E₆ ((C a).map (algebraMap ℚ ℂ))) :=
   calc _ = (a : ℂ) • 1 := by simp [Algebra.smul_def]
@@ -127,23 +127,25 @@ theorem rationalQExpansion_evalE₄E₆Rat_map_C (a : ℚ) :
     _ = _ := by simp [DirectSum.algebraMap_apply]; rfl
 
 theorem rationalQExpansion_evalE₄E₆Rat_map_X0 :
-    (rationalQExpansion (evalE₄E₆Rat (X 0))).map (algebraMap ℚ ℂ) =
+    (rationalQExpansionAlgHom (evalE₄E₆Rat (X 0))).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
         (evalE₄E₆ ((X 0).map (algebraMap ℚ ℂ))) := by
-  calc _ = (E₄Rat : ℚ⟦X⟧).map _ := by rw [evalE₄E₆Rat_X0, rationalQExpansion_of]
+  calc _ = (E₄Rat : ℚ⟦X⟧).map _ := by rw [evalE₄E₆Rat_X0, rationalQExpansionAlgHom_of]
     _ = qExpansion 1 E₄ := ERat_map_complex _ ⟨2, rfl⟩
     _ = _ := by simp
 
 theorem rationalQExpansion_evalE₄E₆Rat_map_X1 :
-    (rationalQExpansion (evalE₄E₆Rat (X 1))).map (algebraMap ℚ ℂ) =
+    (rationalQExpansionAlgHom (evalE₄E₆Rat (X 1))).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
         (evalE₄E₆ ((X 1).map (algebraMap ℚ ℂ))) := by
-  calc _ = (E₆Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) := by rw [evalE₄E₆Rat_X1, rationalQExpansion_of]
+  calc
+    _ = (E₆Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) := by
+      rw [evalE₄E₆Rat_X1, rationalQExpansionAlgHom_of]
     _ = qExpansion 1 E₆ := ERat_map_complex _ ⟨3, rfl⟩
     _ = _ := by simp
 
 theorem rationalQExpansion_evalE₄E₆Rat_map_X (i : Fin 2) :
-    (rationalQExpansion (evalE₄E₆Rat (X i))).map (algebraMap ℚ ℂ) =
+    (rationalQExpansionAlgHom (evalE₄E₆Rat (X i))).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
         (evalE₄E₆ ((X i).map (algebraMap ℚ ℂ))) := by
   fin_cases i
@@ -151,7 +153,7 @@ theorem rationalQExpansion_evalE₄E₆Rat_map_X (i : Fin 2) :
   · exact rationalQExpansion_evalE₄E₆Rat_map_X1
 
 theorem rationalQExpansion_evalE₄E₆Rat_map (P : MvPolynomial (Fin 2) ℚ) :
-    (rationalQExpansion (evalE₄E₆Rat P)).map (algebraMap ℚ ℂ) =
+    (rationalQExpansionAlgHom (evalE₄E₆Rat P)).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ (P.map (algebraMap ℚ ℂ))) := by
   induction P using induction_on with
   | C a => exact rationalQExpansion_evalE₄E₆Rat_map_C a
@@ -181,7 +183,8 @@ monomial in the complex modular forms `E₄` and `E₆` and taking its `q`-expan
 theorem E₄E₆MonomialQExpansion_map_complex (d : Fin 2 →₀ ℕ) :
     (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ) = qExpansionRingHom 1 one_pos
       one_mem_strictPeriods_SL (evalE₄E₆ (monomial d 1)) :=
-  calc _ = (rationalQExpansion _).map _ := congrArg (PowerSeries.map _) (by simp [monomial_fin_two])
+  calc _ = (rationalQExpansionAlgHom _).map _ :=
+      congrArg (PowerSeries.map _) (by simp [monomial_fin_two])
     _ = qExpansionRingHom 1 one_pos _ _ := rationalQExpansion_evalE₄E₆Rat_map (monomial d 1)
     _ = _ := by simp
 

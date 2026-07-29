@@ -14,7 +14,7 @@ public import PadicModForms.ModP.Eisenstein
 
 @[expose] public noncomputable section
 
-open PowerSeries ArithmeticFunction sigma
+open PowerSeries ArithmeticFunction sigma ModularForm
 
 variable {p k : ℕ} [Fact p.Prime]
 
@@ -25,7 +25,7 @@ variable (n : ℕ) (hk : 3 ≤ k) (hk2 : Even k)
 @[simp]
 theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalInt p) =
       if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
-  rw [E_int, coeff_toSubring, coeff_E_rat]
+  rw [E_int, coeff_toSubring, rationalQExpansion_apply, coeff_ERat]
 
 /-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
@@ -39,10 +39,12 @@ theorem coeff_E_int_of_ne_zero (hpk : p - 1 ∣ k) {m : ℕ} (hm : m ≠ 0) :
   simp [coeff_E_int, hm, div_eq_mul_inv, show ((2 : pLocalInt p) : ℚ) = 2 from
     map_ofNat (pLocalInt p).subtype 2]
 
-/-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to `E_rat`. -/
-theorem E_int_map (hpk : p - 1 ∣ k) : (E_int hk hk2 hpk).map (algebraMap _ ℚ) = E_rat k := by
+/-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
+`ERat`. -/
+theorem E_int_map (hpk : p - 1 ∣ k) :
+    (E_int hk hk2 hpk).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
   ext
-  simp [coeff_E_int, coeff_E_rat]
+  simp [coeff_E_int, coeff_ERat]
 
 namespace ModP
 
@@ -53,10 +55,13 @@ theorem coeff_E (hp : 5 ≤ p) (m : ℕ) : (coeff m (E hp) : pLocalInt p) =
   rw [E, coeff_E_int, Nat.cast_sub (by lia : 1 ≤ p)]
   congr 2
 
-/-- The scalar extension of `E` to `ℚ` is a modular form of weight `p - 1`. -/
-theorem E_isModularForm (hp : 5 ≤ p) : ((E hp).map (algebraMap _ ℚ)).isModularForm (p - 1) := by
-  simpa [E_int_map, Nat.cast_sub (by lia : 1 ≤ p)] using
-    E_rat_isModularForm (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))
+/-- The scalar extension of `E` to `ℚ` is the rational `q`-expansion of `ERat` of weight
+`p - 1`. -/
+theorem E_map_eq_rationalQExpansion (hp : 5 ≤ p) :
+    (E hp).map (algebraMap _ ℚ) =
+      rationalQExpansion (ERat (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))) := by
+  simpa [Nat.cast_sub (by lia : 1 ≤ p)] using
+    E_int_map (p := p) (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
 
 end ModP
 

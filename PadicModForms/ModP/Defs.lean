@@ -17,7 +17,7 @@ This file defines modular forms modulo `p`.
 
 @[expose] public section
 
-open PowerSeries
+open PowerSeries ModularForm
 
 variable {p : ℕ} [Fact p.Prime]
 
@@ -25,5 +25,5 @@ variable {p : ℕ} [Fact p.Prime]
 the reduction of a power series with coefficients in the localization of `ℤ` at `p` whose base
 change to `ℚ` is a modular form of weight `k`. -/
 def PowerSeries.isModPModularForm (k : ℤ) (f : (ZMod p)⟦X⟧) : Prop :=
-  ∃ g : (pLocalInt p)⟦X⟧, (g.map (algebraMap _ _)).isModularForm k ∧
-    g.map pLocalInt.toZMod = f
+  ∃ (g : (pLocalInt p)⟦X⟧) (F : rationalModularForms k),
+    g.map (algebraMap _ _) = rationalQExpansion F ∧ g.map pLocalInt.toZMod = f
