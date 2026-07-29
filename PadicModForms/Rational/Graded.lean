@@ -52,10 +52,6 @@ theorem evalE₄E₆Rat_monomial (a b : ℕ) :
 
 variable (f g : rationalModularForms n)
 
-theorem ERat_map_complex (hk : 3 ≤ k) (hk2 : Even k) :
-    (ERat hk hk2 : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 (E hk) := by
-  simpa using (qExpansion_E_eq_E_rat_map hk hk2).symm
-
 @[simp]
 private theorem rationalModularForms_gOne_eq_one :
     (1 : GradedMonoid (fun n ↦ ↥(rationalModularForms n))).2 = 1 := rfl
@@ -119,20 +115,6 @@ theorem algebraMap_rat_eq_complex (a : ℚ) :
     algebraMap ℚ (⨁ k : ℤ, ModularForm 𝒮ℒ k) a = algebraMap ℂ (⨁ k : ℤ, ModularForm 𝒮ℒ k) a :=
   rfl
 
-@[simp]
-theorem rationalModularFormToComplex_ERat (hk : 3 ≤ k) (hk2 : Even k) :
-    rationalModularFormToComplex (ERat hk hk2) = E hk := by
-  rw [← qExpansion_inj one_pos one_mem_strictPeriods_SL, qExpansion_rationalModularFormToComplex,
-    ERat_map_complex]
-
-@[simp]
-theorem rationalModularFormToComplex_E₄Rat : rationalModularFormToComplex E₄Rat = E₄ :=
-  rationalModularFormToComplex_ERat (by norm_num) ⟨2, rfl⟩
-
-@[simp]
-theorem rationalModularFormToComplex_E₆Rat : rationalModularFormToComplex E₆Rat = E₆ :=
-  rationalModularFormToComplex_ERat (by norm_num) ⟨3, rfl⟩
-
 theorem rationalQExpansion_evalE₄E₆Rat_map_C (a : ℚ) :
     (rationalQExpansion (evalE₄E₆Rat (C a))).map (algebraMap ℚ ℂ) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
@@ -187,7 +169,8 @@ theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) 
   fin_cases i <;> simp
 
 /-- The rational `q`-expansion associated with the monomial of exponent vector `d`. -/
-def E₄E₆MonomialQExpansion (d : Fin 2 →₀ ℕ) : ℚ⟦X⟧ := E_rat 4 ^ d 0 * E_rat 6 ^ d 1
+def E₄E₆MonomialQExpansion (d : Fin 2 →₀ ℕ) : ℚ⟦X⟧ :=
+  (E₄Rat : ℚ⟦X⟧) ^ d 0 * (E₆Rat : ℚ⟦X⟧) ^ d 1
 
 @[simp]
 theorem E₄E₆MonomialQExpansion_eq (d : Fin 2 →₀ ℕ) :
@@ -295,44 +278,6 @@ theorem exists_ratPolynomial_of_evalE₄E₆_qExpansion_eq_map (P : MvPolynomial
           (Finset.sum_subtype (p := fun d ↦ d ∈ P.support) P.support (by simp)
             (fun d ↦ monomial d (P.coeff d))).symm
         _ = P := P.support_sum_monomial_coeff
-
-/-- The weights assigned to the variables corresponding to `E₄` and `E₆`. -/
-abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
-
-/-- The underlying `q`-expansion of a weighted-homogeneous polynomial of weighted degree `n`
-is a rational modular form of weight `n`. -/
-theorem isModularForm_rationalQExpansion_evalE₄E₆Rat_of_isWeightedHomogeneous
-    {n : ℕ} {P : MvPolynomial (Fin 2) ℚ}
-    (hP : P.IsWeightedHomogeneous E₄E₆Weights n) :
-    (rationalQExpansion (evalE₄E₆Rat P)).isModularForm n := by
-  sorry
-
-/-- Evaluation of a weighted-homogeneous polynomial is supported in the corresponding component
-of the graded ring of rational modular forms. -/
-theorem evalE₄E₆Rat_eq_of_isWeightedHomogeneous
-    {n : ℕ} {P : MvPolynomial (Fin 2) ℚ}
-    (hP : P.IsWeightedHomogeneous E₄E₆Weights n) :
-    evalE₄E₆Rat P =
-      of (fun i ↦ rationalModularForms i) (n : ℤ)
-        ⟨rationalQExpansion (evalE₄E₆Rat P),
-          isModularForm_rationalQExpansion_evalE₄E₆Rat_of_isWeightedHomogeneous hP⟩ := by
-  sorry
-
-/-- A rational modular form of nonnegative integral weight is the evaluation of a rational
-weighted-homogeneous polynomial in `E₄` and `E₆`. -/
-theorem exists_isWeightedHomogeneous_rationalQExpansion_evalE₄E₆Rat
-    {n : ℕ} {f : ℚ⟦X⟧} (hf : f.isModularForm n) :
-    ∃ P : MvPolynomial (Fin 2) ℚ,
-      P.IsWeightedHomogeneous E₄E₆Weights n ∧ rationalQExpansion (evalE₄E₆Rat P) = f := by
-  sorry
-
-/-- Every rational modular form, in any integral weight, has a rational polynomial preimage in
-the corresponding component of the graded ring. -/
-theorem exists_evalE₄E₆Rat_eq_of_isModularForm
-    {k : ℤ} {f : ℚ⟦X⟧} (hf : f.isModularForm k) :
-    ∃ P : MvPolynomial (Fin 2) ℚ,
-      evalE₄E₆Rat P = of (fun i ↦ rationalModularForms i) k ⟨f, hf⟩ := by
-  sorry
 
 /-! ## The rational graded-ring isomorphism -/
 
