@@ -16,7 +16,7 @@ import PadicModForms.ModP.Eisenstein
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs
 import PadicModForms.PAdic.Eisenstein
-import PadicModForms.PAdic.Graded
+import PadicModForms.PAdic.Weights
 import PadicModForms.Rational.Basic
 import PadicModForms.Rational.E2
 import PadicModForms.Rational.Graded
