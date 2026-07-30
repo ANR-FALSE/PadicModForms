@@ -1,9 +1,9 @@
-import PadicModForms.ForMathlib.AlgebraicIndependent
 import PadicModForms.ForMathlib.Bernoulli
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.EInt
 import PadicModForms.ForMathlib.IntLocalization
+import PadicModForms.ForMathlib.LinearIndependent
 import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
