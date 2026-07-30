@@ -256,6 +256,21 @@ public def rationalModularFormsEquivMvPolynomial :
     MvPolynomial (Fin 2) ℚ ≃ₐ[ℚ] ⨁ i, rationalModularForms i :=
   .ofBijective evalE₄E₆Rat ⟨evalE₄E₆Rat_injective, evalE₄E₆Rat_surjective⟩
 
+theorem rationalQExpansionAlgHom_evalE₄E₆Rat (P : MvPolynomial (Fin 2) ℚ) :
+    rationalQExpansionAlgHom (evalE₄E₆Rat P) =
+      aeval ![(E₄Rat : ℚ⟦X⟧), (E₆Rat : ℚ⟦X⟧)] P := by
+  rw [evalE₄E₆Rat, comp_aeval_apply]
+  congr 2
+  funext i
+  fin_cases i <;> simp
+
+/-- The `q`-expansion of a rational modular form of any weight is a polynomial in the
+`q`-expansions of `E₄` and `E₆`. -/
+public theorem exists_qExpansion_eq_aeval (F : rationalModularForms n) :
+    ∃ P : MvPolynomial (Fin 2) ℚ, (F : ℚ⟦X⟧) = aeval ![(E₄Rat : ℚ⟦X⟧), (E₆Rat : ℚ⟦X⟧)] P := by
+  obtain ⟨P, hP⟩ := evalE₄E₆Rat_surjective (of _ n F)
+  exact ⟨P, by rw [← rationalQExpansionAlgHom_evalE₄E₆Rat, hP, rationalQExpansionAlgHom_of]⟩
+
 /-- The rational modular forms `E₄` and `E₆` generate the graded ring of rational modular
 forms as a `ℚ`-algebra. -/
 theorem E₄E₆Rat_generate :
