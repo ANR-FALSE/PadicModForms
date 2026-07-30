@@ -15,6 +15,9 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.ForMathlib.QExpansion
 
+import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+import PadicModForms.ForMathlib.LinearIndependent
+
 /-!
 # Rational modular forms
 
@@ -37,12 +40,12 @@ def isModularForm (k : ℤ) (f : ℚ⟦X⟧) : Prop :=
   ∃ g : ModularForm 𝒮ℒ k, qExpansion 1 g = f.map (algebraMap ℚ ℂ)
 
 theorem zero_isModularForm (k : ℤ) : isModularForm k 0 :=
-  ⟨0, by simpa using UpperHalfPlane.qExpansion_zero 1⟩
+  ⟨0, by simpa using qExpansion_zero 1⟩
 
 variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
 
 theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 :=
-  ⟨1, by simpa using UpperHalfPlane.qExpansion_one 1⟩
+  ⟨1, by simpa using qExpansion_one 1⟩
 
 include hf
 
@@ -107,8 +110,7 @@ theorem coeff_ERatAux (n k : ℕ) : PowerSeries.coeff n (ERatAux k) =
   PowerSeries.coeff_mk ..
 
 @[simp]
-public theorem coeff_E₂Rat (n : ℕ) :
-    coeff n E₂Rat = if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
+public theorem coeff_E₂Rat (n : ℕ) : coeff n E₂Rat = if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
   by_cases hn : n = 0
   · simp [E₂Rat, hn]
   · simp [E₂Rat, hn, bernoulli_two]
@@ -143,8 +145,7 @@ theorem G_rat_eq_smul_ERatAux : G_rat k = -(bernoulli k / (2 * k) : ℚ) • ERa
   by_cases hn : n = 0
   · simp [G_rat, ERatAux, hn]
   · grind [coeff_smul, G_rat, ERatAux, coeff_mk, smul_eq_mul,
-      show (k : ℚ) ≠ 0 by positivity,
-      bernoulli_ne_zero_of_even hk hk2]
+      show (k : ℚ) ≠ 0 by positivity, bernoulli_ne_zero_of_even hk hk2]
 
 include hk hk2 in
 /-- If `k ≥ 3` is even, then the scalar extension of `G_rat k` is the `q`-expansion of
@@ -168,8 +169,7 @@ theorem G_rat_isModularForm : (G_rat k).isModularForm k :=
   ⟨(-bernoulli k / (2 * k) : ℂ) • E hk, qExpansion_G_eq_G_rat_map hk hk2⟩
 
 /-- The coefficients of the normalized complex Eisenstein series. -/
-theorem qExpansion_coeff (n : ℕ) (hk2 : Even k) :
-    coeff n (qExpansion 1 (ModularForm.E hk)) =
+theorem qExpansion_coeff (n : ℕ) (hk2 : Even k) : coeff n (qExpansion 1 (ModularForm.E hk)) =
       if n = 0 then 1 else -(2 * k / bernoulli k : ℂ) * σ (k - 1) n := by
   simpa using EisensteinSeries.E_qExpansion_coeff hk hk2 n
 
@@ -179,7 +179,7 @@ namespace ModularForm
 
 public instance {n : ℤ} : Module ℚ (ModularForm 𝒮ℒ n) := Module.restrictScalars ℚ ℂ _
 
-public instance : Algebra ℚ (⨁ k : ℤ, ModularForm 𝒮ℒ k) := Algebra.restrictScalars ℚ ℂ _
+public instance : Algebra ℚ (⨁ k, ModularForm 𝒮ℒ k) := Algebra.restrictScalars ℚ ℂ _
 
 variable {n : ℤ} (f g : rationalModularForms n)
 
@@ -195,15 +195,67 @@ theorem rationalModularFormToComplexAux_add : rationalModularFormToComplexAux (f
   simp [← qExpansion_inj one_pos one_mem_strictPeriods_SL, ModularForm.qExpansion_add one_pos
     one_mem_strictPeriods_SL]
 
-/-- The complex modular form whose `q`-expansion is the rational modular form. -/
-public def rationalModularFormToComplex : rationalModularForms n →ₗ[ℚ] ModularForm 𝒮ℒ n :=
+def rationalModularFormToComplexLinear :
+    rationalModularForms n →ₗ[ℚ] ModularForm 𝒮ℒ n :=
   (AddMonoidHom.mk' rationalModularFormToComplexAux
     (rationalModularFormToComplexAux_add (n := n))).toRatLinearMap
+
+/-- Scalar extension from rational modular forms to complex modular forms. -/
+public def rationalModularFormToComplex :
+    rationalModularForms n →ₛₗ[algebraMap ℚ ℂ] ModularForm 𝒮ℒ n where
+  toFun := rationalModularFormToComplexLinear
+  map_add' := map_add _
+  map_smul' q f := by
+    rw [(rationalModularFormToComplexLinear (n := n)).map_smul]
+    rfl
 
 @[simp]
 public theorem qExpansion_rationalModularFormToComplex :
     qExpansion 1 (rationalModularFormToComplex f) = (f : ℚ⟦X⟧).map (algebraMap ℚ ℂ) :=
   qExpansion_rationalModularFormToComplexAux f
+
+public theorem rationalModularFormToComplex_injective {k : ℤ} :
+    Function.Injective (rationalModularFormToComplex (n := k)) := fun f g h ↦ by
+  refine Subtype.ext (PowerSeries.map_injective _ (algebraMap ℚ ℂ).injective ?_)
+  rw [← qExpansion_rationalModularFormToComplex, ← qExpansion_rationalModularFormToComplex, h]
+
+public theorem linearIndependent_rationalModularFormToComplex
+    {κ : Type*} {k : ℤ} (v : κ → rationalModularForms k) (hv : LinearIndependent ℚ v) :
+    LinearIndependent ℂ (rationalModularFormToComplex ∘ v) := by
+  have hvq : LinearIndependent ℚ (fun i ↦ (v i : ℚ⟦X⟧)) := by
+    simpa [Function.comp_def] using hv.map' (rationalModularForms k).subtype
+      (LinearMap.ker_eq_bot_of_injective Subtype.val_injective)
+  have hvc : LinearIndependent ℂ
+      (fun i ↦ (v i : ℚ⟦X⟧).map (algebraMap ℚ ℂ)) :=
+    PowerSeries.linearIndependent_map (fun i ↦ (v i : ℚ⟦X⟧)) hvq
+  let qexp : ModularForm 𝒮ℒ k →ₗ[ℂ] ℂ⟦X⟧ :=
+    (qExpansionLinearMap one_pos one_mem_strictPeriods_SL).comp
+      (lof ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k)
+  apply LinearIndependent.of_comp qexp
+  simpa [qexp, Function.comp_def, lof_eq_of,
+    qExpansionLinearMap_apply, qExpansionRingHom_apply,
+    qExpansion_rationalModularFormToComplex] using hvc
+
+public theorem rationalModularForms_rank_le (k : ℤ) :
+    Module.rank ℚ (rationalModularForms k) ≤ Module.rank ℂ (ModularForm 𝒮ℒ k) := by
+  rw [Module.Free.rank_eq_card_chooseBasisIndex]
+  exact (linearIndependent_rationalModularFormToComplex
+    (Module.Free.chooseBasis ℚ (rationalModularForms k))
+    (Module.Free.chooseBasis ℚ (rationalModularForms k)).linearIndependent).cardinal_le_rank
+
+public noncomputable instance rationalModularForms_finiteDimensional (k : ℤ) :
+    FiniteDimensional ℚ (rationalModularForms k) := by
+  rw [FiniteDimensional, ← Module.rank_lt_aleph0_iff]
+  exact (rationalModularForms_rank_le k).trans_lt
+    (Module.rank_lt_aleph0 ℂ (ModularForm 𝒮ℒ k))
+
+public theorem rationalModularForms_finrank_le (k : ℤ) :
+    Module.finrank ℚ (rationalModularForms k) ≤ Module.finrank ℂ (ModularForm 𝒮ℒ k) := by
+  have h : (Module.finrank ℚ (rationalModularForms k) : Cardinal) ≤
+      Module.finrank ℂ (ModularForm 𝒮ℒ k) := by
+    rw [Module.finrank_eq_rank, Module.finrank_eq_rank]
+    exact rationalModularForms_rank_le k
+  exact_mod_cast h
 
 /-- The rational `q`-expansion of `Eₖ`, regarded as a rational modular form of weight `k`. -/
 public def ERat {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k) : rationalModularForms k :=
@@ -248,13 +300,11 @@ theorem rationalModularFormToComplex_ERat {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k
     ERat_map_complex]
 
 @[simp]
-public theorem rationalModularFormToComplex_E₄Rat :
-    rationalModularFormToComplex E₄Rat = E₄ :=
+public theorem rationalModularFormToComplex_E₄Rat : rationalModularFormToComplex E₄Rat = E₄ :=
   rationalModularFormToComplex_ERat (by norm_num) ⟨2, rfl⟩
 
 @[simp]
-public theorem rationalModularFormToComplex_E₆Rat :
-    rationalModularFormToComplex E₆Rat = E₆ :=
+public theorem rationalModularFormToComplex_E₆Rat : rationalModularFormToComplex E₆Rat = E₆ :=
   rationalModularFormToComplex_ERat (by norm_num) ⟨3, rfl⟩
 
 /-- The submodules of rational modular forms form a graded monoid under multiplication. -/

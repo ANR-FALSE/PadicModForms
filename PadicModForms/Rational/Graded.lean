@@ -10,8 +10,8 @@ public import Mathlib.Algebra.DirectSum.Internal
 public import Mathlib.Algebra.Algebra.Hom.Rat
 public import Mathlib.RingTheory.MvPolynomial.Tower
 
-import PadicModForms.ForMathlib.AlgebraicIndependent
 import PadicModForms.ForMathlib.DirectSum
+import PadicModForms.ForMathlib.LinearIndependent
 import PadicModForms.ForMathlib.«38813»
 public import PadicModForms.Rational.Basic
 
@@ -214,62 +214,6 @@ theorem E₄E₆MonomialQExpansion_linearIndependent :
 theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := fun P Q hPQ ↦ by
   refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
   simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
-
-noncomputable def rationalModularFormToComplexSemilinear {k : ℤ} :
-    rationalModularForms k →ₛₗ[algebraMap ℚ ℂ] ModularForm 𝒮ℒ k where
-  toFun := rationalModularFormToComplex
-  map_add' := map_add _
-  map_smul' q f := by
-    rw [(rationalModularFormToComplex (n := k)).map_smul]
-    change (q : ℂ) • rationalModularFormToComplex f =
-      (q : ℂ) • rationalModularFormToComplex f
-    rfl
-
-theorem rationalModularFormToComplex_injective {k : ℤ} :
-    Function.Injective (rationalModularFormToComplex (n := k)) := by
-  intro f g h
-  apply Subtype.ext
-  apply PowerSeries.map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective
-  rw [← qExpansion_rationalModularFormToComplex f,
-    ← qExpansion_rationalModularFormToComplex g, h]
-
-theorem linearIndependent_rationalModularFormToComplex
-    {κ : Type*} {k : ℤ} (v : κ → rationalModularForms k) (hv : LinearIndependent ℚ v) :
-    LinearIndependent ℂ (rationalModularFormToComplexSemilinear ∘ v) := by
-  have hvq : LinearIndependent ℚ (fun i ↦ (v i : ℚ⟦X⟧)) := by
-    simpa [Function.comp_def] using hv.map' (rationalModularForms k).subtype
-      (LinearMap.ker_eq_bot_of_injective Subtype.val_injective)
-  have hvc : LinearIndependent ℂ
-      (fun i ↦ (v i : ℚ⟦X⟧).map (algebraMap ℚ ℂ)) :=
-    PowerSeries.linearIndependent_map (fun i ↦ (v i : ℚ⟦X⟧)) hvq
-  let qexp : ModularForm 𝒮ℒ k →ₗ[ℂ] ℂ⟦X⟧ :=
-    (qExpansionLinearMap one_pos one_mem_strictPeriods_SL).comp
-      (lof ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k)
-  apply LinearIndependent.of_comp (v := rationalModularFormToComplexSemilinear ∘ v) qexp
-  simpa [qexp, rationalModularFormToComplexSemilinear, Function.comp_def, lof_eq_of,
-    qExpansionLinearMap_apply, qExpansionRingHom_apply,
-    qExpansion_rationalModularFormToComplex] using hvc
-
-theorem rationalModularForms_rank_le (k : ℤ) :
-    Module.rank ℚ (rationalModularForms k) ≤ Module.rank ℂ (ModularForm 𝒮ℒ k) := by
-  rw [Module.Free.rank_eq_card_chooseBasisIndex]
-  exact (linearIndependent_rationalModularFormToComplex
-    (Module.Free.chooseBasis ℚ (rationalModularForms k))
-    (Module.Free.chooseBasis ℚ (rationalModularForms k)).linearIndependent).cardinal_le_rank
-
-noncomputable instance rationalModularForms_finiteDimensional (k : ℤ) :
-    FiniteDimensional ℚ (rationalModularForms k) := by
-  rw [FiniteDimensional, ← Module.rank_lt_aleph0_iff]
-  exact (rationalModularForms_rank_le k).trans_lt
-    (Module.rank_lt_aleph0 ℂ (ModularForm 𝒮ℒ k))
-
-theorem rationalModularForms_finrank_le (k : ℤ) :
-    Module.finrank ℚ (rationalModularForms k) ≤ Module.finrank ℂ (ModularForm 𝒮ℒ k) := by
-  have h : (Module.finrank ℚ (rationalModularForms k) : Cardinal) ≤
-      Module.finrank ℂ (ModularForm 𝒮ℒ k) := by
-    rw [Module.finrank_eq_rank, Module.finrank_eq_rank]
-    exact rationalModularForms_rank_le k
-  exact_mod_cast h
 
 abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
