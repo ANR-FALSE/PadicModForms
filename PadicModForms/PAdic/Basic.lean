@@ -12,6 +12,7 @@ public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.ForMathlib.PowerSeriesTopology
 public import PadicModForms.PAdic.Defs
 public import PadicModForms.Rational.Basic
+public import PadicModForms.Rational.Graded
 import PadicModForms.ForMathlib.EInt
 import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.SpecificLimits
@@ -25,15 +26,14 @@ way in which a classical rational modular form gives a p-adic modular form.
 
 @[expose] public section
 
-open Filter Topology PowerSeries Padic ModularForm
+open Filter Topology PowerSeries Padic ModularForm ArithmeticFunction sigma
 
 open scoped PowerSeriesUniformConvergence
 
-variable {p : ℕ} [hp : Fact p.Prime]
+variable {p : ℕ} [hp : Fact p.Prime] (n : ℕ) (f : ℚ_[p]⟦X⟧)
 
 /-- A classical rational modular form gives a p-adic modular form after extending scalars. -/
-theorem rationalQExpansion_isPAdicModularForm (p : ℕ) [Fact p.Prime] {k : ℤ}
-    (F : rationalModularForms k) :
+theorem rationalQExpansion_isPAdicModularForm {k : ℤ} (F : rationalModularForms k) :
     (rationalQExpansion F).map (algebraMap ℚ ℚ_[p]) |>.isPAdicModularForm p := by
   refine ⟨⟨fun _ ↦ k, fun _ ↦ F, fun u hu ↦ ?_⟩⟩
   filter_upwards with i n
@@ -41,30 +41,28 @@ theorem rationalQExpansion_isPAdicModularForm (p : ℕ) [Fact p.Prime] {k : ℤ}
 
 namespace PowerSeries.Padic
 
-noncomputable local instance : UniformSpace (ℚ_[p]⟦X⟧) :=
-  PowerSeries.WithUniformConvergence.uniformSpace
+noncomputable local instance : UniformSpace (ℚ_[p]⟦X⟧) := WithUniformConvergence.uniformSpace
 
 /-- The additive `p`-adic valuation of the `n`-th coefficient of a power series, viewed in the
 extended integers `[-∞, ∞]`. -/
-noncomputable abbrev coeffPadicValuation (n : ℕ) (f : ℚ_[p]⟦X⟧) : EInt :=
-  Padic.addValuation (coeff n f)
+noncomputable abbrev coeffPadicValuation : EInt := Padic.addValuation (coeff n f)
 
 /-- The valuation on `ℚ_[p]⟦X⟧`: for `f = ∑ aₙ Xⁿ` we set `v(f) = infₙ v_p(aₙ)`. -/
-noncomputable def v (f : ℚ_[p]⟦X⟧) : EInt :=
-  ⨅ n, coeffPadicValuation n f
+noncomputable def v : EInt := ⨅ n, coeffPadicValuation n f
 
-theorem v_def (f : ℚ_[p]⟦X⟧) : v f = ⨅ n, (addValuation (coeff n f) : EInt) :=
-  rfl
+theorem v_def : v f = ⨅ n, (addValuation (coeff n f) : EInt) := rfl
 
-theorem v_le_coeffPadicValuation (f : ℚ_[p]⟦X⟧) (n : ℕ) : v f ≤ coeffPadicValuation n f :=
+theorem v_le_coeffPadicValuation : v f ≤ coeffPadicValuation n f :=
   iInf_le ..
 
-theorem le_v_iff {m : EInt} {f : ℚ_[p]⟦X⟧} : m ≤ v f ↔ ∀ n : ℕ, m ≤ coeffPadicValuation n f :=
+variable {m : EInt} {f}
+
+theorem le_v_iff : m ≤ v f ↔ ∀ n : ℕ, m ≤ coeffPadicValuation n f :=
   le_iInf_iff
 
 /-- A sequence of `p`-adic power series converges for the topology of uniform convergence of
 coefficients iff the valuations of its differences from the limit tend to `∞`. -/
-theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} {f : ℚ_[p]⟦X⟧} :
+theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} :
     Tendsto F atTop (𝓝 f) ↔ Tendsto (fun n ↦ v (F n - f)) atTop (𝓝 (⊤ : EInt)) := by
   rw [WithUniformConvergence.tendsto_iff_tendstoUniformly,
     Metric.tendstoUniformly_iff, tendsto_eint_nhds_top_iff]
@@ -78,24 +76,59 @@ theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} {f : ℚ
     rw [dist_eq_norm', ← map_sub]
     exact ((intCast_le_addValuation_iff_norm_le_pow k _).1 (le_v_iff.1 hi n)).trans_lt hk
 
-theorem v_nonneg_iff {f : ℚ_[p]⟦X⟧} :
-    0 ≤ v f ↔ ∃ g : ℤ_[p]⟦X⟧, g.map (algebraMap _ _) = f := by
+theorem v_nonneg_iff : 0 ≤ v f ↔ ∃ g : ℤ_[p]⟦X⟧, g.map (algebraMap _ _) = f := by
   refine ⟨fun hf ↦ ?_, ?_⟩
-  · let a : ℕ → ℤ_[p] := fun n ↦
-      ⟨coeff n f, (zero_le_addValuation_iff_norm_le_one _).1 (le_v_iff.1 hf n)⟩
-    exact ⟨.mk a, ext fun n ↦ by
-      rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PadicInt.algebraMap_apply]⟩
+  · let a : ℕ → ℤ_[p] := fun n ↦ ⟨_, (zero_le_addValuation_iff_norm_le_one _).1 (le_v_iff.1 hf n)⟩
+    exact ⟨.mk a, ext fun n ↦ by rw [coeff_map, coeff_mk, PadicInt.algebraMap_apply]⟩
   · rintro ⟨g, rfl⟩
     exact le_v_iff.2 fun n ↦ (zero_le_addValuation_iff_norm_le_one _).2
       (by simpa using (coeff n g).2)
 
+theorem v_ne_bot_iff : v f ≠ ⊥ ↔ ∃ m : ℤ, ∀ n, m ≤ coeffPadicValuation n f :=
+  eint_ne_bot_iff.trans (exists_congr fun _ ↦ le_v_iff)
+
+theorem v_ne_bot_of_nonneg (hf : 0 ≤ v f) : v f ≠ ⊥ :=
+  eint_ne_bot_of_nonneg hf
+
+theorem v_ne_bot_iff_norm : v f ≠ ⊥ ↔ ∃ m : ℤ, ∀ n, ‖coeff n f‖ ≤ p ^ (-m) :=
+  v_ne_bot_iff.trans
+    (exists_congr fun m ↦ forall_congr' fun _ ↦ intCast_le_addValuation_iff_norm_le_pow m _)
+
+theorem coeffPadicValuation_ne_bot (n) (f : ℚ_[p]⟦X⟧) : coeffPadicValuation n f ≠ ⊥ := by
+  simp [coeffPadicValuation]
+
+/-- A constant power series has finite valuation. -/
+theorem v_C_ne_bot (c : ℚ_[p]) : v (C c) ≠ ⊥ := by
+  obtain ⟨m, hm⟩ := eint_ne_bot_iff.1 (coeffPadicValuation_ne_bot 0 (C c))
+  refine v_ne_bot_iff.2 ⟨m, fun n ↦ ?_⟩
+  rcases eq_or_ne n 0 with rfl | hn <;> simp_all [coeffPadicValuation, coeff_C]
+
+theorem v_ne_bot_add {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : v g ≠ ⊥) : v (f + g) ≠ ⊥ := by
+  obtain ⟨m, hm⟩ := v_ne_bot_iff_norm.1 hf
+  obtain ⟨m', hm'⟩ := v_ne_bot_iff_norm.1 hg
+  have hp1 : (1 : ℝ) ≤ p := mod_cast hp.1.one_lt.le
+  refine v_ne_bot_iff_norm.2 ⟨min m m', fun n ↦ (IsUltrametricDist.norm_add_le_max _ _).trans
+    (max_le ((hm n).trans ?_) ((hm' n).trans ?_))⟩ <;>
+  exact (zpow_le_zpow_right₀ hp1 (by omega))
+
+/-- Multiplying by a series with integral coefficients keeps the valuation finite. -/
+theorem v_ne_bot_mul_of_nonneg {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : 0 ≤ v g) : v (f * g) ≠ ⊥ := by
+  obtain ⟨m, hm⟩ := v_ne_bot_iff_norm.1 hf
+  have hg' (n : ℕ) : ‖coeff n g‖ ≤ 1 := (zero_le_addValuation_iff_norm_le_one _).1 (le_v_iff.1 hg n)
+  have hppos : (0 : ℝ) < (p : ℝ) ^ (-m) := by
+    have : (0 : ℝ) < p := mod_cast hp.1.pos
+    positivity
+  refine v_ne_bot_iff_norm.2 ⟨m, fun n ↦ ?_⟩
+  rw [coeff_mul]
+  refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hppos.le (fun ⟨i, j⟩ _  ↦ ?_)
+  simpa using mul_le_mul (hm i) (hg' j) (norm_nonneg _) hppos.le
+
 /-- A rational power series has nonnegative `p`-adic valuation iff its coefficients come from the
 localization of `ℤ` at the prime ideal generated by `p`. -/
 theorem v_nonneg_iff_rat {f : ℚ⟦X⟧} :
-    0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) ↔
-      ∃ g : (pLocalInt p)⟦X⟧, g.map (algebraMap _ _) = f := by
+    0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) ↔ ∃ g : (pLocalInt p)⟦X⟧, g.map (algebraMap _ _) = f := by
   refine ⟨fun hf ↦ ?_, ?_⟩
-  · have hcoeff (n : ℕ) : coeff n f ∈ pLocalInt p :=
+  · have hcoeff n : coeff n f ∈ pLocalInt p :=
       (mem_pLocalInt_iff _).2 <| (zero_le_addValuation_ratCast_iff p (coeff n f)).1 <|
         by simpa using le_v_iff.1 hf n
     exact ⟨.mk fun n ↦ ⟨coeff n f, hcoeff n⟩, ext fun n ↦ by simp⟩
@@ -103,13 +136,51 @@ theorem v_nonneg_iff_rat {f : ℚ⟦X⟧} :
     exact le_v_iff.2 fun n ↦ (zero_le_addValuation_ratCast_iff _ _).2 <|
       (mem_pLocalInt_iff _).1 (coeff n g).2
 
+theorem intCast_mem_pLocalInt (m : ℤ) : (m : ℚ) ∈ pLocalInt p := by
+  simp
+
+/-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
+theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
+    0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) :=
+  v_nonneg_iff_rat.2 ⟨.mk fun n ↦ ⟨coeff n f, h n⟩, ext fun n ↦ by simp⟩
+
+/-- `E₄` has integral `q`-expansion, so its valuation is nonnegative. -/
+theorem v_E₄Rat_nonneg : 0 ≤ v (((E₄Rat : ℚ⟦X⟧)).map (algebraMap ℚ ℚ_[p])) := by
+  refine v_map_nonneg_of_forall_mem fun n ↦ ?_
+  rw [coeff_E₄Rat]
+  split_ifs
+  · exact one_mem _
+  · rw [show (240 : ℚ) * (σ 3 n : ℚ) = ((240 * (σ 3 n : ℤ) : ℤ) : ℚ) by push_cast; ring]
+    exact intCast_mem_pLocalInt _
+
+/-- `E₆` has integral `q`-expansion, so its valuation is nonnegative. -/
+theorem v_E₆Rat_nonneg : 0 ≤ v (((E₆Rat : ℚ⟦X⟧)).map (algebraMap ℚ ℚ_[p])) := by
+  refine v_map_nonneg_of_forall_mem fun n ↦ ?_
+  rw [coeff_E₆Rat]
+  split_ifs
+  · exact one_mem _
+  · rw [show -(504 : ℚ) * (σ 5 n : ℚ) = ((-504 * (σ 5 n : ℤ) : ℤ) : ℚ) by push_cast; ring]
+    exact intCast_mem_pLocalInt _
+
 end PowerSeries.Padic
 
 namespace PowerSeries
 
+open MvPolynomial in
 /-- The p-adic valuations of the coefficients of a rational modular form are bounded below. -/
 theorem rationalQExpansion_v_ne_bot {k : ℤ} (F : rationalModularForms k) :
     Padic.v ((rationalQExpansion F).map (algebraMap ℚ ℚ_[p])) ≠ ⊥ := by
-  sorry
+  obtain ⟨P, hP⟩ := exists_qExpansion_eq_aeval F
+  rw [rationalQExpansion_apply, hP]
+  clear hP
+  induction P using MvPolynomial.induction_on with
+  | C a => simpa using Padic.v_C_ne_bot ((algebraMap ℚ ℚ_[p]) a)
+  | add P Q hP hQ => simpa [map_add] using Padic.v_ne_bot_add hP hQ
+  | mul_X P i hP =>
+      rw [map_mul, map_mul]
+      refine Padic.v_ne_bot_mul_of_nonneg hP ?_
+      fin_cases i
+      · simpa using Padic.v_E₄Rat_nonneg
+      · simpa using Padic.v_E₆Rat_nonneg
 
 end PowerSeries
