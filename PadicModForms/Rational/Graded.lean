@@ -11,62 +11,51 @@ public import Mathlib.Algebra.Algebra.Hom.Rat
 public import Mathlib.RingTheory.MvPolynomial.Tower
 
 import PadicModForms.ForMathlib.DirectSum
-import PadicModForms.ForMathlib.LinearIndependent
+import PadicModForms.ForMathlib.MvPolynomial
 import PadicModForms.ForMathlib.«38813»
 public import PadicModForms.Rational.Eisenstein
 
 /-!
 # The graded ring of rational modular forms
 
-This file develops the graded algebra of rational modular forms and gives the identification with
-`ℚ[E₄, E₆]`.
+This file identifies the graded ring of rational level-one modular forms with `ℚ[E₄, E₆]`.
+
+## Main results
+
+* `rationalModularFormsEquivMvPolynomial`: `ℚ[X₀, X₁] ≃ₐ[ℚ] ⨁ i, rationalModularForms i`.
+* `E₄E₆Rat_generate`: `E₄` and `E₆` generate the graded ring as a `ℚ`-algebra.
 -/
 
 noncomputable section
 
-open UpperHalfPlane MatrixGroups EisensteinSeries DirectSum MvPolynomial
+open UpperHalfPlane MatrixGroups EisensteinSeries DirectSum MvPolynomial Module
 
 open scoped PowerSeries
 
 namespace ModularForm
 
-variable {k : ℕ} {n m : ℤ}
+variable {n m : ℤ}
 
-/-- Evaluation in the graded ring of rational modular forms, sending `X₀` to `E₄` and `X₁`
-to `E₆`. -/
-def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
-  aeval ![of _ _ E₄Rat, of _ _ E₆Rat]
+/-!
+### The graded ring of complex modular forms as a scalar extension
 
-@[simp]
-theorem evalE₄E₆Rat_X0 : evalE₄E₆Rat (X 0) = of _ 4 E₄Rat := by
-  simp [evalE₄E₆Rat]
+None of this is needed to define `evalE₄E₆Rat`; it provides the algebra map
+`rationalModularFormsToComplex` used to compare the rational and complex sides.
+-/
 
-@[simp]
-theorem evalE₄E₆Rat_X1 : evalE₄E₆Rat (X 1) = of _ 6 E₆Rat := by
-  simp [evalE₄E₆Rat]
+section GradedMonoid
 
-theorem evalE₄E₆Rat_C (a : ℚ) : evalE₄E₆Rat (C a) = algebraMap ℚ _ a := by
-  simp [evalE₄E₆Rat]
+open GradedMonoid
 
-theorem evalE₄E₆Rat_monomial (a b : ℕ) :
-    evalE₄E₆Rat (X 0 ^ a * X 1 ^ b) = of _ 4 E₄Rat ^ a * of _ 6 E₆Rat ^ b := by
-  simp [evalE₄E₆Rat]
-
-variable (f g : rationalModularForms n)
-
-@[simp]
-theorem rationalModularForms_gOne_eq_one :
-    (1 : GradedMonoid (fun n ↦ ↥(rationalModularForms n))).2 = 1 := rfl
+variable (f : rationalModularForms n) (g : rationalModularForms m)
 
 @[simp]
 theorem rationalModularFormToComplex_one :
     rationalModularFormToComplex 1 = (1 : ModularForm 𝒮ℒ 0) :=
   (qExpansion_inj one_pos one_mem_strictPeriods_SL).1 (by simp [qExpansion_one 1])
 
-open GradedMonoid
-
 @[simp]
-theorem rationalModularFormToComplex_mul (g : rationalModularForms m) :
+theorem rationalModularFormToComplex_mul :
     rationalModularFormToComplex (GMul.mul (A := fun n ↦ rationalModularForms n) f g) =
       (rationalModularFormToComplex f).mul (rationalModularFormToComplex g) := by
   refine (qExpansion_inj one_pos one_mem_strictPeriods_SL).1 ?_
@@ -76,9 +65,8 @@ theorem rationalModularFormToComplex_mul (g : rationalModularForms m) :
 theorem rationalModularFormsToComplex_gOne : of _ 0 (rationalModularFormToComplex 1) = 1 := by
   simp
 
-theorem rationalModularFormsToComplex_gMul (g : rationalModularForms m) :
-    of _ (n + m) (rationalModularFormToComplex
-        (GMul.mul (A := fun k ↦ rationalModularForms k) f g)) =
+theorem rationalModularFormsToComplex_gMul : of _ (n + m) (rationalModularFormToComplex
+    (GMul.mul (A := fun k ↦ rationalModularForms k) f g)) =
       of _ n (rationalModularFormToComplex f) * of _ m (rationalModularFormToComplex g) := by
   rw [rationalModularFormToComplex_mul, of_mul_of]
   exact congrArg (of (ModularForm 𝒮ℒ) (n + m)) rfl
@@ -91,10 +79,9 @@ def rationalModularFormsToComplexRingHom :
 
 @[simp]
 theorem rationalModularFormsToComplexRingHom_apply (F : ⨁ i, rationalModularForms i) :
-    rationalModularFormsToComplexRingHom F =
-      DirectSum.toAddMonoid
-        (fun m ↦ (of (fun k ↦ ModularForm 𝒮ℒ k) m).comp
-          (rationalModularFormToComplex).toAddMonoidHom) F := rfl
+    rationalModularFormsToComplexRingHom F = DirectSum.toAddMonoid
+      (fun m ↦ (of (fun k ↦ ModularForm 𝒮ℒ k) m).comp
+        (rationalModularFormToComplex).toAddMonoidHom) F := rfl
 
 @[simp]
 theorem rationalModularFormsToComplexRingHom_of :
@@ -116,59 +103,12 @@ theorem rationalModularFormsToComplex_apply (F : ⨁ i, rationalModularForms i) 
     (rationalModularFormsToComplex F) k = rationalModularFormToComplex (F k) := by
   simp [rationalModularFormsToComplex]
 
-/-- The rational algebra structure on complex graded modular forms is compatible with its
-complex algebra structure. -/
-@[simp]
-theorem algebraMap_rat_eq_complex (a : ℚ) :
-    algebraMap ℚ (⨁ k, ModularForm 𝒮ℒ k) a = algebraMap ℂ (⨁ k, ModularForm 𝒮ℒ k) a :=
-  rfl
+end GradedMonoid
 
-theorem rationalQExpansion_evalE₄E₆Rat_map_C (a : ℚ) :
-    (rationalQExpansionAlgHom (evalE₄E₆Rat (C a))).map (algebraMap ℚ ℂ) =
-      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
-        (evalE₄E₆ ((C a).map (algebraMap ℚ ℂ))) :=
-  calc _ = (a : ℂ) • 1 := by simp [Algebra.smul_def]
-    _ = (a : ℂ) • qExpansion 1 (1 : ModularForm 𝒮ℒ 0) := by rw [ModularForm.qExpansion_one]
-    _ = qExpansion 1 (((a : ℂ) • 1 : ModularForm 𝒮ℒ 0)) :=
-      (ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL _ _).symm
-    _ = qExpansion 1 (const a : ModularForm 𝒮ℒ 0) := by rw [show const a = (a : ℂ) • 1 by ext; simp]
-    _ = _ := by simp [DirectSum.algebraMap_apply]; rfl
-
-theorem rationalQExpansion_evalE₄E₆Rat_map_X0 :
-    (rationalQExpansionAlgHom (evalE₄E₆Rat (X 0))).map (algebraMap ℚ ℂ) =
-      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
-        (evalE₄E₆ ((X 0).map (algebraMap ℚ ℂ))) := by
-  calc _ = (E₄Rat : ℚ⟦X⟧).map _ := by rw [evalE₄E₆Rat_X0, rationalQExpansionAlgHom_of]
-    _ = qExpansion 1 E₄ := ERat_map_complex _ ⟨2, rfl⟩
-    _ = _ := by simp
-
-theorem rationalQExpansion_evalE₄E₆Rat_map_X1 :
-    (rationalQExpansionAlgHom (evalE₄E₆Rat (X 1))).map (algebraMap ℚ ℂ) =
-      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
-        (evalE₄E₆ ((X 1).map (algebraMap ℚ ℂ))) := by
-  calc
-    _ = (E₆Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) := by
-      rw [evalE₄E₆Rat_X1, rationalQExpansionAlgHom_of]
-    _ = qExpansion 1 E₆ := ERat_map_complex _ ⟨3, rfl⟩
-    _ = _ := by simp
-
-theorem rationalQExpansion_evalE₄E₆Rat_map_X (i : Fin 2) :
-    (rationalQExpansionAlgHom (evalE₄E₆Rat (X i))).map (algebraMap ℚ ℂ) =
-      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL
-        (evalE₄E₆ ((X i).map (algebraMap ℚ ℂ))) := by
-  fin_cases i
-  · exact rationalQExpansion_evalE₄E₆Rat_map_X0
-  · exact rationalQExpansion_evalE₄E₆Rat_map_X1
-
-theorem rationalQExpansion_evalE₄E₆Rat_map (P : MvPolynomial (Fin 2) ℚ) :
-    (rationalQExpansionAlgHom (evalE₄E₆Rat P)).map (algebraMap ℚ ℂ) =
-      qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL (evalE₄E₆ (P.map (algebraMap ℚ ℂ))) := by
-  induction P using induction_on with
-  | C a => exact rationalQExpansion_evalE₄E₆Rat_map_C a
-  | add P Q hP hQ =>
-    simpa using congrArg₂ (· + ·) hP hQ
-  | mul_X P i hP =>
-    simpa using congrArg₂ (· * ·) hP (rationalQExpansion_evalE₄E₆Rat_map_X i)
+/-- Evaluation in the graded ring of rational modular forms, sending `X₀` to `E₄` and `X₁`
+to `E₆`. -/
+def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
+  aeval ![of _ _ E₄Rat, of _ _ E₆Rat]
 
 /-- The scalar-extension square for evaluation at `E₄` and `E₆` commutes. -/
 theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) ℚ) :
@@ -178,166 +118,108 @@ theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) 
   funext i
   fin_cases i <;> simp
 
-/-- The rational `q`-expansion associated with the monomial of exponent vector `d`. -/
-def E₄E₆MonomialQExpansion (d : Fin 2 →₀ ℕ) : ℚ⟦X⟧ :=
-  (E₄Rat : ℚ⟦X⟧) ^ d 0 * (E₆Rat : ℚ⟦X⟧) ^ d 1
-
-@[simp]
-theorem E₄E₆MonomialQExpansion_eq (d : Fin 2 →₀ ℕ) :
-    E₄E₆MonomialQExpansion d = (E₄Rat : ℚ⟦X⟧) ^ d 0 * (E₆Rat : ℚ⟦X⟧) ^ d 1 := rfl
-
-/-- Extending a rational monomial `q`-expansion to `ℂ` agrees with evaluating the corresponding
-monomial in the complex modular forms `E₄` and `E₆` and taking its `q`-expansion. -/
-theorem E₄E₆MonomialQExpansion_map_complex (d : Fin 2 →₀ ℕ) :
-    (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ) = qExpansionRingHom 1 one_pos
-      one_mem_strictPeriods_SL (evalE₄E₆ (monomial d 1)) :=
-  calc _ = (rationalQExpansionAlgHom _).map _ :=
-      congrArg (PowerSeries.map _) (by simp [monomial_fin_two])
-    _ = qExpansionRingHom 1 one_pos _ _ := rationalQExpansion_evalE₄E₆Rat_map (monomial d 1)
-    _ = _ := by simp
-
-/-- The complex scalar extensions of the rational monomial `q`-expansions in `E₄` and `E₆` are
-linearly independent. -/
-theorem E₄E₆MonomialQExpansion_linearIndependent :
-    LinearIndependent ℂ (fun d ↦ (E₄E₆MonomialQExpansion d).map (algebraMap ℚ ℂ)) := by
-  let x : Fin 2 → (⨁ k, ModularForm 𝒮ℒ k) := ![of _ 4 E₄, of _ 6 E₆]
-  have hx : AlgebraicIndependent ℂ x := by
-    simpa [algebraicIndependent_iff_injective_aeval, x, evalE₄E₆] using evalE₄E₆_injective
-  convert! hx.linearIndependent_monomials.map'
-    (qExpansionLinearMap one_pos one_mem_strictPeriods_SL) <|
-      LinearMap.ker_eq_bot_of_injective
-      (fun F G hFG ↦ levelOne_qExpansionRingHom_injective (by simpa using hFG))
-  ext
-  rw [E₄E₆MonomialQExpansion_map_complex, evalE₄E₆]
-  simp [x]
-
 theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := fun P Q hPQ ↦ by
   refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
   simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
 
 abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
-abbrev E₄E₆WeightedMonomials (k : ℕ) :=
-  {d : Fin 2 →₀ ℕ // Finsupp.weight E₄E₆Weights d = k}
+variable (k : ℕ)
 
-abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] (k : ℕ) :=
+abbrev E₄E₆WeightedMonomials := {d : Fin 2 →₀ ℕ // Finsupp.weight E₄E₆Weights d = k}
+
+abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] :=
   weightedHomogeneousSubmodule R E₄E₆Weights k
 
-noncomputable def E₄E₆WeightedMonomialBasis (R : Type*) [Field R] (k : ℕ) :
-    Module.Basis (E₄E₆WeightedMonomials k) R (E₄E₆WeightedHomogeneous R k) :=
+noncomputable def E₄E₆WeightedMonomialBasis (R : Type*) [Field R] :
+    Basis (E₄E₆WeightedMonomials k) R (E₄E₆WeightedHomogeneous k R) :=
   (basisRestrictSupport R {d | Finsupp.weight E₄E₆Weights d = k}).map
-    (LinearEquiv.ofEq _ _
-      (weightedHomogeneousSubmodule_eq_finsupp_supported R E₄E₆Weights k).symm)
+    (.ofEq _ _ (weightedHomogeneousSubmodule_eq_finsupp_supported R _ k).symm)
 
-noncomputable instance E₄E₆WeightedHomogeneous_finiteDimensional
-    (R : Type*) [Field R] (k : ℕ) :
-    FiniteDimensional R (E₄E₆WeightedHomogeneous R k) := by
-  rw [FiniteDimensional]
-  exact Module.Finite.iff_fg.mpr
-    (weightedHomogeneousSubmodule_fg R E₄E₆Weights (by decide) k)
-
-theorem E₄E₆WeightedHomogeneous_finrank_eq (k : ℕ) :
-    Module.finrank ℚ (E₄E₆WeightedHomogeneous ℚ k) =
-      Module.finrank ℂ (E₄E₆WeightedHomogeneous ℂ k) := by
-  letI : Fintype (E₄E₆WeightedMonomials k) :=
-    (Finsupp.finite_of_nat_weight_eq E₄E₆Weights (by decide) k).fintype
-  rw [Module.finrank_eq_card_basis (E₄E₆WeightedMonomialBasis ℚ k),
-    Module.finrank_eq_card_basis (E₄E₆WeightedMonomialBasis ℂ k)]
-
-noncomputable def evalE₄E₆AtWeight (k : ℕ) :
-    E₄E₆WeightedHomogeneous ℂ k →ₗ[ℂ] ModularForm 𝒮ℒ k :=
-  (DirectSum.component ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k).comp
-    (evalE₄E₆.toLinearMap.comp (E₄E₆WeightedHomogeneous ℂ k).subtype)
+noncomputable def evalE₄E₆AtWeight : E₄E₆WeightedHomogeneous k ℂ →ₗ[ℂ] ModularForm 𝒮ℒ k :=
+  (component ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k).comp
+    (evalE₄E₆.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℂ).subtype)
 
 @[simp]
-theorem evalE₄E₆AtWeight_apply (k : ℕ)
-    (p : E₄E₆WeightedHomogeneous ℂ k) :
+theorem evalE₄E₆AtWeight_apply (p : E₄E₆WeightedHomogeneous k ℂ) :
     evalE₄E₆AtWeight k p = (evalE₄E₆ p) k := rfl
 
-theorem evalE₄E₆AtWeight_injective (k : ℕ) :
-    Function.Injective (evalE₄E₆AtWeight k) := by
-  intro p q hpq
-  apply Subtype.ext
-  apply evalE₄E₆_injective
-  rw [evalE₄E₆_eq_of_apply k p p.property, evalE₄E₆_eq_of_apply k q q.property]
-  rw [show (evalE₄E₆ p) k = (evalE₄E₆ q) k by exact hpq]
+theorem evalE₄E₆AtWeight_injective : Function.Injective (evalE₄E₆AtWeight k) := fun p q hpq ↦ by
+  refine Subtype.ext (evalE₄E₆_injective ?_)
+  rw [evalE₄E₆_eq_of_apply k p p.property, evalE₄E₆_eq_of_apply k q q.property,
+    show (evalE₄E₆ p) k = (evalE₄E₆ q) k by exact hpq]
 
-theorem evalE₄E₆AtWeight_surjective (k : ℕ) :
-    Function.Surjective (evalE₄E₆AtWeight k) := by
+theorem evalE₄E₆AtWeight_surjective : Function.Surjective (evalE₄E₆AtWeight k) := by
   intro f
-  obtain ⟨p, hp⟩ := evalE₄E₆_surjective (DirectSum.of _ (k : ℤ) f)
-  refine ⟨⟨weightedHomogeneousComponent E₄E₆Weights k p,
-    weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
-  rw [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq]
-  simpa using congrArg (fun F ↦ F (k : ℤ)) hp
+  obtain ⟨p, hp⟩ := evalE₄E₆_surjective (.of _ (k : ℤ) f)
+  refine ⟨⟨_, weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
+  simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congrArg (fun F ↦ F k) hp
 
-noncomputable def evalE₄E₆AtWeightEquiv (k : ℕ) :
-    E₄E₆WeightedHomogeneous ℂ k ≃ₗ[ℂ] ModularForm 𝒮ℒ k :=
-  LinearEquiv.ofBijective (evalE₄E₆AtWeight k)
-    ⟨evalE₄E₆AtWeight_injective k, evalE₄E₆AtWeight_surjective k⟩
+noncomputable def evalE₄E₆AtWeightEquiv : E₄E₆WeightedHomogeneous k ℂ ≃ₗ[ℂ] ModularForm 𝒮ℒ k :=
+  .ofBijective _ ⟨evalE₄E₆AtWeight_injective k, evalE₄E₆AtWeight_surjective k⟩
 
-theorem isWeightedHomogeneous_map_rat {k : ℕ} {p : MvPolynomial (Fin 2) ℚ}
+theorem isWeightedHomogeneous_map_rat {k} {p : MvPolynomial (Fin 2) ℚ}
     (hp : IsWeightedHomogeneous E₄E₆Weights p k) :
-    IsWeightedHomogeneous E₄E₆Weights (p.map (algebraMap ℚ ℂ)) k := by
-  intro d hd
-  apply hp
-  intro hzero
-  apply hd
-  rw [coeff_map, hzero, map_zero]
+    IsWeightedHomogeneous E₄E₆Weights (p.map (algebraMap ℚ ℂ)) k :=
+  fun d hd ↦ hp (fun hzero ↦ hd <| by simp [coeff_map, hzero])
 
-noncomputable def evalE₄E₆RatAtWeight (k : ℕ) :
-    E₄E₆WeightedHomogeneous ℚ k →ₗ[ℚ] rationalModularForms k :=
+noncomputable def evalE₄E₆RatAtWeight : E₄E₆WeightedHomogeneous k ℚ →ₗ[ℚ] rationalModularForms k :=
   (DirectSum.component ℚ ℤ (fun k ↦ rationalModularForms k) k).comp
-    (evalE₄E₆Rat.toLinearMap.comp (E₄E₆WeightedHomogeneous ℚ k).subtype)
+    (evalE₄E₆Rat.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℚ).subtype)
 
 @[simp]
-theorem evalE₄E₆RatAtWeight_apply (k : ℕ)
-    (p : E₄E₆WeightedHomogeneous ℚ k) :
+theorem evalE₄E₆RatAtWeight_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
     evalE₄E₆RatAtWeight k p = (evalE₄E₆Rat p) k := rfl
 
-theorem evalE₄E₆RatAtWeight_injective (k : ℕ) :
-    Function.Injective (evalE₄E₆RatAtWeight k) := by
-  intro p q hpq
-  have hp : rationalModularFormToComplex ((evalE₄E₆Rat p) k) =
-      (evalE₄E₆ (p.1.map (algebraMap ℚ ℂ))) k := by
-    simpa using congrArg (fun F ↦ F (k : ℤ))
-      (rationalModularFormsToComplex_evalE₄E₆Rat p)
-  have hq : rationalModularFormToComplex ((evalE₄E₆Rat q) k) =
-      (evalE₄E₆ (q.1.map (algebraMap ℚ ℂ))) k := by
-    simpa using congrArg (fun F ↦ F (k : ℤ))
-      (rationalModularFormsToComplex_evalE₄E₆Rat q)
-  have hpq' : rationalModularFormToComplex ((evalE₄E₆Rat p) k) =
-      rationalModularFormToComplex ((evalE₄E₆Rat q) k) := by
-    exact congrArg rationalModularFormToComplex hpq
-  have heval :
-      evalE₄E₆ (p.1.map (algebraMap ℚ ℂ)) = evalE₄E₆ (q.1.map (algebraMap ℚ ℂ)) := by
-    rw [evalE₄E₆_eq_of_apply k _ (isWeightedHomogeneous_map_rat p.property),
-      evalE₄E₆_eq_of_apply k _ (isWeightedHomogeneous_map_rat q.property),
-      hp.symm.trans (hpq'.trans hq)]
-  apply Subtype.ext
-  apply MvPolynomial.map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective
-  exact evalE₄E₆_injective heval
+/-- The weighted-homogeneous monomial basis consists of the monomials themselves. -/
+theorem coe_E₄E₆WeightedMonomialBasis (R : Type*) [Field R] (d : E₄E₆WeightedMonomials k) :
+    (E₄E₆WeightedMonomialBasis k R d : MvPolynomial (Fin 2) R) = monomial (d : Fin 2 →₀ ℕ) 1 := by
+  rw [E₄E₆WeightedMonomialBasis, Basis.map_apply]
+  exact basisRestrictSupport_apply_coe _ _
 
-theorem evalE₄E₆RatAtWeight_surjective (k : ℕ) :
+/-- The `ℂ`-basis of the complex modular forms of weight `k` given by the monomials in `E₄`
+and `E₆`. -/
+def complexMonomialBasis : Basis (E₄E₆WeightedMonomials k) ℂ (ModularForm 𝒮ℒ k) :=
+  (E₄E₆WeightedMonomialBasis k ℂ).map (evalE₄E₆AtWeightEquiv k)
+
+@[simp]
+theorem complexMonomialBasis_apply (d : E₄E₆WeightedMonomials k) :
+    complexMonomialBasis k d = evalE₄E₆AtWeight k (E₄E₆WeightedMonomialBasis k ℂ d) := rfl
+
+/-- The rational modular form of weight `k` given by the monomial `d` in `E₄` and `E₆`. -/
+def ratMonomial (d : E₄E₆WeightedMonomials k) : rationalModularForms k :=
+  evalE₄E₆RatAtWeight k (E₄E₆WeightedMonomialBasis k ℚ d)
+
+/-- Each complex monomial in `E₄` and `E₆` is the scalar extension of the corresponding rational
+one. -/
+theorem complexMonomialBasis_eq :
+    (complexMonomialBasis k) = rationalModularFormToComplex ∘ ratMonomial k := by
+  funext d
+  have hsq := congrArg (fun F ↦ F k) (rationalModularFormsToComplex_evalE₄E₆Rat
+    (E₄E₆WeightedMonomialBasis k ℚ d : MvPolynomial (Fin 2) ℚ))
+  simp only [rationalModularFormsToComplex_apply] at hsq
+  rw [Function.comp_apply, ratMonomial, evalE₄E₆RatAtWeight_apply, hsq,
+    coe_E₄E₆WeightedMonomialBasis, map_monomial, map_one, complexMonomialBasis_apply,
+    evalE₄E₆AtWeight_apply, coe_E₄E₆WeightedMonomialBasis]
+
+/-- The `ℚ`-basis of `rationalModularForms k` given by the monomials in `E₄` and `E₆`, obtained by
+descending `complexMonomialBasis k` along scalar extension. -/
+noncomputable def ratMonomialBasis : Basis (E₄E₆WeightedMonomials k) ℚ (rationalModularForms k) :=
+  basisOfComplexBasis (ratMonomial k) (complexMonomialBasis k) (complexMonomialBasis_eq k)
+
+@[simp]
+theorem ratMonomialBasis_apply (d : E₄E₆WeightedMonomials k) :
+    ratMonomialBasis k d = ratMonomial k d := by
+  simp [ratMonomialBasis]
+
+theorem evalE₄E₆RatAtWeight_surjective :
     Function.Surjective (evalE₄E₆RatAtWeight k) := by
-  have hinj := evalE₄E₆RatAtWeight_injective k
-  have hle : Module.finrank ℚ (E₄E₆WeightedHomogeneous ℚ k) ≤
-      Module.finrank ℚ (rationalModularForms k) :=
-    LinearMap.finrank_le_finrank_of_injective hinj
-  have hle' : Module.finrank ℚ (rationalModularForms k) ≤
-      Module.finrank ℚ (E₄E₆WeightedHomogeneous ℚ k) := by
-    calc
-      _ ≤ Module.finrank ℂ (ModularForm 𝒮ℒ k) := rationalModularForms_finrank_le k
-      _ = Module.finrank ℂ (E₄E₆WeightedHomogeneous ℂ k) :=
-        (evalE₄E₆AtWeightEquiv k).finrank_eq.symm
-      _ = _ := (E₄E₆WeightedHomogeneous_finrank_eq k).symm
-  exact (LinearMap.injective_iff_surjective_of_finrank_eq_finrank
-    (le_antisymm hle hle')).mp hinj
+  rw [← LinearMap.range_eq_top, eq_top_iff, ← (ratMonomialBasis k).span_eq, Submodule.span_le]
+  rintro _ ⟨d, rfl⟩
+  exact ⟨E₄E₆WeightedMonomialBasis k ℚ d, (ratMonomialBasis_apply k d).symm⟩
 
-theorem evalE₄E₆Rat_eq_of_apply (k : ℕ)
-    (p : E₄E₆WeightedHomogeneous ℚ k) :
-    evalE₄E₆Rat p = DirectSum.of (fun k ↦ rationalModularForms k) k
-      (evalE₄E₆RatAtWeight k p) := by
+theorem evalE₄E₆Rat_eq_of_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
+    evalE₄E₆Rat p = DirectSum.of (fun k ↦ rationalModularForms k) k (evalE₄E₆RatAtWeight k p) := by
   apply DFinsupp.ext
   intro j
   by_cases hj : j = (k : ℤ)
@@ -351,9 +233,7 @@ theorem evalE₄E₆Rat_eq_of_apply (k : ℕ)
     rw [hsquare, map_zero, evalE₄E₆_eq_of_apply k _
       (isWeightedHomogeneous_map_rat p.property), DirectSum.of_eq_of_ne _ _ _ hj]
 
-/-- Evaluation at `E₄` and `E₆` is surjective onto the graded ring of rational modular forms. -/
-theorem evalE₄E₆Rat_surjective :
-    Function.Surjective evalE₄E₆Rat := fun F ↦ by
+theorem evalE₄E₆Rat_surjective : Function.Surjective evalE₄E₆Rat := fun F ↦ by
   induction F using DirectSum.induction_on with
   | zero => exact ⟨0, map_zero _⟩
   | of k f =>
@@ -374,94 +254,14 @@ theorem evalE₄E₆Rat_surjective :
 /-- The graded ring of rational level-one modular forms is isomorphic to `ℚ[X₀, X₁]`. -/
 public def rationalModularFormsEquivMvPolynomial :
     MvPolynomial (Fin 2) ℚ ≃ₐ[ℚ] ⨁ i, rationalModularForms i :=
-  AlgEquiv.ofBijective evalE₄E₆Rat ⟨evalE₄E₆Rat_injective, evalE₄E₆Rat_surjective⟩
+  .ofBijective evalE₄E₆Rat ⟨evalE₄E₆Rat_injective, evalE₄E₆Rat_surjective⟩
 
 /-- The rational modular forms `E₄` and `E₆` generate the graded ring of rational modular
 forms as a `ℚ`-algebra. -/
 theorem E₄E₆Rat_generate :
     Algebra.adjoin ℚ ({of _ 4 E₄Rat, of _ 6 E₆Rat} : Set (⨁ i, rationalModularForms i)) = ⊤ := by
   rw [show ({of _ 4 E₄Rat, of _ 6 E₆Rat} : Set (⨁ i, rationalModularForms i)) =
-      Set.range ![of _ 4 E₄Rat, of _ 6 E₆Rat] by ext x; simp [or_comm]]
-  rw [← MvPolynomial.aeval_range, ← evalE₄E₆Rat]
+    Set.range ![of _ 4 E₄Rat, of _ 6 E₆Rat] by ext x; simp [or_comm], ← aeval_range, ← evalE₄E₆Rat]
   exact (AlgHom.range_eq_top evalE₄E₆Rat).mpr evalE₄E₆Rat_surjective
-
-namespace test
-
-/-!
-### Descending the `E₄`-`E₆` monomial basis from `ℂ` to `ℚ`
-
-Fix a weight `k`. The monomials in `E₄` and `E₆` of weight `k` form a `ℂ`-basis
-`complexMonomialBasis k` of `ModularForm 𝒮ℒ k`, and each of them is the scalar extension of a
-rational modular form. `Module.Basis.ofCompSemilinear` then hands back the corresponding
-`ℚ`-basis `ratMonomialBasis k` of `rationalModularForms k`, with no surjectivity argument.
--/
-
-open Module
-
-variable (k : ℕ)
-
-/-- Scalar extension takes `ℚ`-linearly independent sets of rational modular forms of weight `k`
-to `ℂ`-linearly independent ones. This is the hypothesis `Module.Basis.ofCompSemilinear` needs. -/
-theorem linearIndepOn_rationalModularFormToComplex (s : Set (rationalModularForms (k : ℤ)))
-    (hs : LinearIndepOn ℚ id s) :
-    LinearIndepOn ℂ ⇑(rationalModularFormToComplex (n := (k : ℤ))) s :=
-  linearIndependent_rationalModularFormToComplex _ hs
-
-/-- Descent of a basis: a `ℂ`-basis of the complex modular forms of weight `k` whose members are
-scalar extensions of rational modular forms yields a `ℚ`-basis of `rationalModularForms k`. -/
-noncomputable def basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms (k : ℤ))
-    (c : Basis ι ℂ (ModularForm 𝒮ℒ (k : ℤ))) (hc : ⇑c = rationalModularFormToComplex ∘ b) :
-    Basis ι ℚ (rationalModularForms (k : ℤ)) :=
-  Basis.ofCompSemilinear _ (linearIndepOn_rationalModularFormToComplex k) b c hc
-
-/-- The weighted-homogeneous monomial basis consists of the monomials themselves; in particular it
-is compatible with extension of the coefficient field. -/
-theorem coe_E₄E₆WeightedMonomialBasis (R : Type*) [Field R] (d : E₄E₆WeightedMonomials k) :
-    (E₄E₆WeightedMonomialBasis R k d : MvPolynomial (Fin 2) R) = monomial (d : Fin 2 →₀ ℕ) 1 := by
-  have hmem : monomial (d : Fin 2 →₀ ℕ) (1 : R) ∈
-      restrictSupport R {e | Finsupp.weight E₄E₆Weights e = k} := by
-    intro x hx
-    simp only [Finset.mem_coe] at hx
-    have := MvPolynomial.support_monomial_subset hx
-    simp_all
-  have key : (basisRestrictSupport R {e | Finsupp.weight E₄E₆Weights e = k}) d =
-      ⟨monomial (d : Fin 2 →₀ ℕ) 1, hmem⟩ := by
-    rw [Basis.apply_eq_iff]
-    ext i
-    change MvPolynomial.coeff (i : Fin 2 →₀ ℕ) (monomial (d : Fin 2 →₀ ℕ) (1 : R)) = _
-    simp [MvPolynomial.coeff_monomial, Finsupp.single_apply, ← Subtype.coe_inj]
-  simp only [E₄E₆WeightedMonomialBasis, Basis.map_apply, key]
-  rfl
-
-/-- The `ℂ`-basis of the complex modular forms of weight `k` given by the monomials in `E₄`
-and `E₆`. -/
-noncomputable def complexMonomialBasis :
-    Basis (E₄E₆WeightedMonomials k) ℂ (ModularForm 𝒮ℒ (k : ℤ)) :=
-  (E₄E₆WeightedMonomialBasis ℂ k).map (evalE₄E₆AtWeightEquiv k)
-
-/-- The rational modular form of weight `k` given by the monomial `d` in `E₄` and `E₆`. -/
-noncomputable def ratMonomial (d : E₄E₆WeightedMonomials k) : rationalModularForms (k : ℤ) :=
-  evalE₄E₆RatAtWeight k (E₄E₆WeightedMonomialBasis ℚ k d)
-
-/-- Each complex monomial in `E₄` and `E₆` is the scalar extension of the corresponding rational
-one. -/
-theorem complexMonomialBasis_eq :
-    ⇑(complexMonomialBasis k) = rationalModularFormToComplex ∘ ratMonomial k := by
-  funext d
-  have hsq := congrArg (fun F ↦ F (k : ℤ)) (rationalModularFormsToComplex_evalE₄E₆Rat
-    (E₄E₆WeightedMonomialBasis ℚ k d : MvPolynomial (Fin 2) ℚ))
-  simp only [rationalModularFormsToComplex_apply] at hsq
-  rw [Function.comp_apply, ratMonomial, evalE₄E₆RatAtWeight_apply, hsq,
-    coe_E₄E₆WeightedMonomialBasis, MvPolynomial.map_monomial, map_one]
-  change evalE₄E₆AtWeight k (E₄E₆WeightedMonomialBasis ℂ k d) = _
-  rw [evalE₄E₆AtWeight_apply, coe_E₄E₆WeightedMonomialBasis]
-
-/-- The `ℚ`-basis of `rationalModularForms k` given by the monomials in `E₄` and `E₆`, obtained by
-descending `complexMonomialBasis k` along scalar extension. -/
-noncomputable def ratMonomialBasis :
-    Basis (E₄E₆WeightedMonomials k) ℚ (rationalModularForms (k : ℤ)) :=
-  basisOfComplexBasis k (ratMonomial k) (complexMonomialBasis k) (complexMonomialBasis_eq k)
-
-end test
 
 end ModularForm
