@@ -9,12 +9,25 @@ module
 public import Mathlib
 
 /-!
-# Topology of the extended integers
+# The extended integers
+
+Order facts about `EInt = WithBotTop ℤ` and the topology of `EInt`.
 -/
 
 @[expose] public section
 
 open Filter Topology
+
+variable {x : EInt}
+
+/-- An element of `EInt` is `≠ ⊥` if it is bounded below by an integer. -/
+theorem eint_ne_bot_iff : x ≠ ⊥ ↔ ∃ m : ℤ, m ≤ x := by
+  induction x using WithBotTop.rec with
+  | bot => simp
+  | coe k => exact ⟨fun _ ↦ ⟨k, le_rfl⟩, fun _ ↦ by simp⟩
+  | top => exact ⟨fun _ ↦ ⟨0, le_top⟩, fun _ ↦ by simp⟩
+
+theorem eint_ne_bot_of_nonneg (hx : 0 ≤ x) : x ≠ ⊥ := fun h ↦ by simp_all
 
 -- should go to Mathlib.Topology.Instances.EInt (new file, analogous to
 -- Mathlib.Topology.Instances.ENat)
