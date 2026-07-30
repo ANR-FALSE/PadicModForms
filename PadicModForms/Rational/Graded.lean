@@ -13,7 +13,7 @@ public import Mathlib.RingTheory.MvPolynomial.Tower
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.LinearIndependent
 import PadicModForms.ForMathlib.«38813»
-public import PadicModForms.Rational.Basic
+public import PadicModForms.Rational.Eisenstein
 
 /-!
 # The graded ring of rational modular forms
@@ -29,6 +29,12 @@ open UpperHalfPlane ModularForm MatrixGroups EisensteinSeries SetLike DirectSum 
 open scoped MatrixGroups PowerSeries
 
 namespace ModularForm
+
+namespace test
+
+
+
+end test
 
 variable {k : ℕ} {n m : ℤ}
 

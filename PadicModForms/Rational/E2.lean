@@ -7,7 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.E2
-public import PadicModForms.Rational.Basic
+public import PadicModForms.Rational.Eisenstein
 
 /-!
 # The rational q-expansion of `E2`
