@@ -27,10 +27,7 @@ modular forms of fixed weight their linear structure.
 
 noncomputable section
 
-open UpperHalfPlane ModularForm ModularFormClass MatrixGroups SetLike DirectSum PowerSeries
-  ArithmeticFunction sigma EisensteinSeries Module Free
-
-open scoped MatrixGroups PowerSeries
+open UpperHalfPlane SetLike DirectSum PowerSeries EisensteinSeries Module Free MatrixGroups
 
 namespace PowerSeries
 
