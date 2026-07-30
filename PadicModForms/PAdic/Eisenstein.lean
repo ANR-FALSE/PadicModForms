@@ -41,7 +41,7 @@ noncomputable def R : ℚ_[p]⟦X⟧ := (rationalQExpansion E₆Rat).map (algebr
 @[simp] theorem coeff_Q (n : ℕ) :
     coeff n Q = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n := by
   rw [Q, coeff_map, rationalQExpansion_apply,
-    coeff_ERat (by norm_num : 3 ≤ 4) ⟨2, rfl⟩]
+    coeff_ERat n (by norm_num : 3 ≤ 4) ⟨2, rfl⟩]
   by_cases hn : n = 0
   · simp [hn]
   · simp [hn, bernoulli_four]
@@ -50,7 +50,7 @@ noncomputable def R : ℚ_[p]⟦X⟧ := (rationalQExpansion E₆Rat).map (algebr
 @[simp] theorem coeff_R (n : ℕ) :
     coeff n R = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n := by
   rw [R, coeff_map, rationalQExpansion_apply,
-    coeff_ERat (by norm_num : 3 ≤ 6) ⟨3, rfl⟩]
+    coeff_ERat n (by norm_num : 3 ≤ 6) ⟨3, rfl⟩]
   by_cases hn : n = 0
   · simp [hn]
   · simp [hn, bernoulli_six]

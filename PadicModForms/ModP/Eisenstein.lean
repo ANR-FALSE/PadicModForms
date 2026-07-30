@@ -31,7 +31,7 @@ include hk hk2 in
 /-- The coefficients of `ERat` are `p`-integral if `p - 1 ∣ k`. -/
 theorem coeff_ERat_mem_pLocalInt (hpk : p - 1 ∣ k) (n : ℕ) :
     coeff n (rationalQExpansion (ERat hk hk2)) ∈ pLocalInt p := by
-  rw [rationalQExpansion_apply, coeff_ERat hk hk2]
+  rw [rationalQExpansion_apply, coeff_ERat _ hk hk2]
   by_cases hn : n = 0
   · simp [hn]
   · have hk_mem : (k : ℚ) ∈ pLocalInt p := by simp
