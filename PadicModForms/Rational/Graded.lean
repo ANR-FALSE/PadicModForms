@@ -24,17 +24,11 @@ This file develops the graded algebra of rational modular forms and gives the id
 
 noncomputable section
 
-open UpperHalfPlane ModularForm MatrixGroups EisensteinSeries SetLike DirectSum MvPolynomial
+open UpperHalfPlane MatrixGroups EisensteinSeries DirectSum MvPolynomial
 
-open scoped MatrixGroups PowerSeries
+open scoped PowerSeries
 
 namespace ModularForm
-
-namespace test
-
-
-
-end test
 
 variable {k : ℕ} {n m : ℤ}
 
@@ -390,5 +384,84 @@ theorem E₄E₆Rat_generate :
       Set.range ![of _ 4 E₄Rat, of _ 6 E₆Rat] by ext x; simp [or_comm]]
   rw [← MvPolynomial.aeval_range, ← evalE₄E₆Rat]
   exact (AlgHom.range_eq_top evalE₄E₆Rat).mpr evalE₄E₆Rat_surjective
+
+namespace test
+
+/-!
+### Descending the `E₄`-`E₆` monomial basis from `ℂ` to `ℚ`
+
+Fix a weight `k`. The monomials in `E₄` and `E₆` of weight `k` form a `ℂ`-basis
+`complexMonomialBasis k` of `ModularForm 𝒮ℒ k`, and each of them is the scalar extension of a
+rational modular form. `Module.Basis.ofCompSemilinear` then hands back the corresponding
+`ℚ`-basis `ratMonomialBasis k` of `rationalModularForms k`, with no surjectivity argument.
+-/
+
+open Module
+
+variable (k : ℕ)
+
+/-- Scalar extension takes `ℚ`-linearly independent sets of rational modular forms of weight `k`
+to `ℂ`-linearly independent ones. This is the hypothesis `Module.Basis.ofCompSemilinear` needs. -/
+theorem linearIndepOn_rationalModularFormToComplex (s : Set (rationalModularForms (k : ℤ)))
+    (hs : LinearIndepOn ℚ id s) :
+    LinearIndepOn ℂ ⇑(rationalModularFormToComplex (n := (k : ℤ))) s :=
+  linearIndependent_rationalModularFormToComplex _ hs
+
+/-- Descent of a basis: a `ℂ`-basis of the complex modular forms of weight `k` whose members are
+scalar extensions of rational modular forms yields a `ℚ`-basis of `rationalModularForms k`. -/
+noncomputable def basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms (k : ℤ))
+    (c : Basis ι ℂ (ModularForm 𝒮ℒ (k : ℤ))) (hc : ⇑c = rationalModularFormToComplex ∘ b) :
+    Basis ι ℚ (rationalModularForms (k : ℤ)) :=
+  Basis.ofCompSemilinear _ (linearIndepOn_rationalModularFormToComplex k) b c hc
+
+/-- The weighted-homogeneous monomial basis consists of the monomials themselves; in particular it
+is compatible with extension of the coefficient field. -/
+theorem coe_E₄E₆WeightedMonomialBasis (R : Type*) [Field R] (d : E₄E₆WeightedMonomials k) :
+    (E₄E₆WeightedMonomialBasis R k d : MvPolynomial (Fin 2) R) = monomial (d : Fin 2 →₀ ℕ) 1 := by
+  have hmem : monomial (d : Fin 2 →₀ ℕ) (1 : R) ∈
+      restrictSupport R {e | Finsupp.weight E₄E₆Weights e = k} := by
+    intro x hx
+    simp only [Finset.mem_coe] at hx
+    have := MvPolynomial.support_monomial_subset hx
+    simp_all
+  have key : (basisRestrictSupport R {e | Finsupp.weight E₄E₆Weights e = k}) d =
+      ⟨monomial (d : Fin 2 →₀ ℕ) 1, hmem⟩ := by
+    rw [Basis.apply_eq_iff]
+    ext i
+    change MvPolynomial.coeff (i : Fin 2 →₀ ℕ) (monomial (d : Fin 2 →₀ ℕ) (1 : R)) = _
+    simp [MvPolynomial.coeff_monomial, Finsupp.single_apply, ← Subtype.coe_inj]
+  simp only [E₄E₆WeightedMonomialBasis, Basis.map_apply, key]
+  rfl
+
+/-- The `ℂ`-basis of the complex modular forms of weight `k` given by the monomials in `E₄`
+and `E₆`. -/
+noncomputable def complexMonomialBasis :
+    Basis (E₄E₆WeightedMonomials k) ℂ (ModularForm 𝒮ℒ (k : ℤ)) :=
+  (E₄E₆WeightedMonomialBasis ℂ k).map (evalE₄E₆AtWeightEquiv k)
+
+/-- The rational modular form of weight `k` given by the monomial `d` in `E₄` and `E₆`. -/
+noncomputable def ratMonomial (d : E₄E₆WeightedMonomials k) : rationalModularForms (k : ℤ) :=
+  evalE₄E₆RatAtWeight k (E₄E₆WeightedMonomialBasis ℚ k d)
+
+/-- Each complex monomial in `E₄` and `E₆` is the scalar extension of the corresponding rational
+one. -/
+theorem complexMonomialBasis_eq :
+    ⇑(complexMonomialBasis k) = rationalModularFormToComplex ∘ ratMonomial k := by
+  funext d
+  have hsq := congrArg (fun F ↦ F (k : ℤ)) (rationalModularFormsToComplex_evalE₄E₆Rat
+    (E₄E₆WeightedMonomialBasis ℚ k d : MvPolynomial (Fin 2) ℚ))
+  simp only [rationalModularFormsToComplex_apply] at hsq
+  rw [Function.comp_apply, ratMonomial, evalE₄E₆RatAtWeight_apply, hsq,
+    coe_E₄E₆WeightedMonomialBasis, MvPolynomial.map_monomial, map_one]
+  change evalE₄E₆AtWeight k (E₄E₆WeightedMonomialBasis ℂ k d) = _
+  rw [evalE₄E₆AtWeight_apply, coe_E₄E₆WeightedMonomialBasis]
+
+/-- The `ℚ`-basis of `rationalModularForms k` given by the monomials in `E₄` and `E₆`, obtained by
+descending `complexMonomialBasis k` along scalar extension. -/
+noncomputable def ratMonomialBasis :
+    Basis (E₄E₆WeightedMonomials k) ℚ (rationalModularForms (k : ℤ)) :=
+  basisOfComplexBasis k (ratMonomial k) (complexMonomialBasis k) (complexMonomialBasis_eq k)
+
+end test
 
 end ModularForm
