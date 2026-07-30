@@ -144,6 +144,22 @@ theorem rationalModularFormToComplex_ERat :
 
 omit hk hk2
 
+/-- The `q`-expansion of `E₄` has integer coefficients: `1 + 240 ∑ σ₃(n) qⁿ`. -/
+public theorem coeff_E₄Rat : coeff n E₄Rat = if n = 0 then 1 else (240 : ℚ) * σ 3 n := by
+  rw [coeff_ERat n (by norm_num : 3 ≤ 4) ⟨2, rfl⟩]
+  by_cases hn : n = 0
+  · simp [hn]
+  · simp [hn, bernoulli_four]
+    ring
+
+/-- The `q`-expansion of `E₆` has integer coefficients: `1 - 504 ∑ σ₅(n) qⁿ`. -/
+public theorem coeff_E₆Rat : coeff n E₆Rat = if n = 0 then 1 else -(504 : ℚ) * σ 5 n := by
+  rw [coeff_ERat n (by norm_num : 3 ≤ 6) ⟨3, rfl⟩]
+  by_cases hn : n = 0
+  · simp [hn]
+  · simp [hn, bernoulli_six]
+    norm_num
+
 @[simp]
 public theorem rationalModularFormToComplex_E₄Rat : rationalModularFormToComplex E₄Rat = E₄ :=
   rationalModularFormToComplex_ERat (by norm_num) ⟨2, rfl⟩
