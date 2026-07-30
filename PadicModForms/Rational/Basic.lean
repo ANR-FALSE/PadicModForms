@@ -71,11 +71,7 @@ public theorem IsModularForm.add : (f + g).isModularForm k := by
   obtain ⟨G, hG⟩ := hg
   exact ⟨F + G, by simp [ModularForm.qExpansion_add one_pos one_mem_strictPeriods_SL, hF, hG]⟩
 
-theorem IsModularForm.sub : (f - g).isModularForm k := by
-  obtain ⟨F, hF⟩ := hf
-  obtain ⟨G, hG⟩ := hg
-  exact ⟨F - G, by simp [ModularForm.qExpansion_sub one_pos one_mem_strictPeriods_SL, hF, hG]⟩
-
+/-- The rational modular forms of weight `k`, as a `ℚ`-submodule of rational power series. -/
 @[expose] public def _root_.rationalModularForms (k : ℤ) : Submodule ℚ ℚ⟦X⟧ where
   carrier := {f | f.isModularForm k}
   zero_mem' := zero_isModularForm k
@@ -120,49 +116,53 @@ public def rationalModularFormToComplex :
   map_add' := map_add _
   map_smul' q f := by simp [Rat.cast_smul_eq_qsmul]
 
+/-- The `q`-expansion of the complex modular form attached to `f` is obtained from `f` by
+extending the coefficients to `ℂ`. -/
 @[simp]
 public theorem qExpansion_rationalModularFormToComplex :
     qExpansion 1 (rationalModularFormToComplex f) = (f : ℚ⟦X⟧).map (algebraMap ℚ ℂ) :=
   qExpansion_rationalModularFormToComplexAux f
 
-public theorem rationalModularFormToComplex_injective {k : ℤ} :
-    Function.Injective (rationalModularFormToComplex (n := k)) := fun f g h ↦ by
+/-- Scalar extension to complex modular forms is injective. -/
+public theorem rationalModularFormToComplex_injective :
+    Function.Injective (rationalModularFormToComplex (n := n)) := fun f g h ↦ by
   refine Subtype.ext (PowerSeries.map_injective _ (algebraMap ℚ ℂ).injective ?_)
   rw [← qExpansion_rationalModularFormToComplex, ← qExpansion_rationalModularFormToComplex, h]
 
-public theorem linearIndependent_rationalModularFormToComplex {κ : Type*} {k : ℤ}
-    (v : κ → rationalModularForms k) (hv : LinearIndependent ℚ v) :
+/-- Scalar extension to complex modular forms takes `ℚ`-linearly independent families to
+`ℂ`-linearly independent ones. -/
+public theorem linearIndependent_rationalModularFormToComplex {κ : Type*}
+    (v : κ → rationalModularForms n) (hv : LinearIndependent ℚ v) :
     LinearIndependent ℂ (rationalModularFormToComplex ∘ v) := by
   have hvq : LinearIndependent ℚ (fun i ↦ (v i : ℚ⟦X⟧)) := by
-    simpa [Function.comp_def] using hv.map' (rationalModularForms k).subtype
+    simpa [Function.comp_def] using hv.map' (rationalModularForms n).subtype
       (LinearMap.ker_eq_bot_of_injective Subtype.val_injective)
   have hvc : LinearIndependent ℂ (fun i ↦ (v i : ℚ⟦X⟧).map (algebraMap ℚ ℂ)) :=
     linearIndependent_map (fun i ↦ (v i : ℚ⟦X⟧)) hvq
-  let qexp : ModularForm 𝒮ℒ k →ₗ[ℂ] ℂ⟦X⟧ :=
-    (qExpansionLinearMap one_pos one_mem_strictPeriods_SL).comp
-      (lof ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k)
-  apply LinearIndependent.of_comp qexp
-  simpa [qexp, Function.comp_def, lof_eq_of,
-    qExpansionLinearMap_apply, qExpansionRingHom_apply,
+  let := (qExpansionLinearMap one_pos one_mem_strictPeriods_SL).comp (lof ℂ ℤ (ModularForm 𝒮ℒ ·) n)
+  apply LinearIndependent.of_comp this
+  simpa [this, Function.comp_def, lof_eq_of, qExpansionLinearMap_apply, qExpansionRingHom_apply,
     qExpansion_rationalModularFormToComplex] using hvc
 
+/-- Rational modular forms of weight `k` have rank over `ℚ` at most the rank over `ℂ` of the
+complex modular forms of the same weight. -/
 public theorem rationalModularForms_rank_le (k : ℤ) :
     Module.rank ℚ (rationalModularForms k) ≤ Module.rank ℂ (ModularForm 𝒮ℒ k) := by
   rw [rank_eq_card_chooseBasisIndex]
   exact (linearIndependent_rationalModularFormToComplex (chooseBasis ℚ (rationalModularForms k))
     (chooseBasis ℚ (rationalModularForms k)).linearIndependent).cardinal_le_rank
 
+/-- Rational modular forms of a fixed weight form a finite-dimensional `ℚ`-vector space. -/
 public noncomputable instance rationalModularForms_finiteDimensional (k : ℤ) :
     FiniteDimensional ℚ (rationalModularForms k) := by
-  rw [FiniteDimensional, ← rank_lt_aleph0_iff]
-  exact (rationalModularForms_rank_le k).trans_lt (rank_lt_aleph0 ℂ (ModularForm 𝒮ℒ k))
+  simpa [← rank_lt_aleph0_iff] using (rationalModularForms_rank_le k).trans_lt (rank_lt_aleph0 ℂ _)
 
+/-- The `ℚ`-dimension of the rational modular forms of weight `k` is at most the `ℂ`-dimension of
+the complex modular forms of the same weight. -/
 public theorem rationalModularForms_finrank_le (k : ℤ) :
     finrank ℚ (rationalModularForms k) ≤ finrank ℂ (ModularForm 𝒮ℒ k) := by
-  have h : (finrank ℚ (rationalModularForms k) : Cardinal) ≤ finrank ℂ (ModularForm 𝒮ℒ k) := by
-    rw [finrank_eq_rank, finrank_eq_rank]
-    exact rationalModularForms_rank_le k
-  exact_mod_cast h
+  rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
+  exact rationalModularForms_rank_le k
 
 /-- The submodules of rational modular forms form a graded monoid under multiplication. -/
 public instance : GradedMonoid rationalModularForms where
@@ -176,15 +176,14 @@ public def rationalQExpansionAlgHom : (⨁ i, rationalModularForms i) →ₐ[ℚ
 
 /-- The `q`-expansion linear map on rational modular forms of a fixed weight. -/
 public abbrev rationalQExpansion {n : ℤ} : rationalModularForms n →ₗ[ℚ] ℚ⟦X⟧ :=
-  rationalQExpansionAlgHom.toLinearMap.comp
-    (lof ℚ ℤ (fun i ↦ rationalModularForms i) n)
+  rationalQExpansionAlgHom.toLinearMap.comp (lof ℚ ℤ (fun i ↦ rationalModularForms i) n)
 
-variable {n : ℤ} (f : rationalModularForms n)
-
+/-- Forgetting the weight of a form concentrated in weight `n` gives back its power series. -/
 @[simp]
 public theorem rationalQExpansionAlgHom_of :
     rationalQExpansionAlgHom (of _ n f) = f := coeAlgHom_of ..
 
+/-- The `q`-expansion of a rational modular form of weight `n` is its underlying power series. -/
 @[simp]
 public theorem rationalQExpansion_apply : rationalQExpansion f = f :=
   rationalQExpansionAlgHom_of f
