@@ -155,6 +155,12 @@ public def basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms n)
     Basis ι ℚ (rationalModularForms n) :=
   .ofCompSemilinear _ linearIndepOn_rationalModularFormToComplex b c hc
 
+@[simp]
+public theorem coe_basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms n)
+    (c : Basis ι ℂ (ModularForm 𝒮ℒ n)) (hc : c = rationalModularFormToComplex ∘ b) :
+    basisOfComplexBasis b c hc = b :=
+  Basis.coe_ofCompSemilinear ..
+
 /-- Rational modular forms of weight `k` have rank over `ℚ` at most the rank over `ℂ` of the
 complex modular forms of the same weight. -/
 public theorem rationalModularForms_rank_le (k : ℤ) :
