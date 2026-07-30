@@ -49,13 +49,13 @@ include hk hk2 in
 /-- A rational Eisenstein series becomes a p-adic modular form after extending scalars. -/
 theorem ERat_map_isPAdicModularForm :
     isPAdicModularForm p ((rationalQExpansion (ERat hk hk2)).map (algebraMap ℚ ℚ_[p])) :=
-  rationalQExpansion_isPAdicModularForm p (ERat hk hk2)
+  rationalQExpansion_isPAdicModularForm (ERat hk hk2)
 
 include hk hk2 in
 /-- A rational `G`-series becomes a p-adic modular form after extending scalars. -/
 theorem GRat_map_isPAdicModularForm :
     isPAdicModularForm p ((rationalQExpansion (GRat hk hk2)).map (algebraMap ℚ ℚ_[p])) :=
-  rationalQExpansion_isPAdicModularForm p (GRat hk hk2)
+  rationalQExpansion_isPAdicModularForm (GRat hk hk2)
 
 theorem Q_isPAdicModularForm : isPAdicModularForm p Q := by
   simpa [Q] using ERat_map_isPAdicModularForm p (k := 4) (by norm_num) ⟨2, rfl⟩
