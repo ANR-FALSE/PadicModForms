@@ -8,7 +8,6 @@ module
 
 public import Mathlib.LinearAlgebra.Basis.VectorSpace
 public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
-public import Mathlib.RingTheory.AlgebraicIndependent.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 
 /-!
@@ -25,6 +24,9 @@ let `f : M →ₛₗ[σ] N` be a `σ`-semilinear map. We study when a family `b 
 * `top_le_span_range_of_comp_semilinear` and `Basis.ofCompSemilinear`: assuming moreover
   that `A` is a division ring and that `f` takes `A`-linearly independent sets to `B`-linearly
   independent ones, the family `b` is an `A`-basis of `M`.
+* `linearIndependent_algebraMap_comp` and `PowerSeries.linearIndependent_map`: over a field `A`,
+  linear independence of a family of `A`-valued functions, resp. of power series, is preserved by
+  extension of scalars to an `A`-algebra `B`, since `B` is free as an `A`-module.
 
 -/
 
@@ -51,20 +53,6 @@ theorem LinearIndependent.of_comp_semilinear (f : M →ₛₗ[σ] N) (hσ : Inje
   exact hσ (by simpa using h s _ key i hi)
 
 end Ring
-
-section Algebra
-
-variable [CommRing A] [Ring B] [Algebra A B] [FaithfulSMul A B]
-variable [AddCommGroup M] [Module A M] [AddCommGroup N] [Module B N]
-
-/-- If the image of a family under a semilinear map `f : M →ₛₗ[algebraMap A B] N` is `B`-linearly
-independent, then the family itself is `A`-linearly independent, provided `B` has no
-`A`-torsion. -/
-theorem LinearIndependent.of_comp_algebraMap (f : M →ₛₗ[algebraMap A B] N) {b : ι → M}
-    (h : LinearIndependent B (f ∘ b)) : LinearIndependent A b :=
-  h.of_comp_semilinear f (FaithfulSMul.algebraMap_injective A B)
-
-end Algebra
 
 section DivisionRing
 
@@ -110,11 +98,6 @@ theorem Module.Basis.coe_ofCompSemilinear (hc : c = f ∘ b) :
     Basis.ofCompSemilinear f hf b c hc = b := by
   simp [Basis.ofCompSemilinear]
 
-@[simp]
-theorem Module.Basis.ofCompSemilinear_apply (hc : c = f ∘ b) (i : ι) :
-    Basis.ofCompSemilinear f hf b c hc i = b i := by
-  simp [Basis.ofCompSemilinear]
-
 end DivisionRing
 
 section CoeffPi
@@ -156,18 +139,3 @@ theorem PowerSeries.linearIndependent_map {κ : Type*} (v : κ → A⟦X⟧)
     hv.map' coeffPi (ker_eq_bot_of_injective coeffPi_injective)
 
 end Pi
-
-section Monomials
-
-variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S] {x : ι → S}
-
-open MvPolynomial
-
-/-- The monomials in an algebraically independent family are linearly independent. -/
-theorem AlgebraicIndependent.linearIndependent_monomials (hx : AlgebraicIndependent R x) :
-    LinearIndependent R (fun d : ι →₀ ℕ ↦ d.prod fun i n ↦ x i ^ n) := by
-  have hli : LinearIndependent R (fun d ↦ aeval x (monomial d 1 : MvPolynomial ι R)) :=
-    (basisMonomials ι R).linearIndependent.map' (aeval x).toLinearMap (ker_eq_bot_of_injective hx)
-  simpa [aeval_monomial] using hli
-
-end Monomials
