@@ -141,6 +141,20 @@ public theorem linearIndependent_rationalModularFormToComplex {κ : Type*}
   simpa [this, Function.comp_def, lof_eq_of, qExpansionLinearMap_apply, qExpansionRingHom_apply,
     qExpansion_rationalModularFormToComplex] using hvc
 
+/-- Scalar extension to complex modular forms takes `ℚ`-linearly independent sets to `ℂ`-linearly
+independent ones. This is the hypothesis needed by `Module.Basis.ofCompSemilinear`. -/
+public theorem linearIndepOn_rationalModularFormToComplex (s : Set (rationalModularForms n))
+    (hs : LinearIndepOn ℚ id s) :
+    LinearIndepOn ℂ (rationalModularFormToComplex) s :=
+  linearIndependent_rationalModularFormToComplex _ hs
+
+/-- Descent of a basis: a `ℂ`-basis of the complex modular forms of weight `n` whose members are
+scalar extensions of rational modular forms yields a `ℚ`-basis of `rationalModularForms n`. -/
+public def basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms n)
+    (c : Basis ι ℂ (ModularForm 𝒮ℒ n)) (hc : c = rationalModularFormToComplex ∘ b) :
+    Basis ι ℚ (rationalModularForms n) :=
+  .ofCompSemilinear _ linearIndepOn_rationalModularFormToComplex b c hc
+
 /-- Rational modular forms of weight `k` have rank over `ℚ` at most the rank over `ℂ` of the
 complex modular forms of the same weight. -/
 public theorem rationalModularForms_rank_le (k : ℤ) :
