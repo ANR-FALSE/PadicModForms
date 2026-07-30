@@ -26,38 +26,24 @@ variable {p : ℕ} [Fact p.Prime]
 namespace EisensteinSeries
 
 /-- `P = E₂`, regarded as a power series over `ℚ_[p]`. -/
-noncomputable def P : ℚ_[p]⟦X⟧ := E₂Rat.map (algebraMap ℚ ℚ_[p])
+abbrev P : ℚ_[p]⟦X⟧ := E₂Rat.map (algebraMap ℚ ℚ_[p])
 
 /-- `Q = E₄`, regarded as a power series over `ℚ_[p]`. -/
-noncomputable def Q : ℚ_[p]⟦X⟧ := (rationalQExpansion E₄Rat).map (algebraMap ℚ ℚ_[p])
+abbrev Q : ℚ_[p]⟦X⟧ := (rationalQExpansion E₄Rat).map (algebraMap ℚ ℚ_[p])
 
 /-- `R = E₆`, regarded as a power series over `ℚ_[p]`. -/
-noncomputable def R : ℚ_[p]⟦X⟧ := (rationalQExpansion E₆Rat).map (algebraMap ℚ ℚ_[p])
+abbrev R : ℚ_[p]⟦X⟧ := (rationalQExpansion E₆Rat).map (algebraMap ℚ ℚ_[p])
 
-@[simp] theorem coeff_P (n : ℕ) :
-    coeff n P = if n = 0 then 1 else (-24 : ℚ_[p]) * σ 1 n := by
-  by_cases hn : n = 0 <;> simp [P, hn]
+@[simp] theorem coeff_P (n : ℕ) : coeff n P = if n = 0 then 1 else (-24 : ℚ_[p]) * σ 1 n := by
+  by_cases hn : n = 0 <;> simp [hn]
 
-@[simp] theorem coeff_Q (n : ℕ) :
-    coeff n Q = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n := by
-  rw [Q, coeff_map, rationalQExpansion_apply,
-    coeff_ERat n (by norm_num : 3 ≤ 4) ⟨2, rfl⟩]
-  by_cases hn : n = 0
-  · simp [hn]
-  · simp [hn, bernoulli_four]
-    ring
+@[simp] theorem coeff_Q (n : ℕ) : coeff n Q = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n := by
+  by_cases hn : n = 0 <;> simp [hn, coeff_E₄Rat]
 
-@[simp] theorem coeff_R (n : ℕ) :
-    coeff n R = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n := by
-  rw [R, coeff_map, rationalQExpansion_apply,
-    coeff_ERat n (by norm_num : 3 ≤ 6) ⟨3, rfl⟩]
-  by_cases hn : n = 0
-  · simp [hn]
-  · simp [hn, bernoulli_six]
-    norm_num
+@[simp] theorem coeff_R (n : ℕ) : coeff n R = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n := by
+  by_cases hn : n = 0 <;> simp [hn, coeff_E₆Rat]
 
-variable {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k)
-variable (p)
+variable {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k) (p)
 
 include hk hk2 in
 /-- A rational Eisenstein series becomes a p-adic modular form after extending scalars. -/
