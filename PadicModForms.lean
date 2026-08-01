@@ -12,7 +12,6 @@ import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
 import PadicModForms.ModP.Congruences
-import PadicModForms.ModP.Defs
 import PadicModForms.ModP.Eisenstein
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs

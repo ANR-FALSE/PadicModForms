@@ -6,63 +6,90 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Eisenstein
+public import PadicModForms.ForMathlib.IntLocalization
+public import PadicModForms.Rational.Basic
 
 /-!
-# Basic results about integral and mod-`p` Eisenstein series
+# Modular forms modulo `p`
+
+This file defines modular forms modulo `p` and gives the modular forms of fixed weight their
+linear structure.
 -/
 
-@[expose] public noncomputable section
+@[expose] public section
 
-open PowerSeries ArithmeticFunction sigma ModularForm
+open PowerSeries ModularForm
 
-variable {p k : ℕ} [Fact p.Prime]
+variable {p : ℕ} [Fact p.Prime]
 
-namespace EisensteinSeries
+namespace PowerSeries
 
-variable (n : ℕ) (hk : 3 ≤ k) (hk2 : Even k)
+/-- A power series with coefficients in `ℤ/pℤ` is a mod-`p` modular form of weight `k` if it is
+the reduction of a power series with coefficients in the localization of `ℤ` at `p` whose base
+change to `ℚ` is a modular form of weight `k`. -/
+public def isModPModularForm (k : ℤ) (f : (ZMod p)⟦X⟧) : Prop :=
+  ∃ (g : (pLocalInt p)⟦X⟧) (F : rationalModularForms k),
+    g.map (algebraMap _ _) = rationalQExpansion F ∧ g.map pLocalInt.toZMod = f
+
+public theorem zero_isModPModularForm (k : ℤ) :
+    isModPModularForm k (0 : (ZMod p)⟦X⟧) :=
+  ⟨0, 0, by simp, by simp⟩
+
+variable {k l : ℤ} {f g : (ZMod p)⟦X⟧} (hf : f.isModPModularForm k)
+  (hg : g.isModPModularForm k)
+
+theorem one_isModPModularForm : (1 : (ZMod p)⟦X⟧).isModPModularForm 0 :=
+  ⟨1, 1, by simp, by simp⟩
+
+include hf
+
+theorem IsModPModularForm.neg : (-f).isModPModularForm k := by
+  obtain ⟨f', F, hf'Q, hf'p⟩ := hf
+  exact ⟨-f', -F, by simp [hf'Q], by simp [hf'p]⟩
+
+public theorem IsModPModularForm.smul (a : ZMod p) : (a • f).isModPModularForm k := by
+  obtain ⟨f', F, hf'Q, hf'p⟩ := hf
+  refine ⟨(a.val : pLocalInt p) • f', (a.val : ℚ) • F, ?_, ?_⟩
+  · calc _ = a.val • f'.map (algebraMap _ ℚ) := by
+          ext n
+          exact map_nsmul (algebraMap (pLocalInt p) ℚ) a.val (coeff n f')
+      _ = (a.val : ℚ) • rationalQExpansion F := congrArg ((a.val : ℚ) • ·) hf'Q
+      _ = rationalQExpansion ((a.val : ℚ) • F) := by rw [map_smul]
+  · ext n
+    have hn := congrArg (coeff n) hf'p
+    rw [coeff_map] at hn
+    simp [smul_eq_mul, map_mul, hn]
+
+theorem IsModPModularForm.mul (hg : g.isModPModularForm l) : (f * g).isModPModularForm (k + l) := by
+  obtain ⟨f', F, hf'Q, hf'p⟩ := hf
+  obtain ⟨g', G, hg'Q, hg'p⟩ := hg
+  exact ⟨f' * g', GradedMonoid.GMul.mul (A := fun n ↦ rationalModularForms n) F G,
+    by simp [hf'Q, hg'Q], by simp [hf'p, hg'p]⟩
+
+include hg
+
+public theorem IsModPModularForm.add : (f + g).isModPModularForm k := by
+  obtain ⟨f', F, hf'Q, hf'p⟩ := hf
+  obtain ⟨g', G, hg'Q, hg'p⟩ := hg
+  exact ⟨f' + g', F + G, by simp [hf'Q, hg'Q], by simp [hf'p, hg'p]⟩
+
+/-- The mod-`p` modular forms of weight `k`, as a `ℤ/pℤ`-submodule of power series over
+`ℤ/pℤ`. -/
+public def _root_.modPModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
+    Submodule (ZMod p) (ZMod p)⟦X⟧ where
+  carrier := {f | f.isModPModularForm k}
+  zero_mem' := zero_isModPModularForm k
+  add_mem' := IsModPModularForm.add
+  smul_mem' a _ hf := IsModPModularForm.smul hf a
+
+omit hf hg
 
 @[simp]
-theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalInt p) =
-      if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
-  rw [E_int, coeff_toSubring, rationalQExpansion_apply, coeff_ERat]
+theorem mem_modPModularForms : f ∈ modPModularForms p k ↔ f.isModPModularForm k := .rfl
 
-/-- The constant coefficient of `E_int` is `1`. -/
-@[simp]
-theorem coeff_E_int_zero (hpk : p - 1 ∣ k) : coeff 0 (E_int hk hk2 hpk) = 1 := by
-  exact Subtype.ext <| by simp only [coeff_E_int, reduceIte, OneMemClass.coe_one]
+end PowerSeries
 
-/-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
-theorem coeff_E_int_of_ne_zero (hpk : p - 1 ∣ k) {m : ℕ} (hm : m ≠ 0) :
-    coeff m (E_int hk hk2 hpk) =
-      -(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ * σ (k - 1) m := Subtype.ext <| by
-  simp [coeff_E_int, hm, div_eq_mul_inv, show ((2 : pLocalInt p) : ℚ) = 2 from
-    map_ofNat (pLocalInt p).subtype 2]
-
-/-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
-`ERat`. -/
-theorem E_int_map (hpk : p - 1 ∣ k) :
-    (E_int hk hk2 hpk).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
-  ext
-  simp [coeff_E_int, coeff_ERat]
-
-namespace ModP
-
-/-- The coefficients of `E`. -/
-@[simp]
-theorem coeff_E (hp : 5 ≤ p) (m : ℕ) : (coeff m (E hp) : pLocalInt p) =
-    if m = 0 then 1 else -(2 * (p - 1) / bernoulli (p - 1)) * σ (p - 2) m := by
-  rw [E, coeff_E_int, Nat.cast_sub (by lia : 1 ≤ p)]
-  congr 2
-
-/-- The scalar extension of `E` to `ℚ` is the rational `q`-expansion of `ERat` of weight
-`p - 1`. -/
-theorem E_map_eq_rationalQExpansion (hp : 5 ≤ p) :
-    (E hp).map (algebraMap _ ℚ) =
-      rationalQExpansion (ERat (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))) := by
-  simpa [Nat.cast_sub (by lia : 1 ≤ p)] using
-    E_int_map (p := p) (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
-
-end ModP
-
-end EisensteinSeries
+/-- The submodules of mod-`p` modular forms form a graded monoid under multiplication. -/
+public instance (p : ℕ) [Fact p.Prime] : SetLike.GradedMonoid (modPModularForms p) where
+  one_mem := PowerSeries.one_isModPModularForm
+  mul_mem _ _ := PowerSeries.IsModPModularForm.mul
