@@ -66,6 +66,20 @@ theorem qExpansionLinearMap_apply [Γ.HasDetOne] (hh : 0 < h)
   | of k f => rw [qExpansionLinearMap_of, qExpansionRingHom_apply]
   | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
 
+/-!
+### Injectivity of the `q`-expansion on the graded ring of level one modular forms
+
+The proof has two steps. The map `levelOneCoeAddHom` sends `F : ⨁ k, ModularForm 𝒮ℒ k` to the
+function `∑ k, F k : ℍ → ℂ`, which is periodic, holomorphic and bounded at infinity, and whose
+`q`-expansion is `qExpansionRingHom F`. Hence `qExpansionRingHom F = 0` gives `∑ k, F k = 0`.
+
+It remains to see that modular forms of distinct weights are linearly independent, i.e. that
+`levelOneCoeAddHom` is injective. Fixing `z`, the slash equations say that `∑ k, F k` evaluated at
+`γ • z` is the polynomial `∑ k, (F k z) • X ^ k` evaluated at `denom γ z`. Taking
+`γ = !![0, -1; 1, n]`, whose `denom` at `z` is `z + n`, exhibits infinitely many roots of that
+polynomial, so all its coefficients `F k z` vanish.
+-/
+
 private def levelOneCoeAddHom : (⨁ k, ModularForm 𝒮ℒ k) →+ (ℍ → ℂ) :=
   toAddMonoid fun _ ↦
     { toFun := fun f ↦ f
@@ -99,10 +113,12 @@ private theorem levelOneCoeAddHom_bdd (F : ⨁ k, ModularForm 𝒮ℒ k) :
   induction F using DirectSum.induction_on with
   | zero => exact Asymptotics.isBigO_zero _ atImInfty
   | of k f => simpa using ModularFormClass.bdd_at_infty f
-  | add F G hF hG =>
-      rw [map_add]
-      rw [IsBoundedAtImInfty, Filter.BoundedAtFilter] at hF hG ⊢
-      exact hF.add hG
+  | add F G hF hG => exact map_add levelOneCoeAddHom F G ▸ hF.add hG
+
+private theorem levelOneCoeAddHom_analyticAt (F : ⨁ k, ModularForm 𝒮ℒ k) :
+    AnalyticAt ℂ (cuspFunction 1 (levelOneCoeAddHom F)) 0 :=
+  analyticAt_cuspFunction_zero one_pos (levelOneCoeAddHom_periodic F) (levelOneCoeAddHom_holo F)
+    (levelOneCoeAddHom_bdd F)
 
 private theorem qExpansion_levelOneCoeAddHom (F : ⨁ k, ModularForm 𝒮ℒ k) :
     qExpansion 1 (levelOneCoeAddHom F) =
@@ -111,12 +127,8 @@ private theorem qExpansion_levelOneCoeAddHom (F : ⨁ k, ModularForm 𝒮ℒ k) 
   | zero => exact qExpansion_zero 1
   | of k f => simp
   | add F G hF hG =>
-      calc _ = qExpansion 1 (levelOneCoeAddHom F) + qExpansion 1 (levelOneCoeAddHom G) := by simp
-        [qExpansion_add (analyticAt_cuspFunction_zero one_pos (levelOneCoeAddHom_periodic F)
-          (levelOneCoeAddHom_holo F) (levelOneCoeAddHom_bdd F))
-          (analyticAt_cuspFunction_zero one_pos (levelOneCoeAddHom_periodic G)
-          (levelOneCoeAddHom_holo G) (levelOneCoeAddHom_bdd G))]
-        _ = _ := by rw [map_add, hF, hG]
+      rw [map_add, map_add, qExpansion_add (levelOneCoeAddHom_analyticAt F)
+        (levelOneCoeAddHom_analyticAt G), hF, hG]
 
 private noncomputable def levelOneWeightPolynomial (z : ℍ) : (⨁ k, ModularForm 𝒮ℒ k) →+ ℂ[X] :=
   toAddMonoid fun k ↦ if hk : 0 ≤ k then
@@ -125,13 +137,11 @@ private noncomputable def levelOneWeightPolynomial (z : ℍ) : (⨁ k, ModularFo
       map_add' := by simp }
   else 0
 
-private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k) (z : ℍ) (n : ℕ) :
-      letI γ : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩
-    (levelOneWeightPolynomial z F).eval ((z : ℂ) + n) = levelOneCoeAddHom F (γ • z) := by
-  set γ : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩
-  have hdenom : denom γ z = (z : ℂ) + n :=
-    calc denom γ z = (γ 1 0 : ℂ) * z + (γ 1 1 : ℂ) := ModularGroup.denom_apply γ z
-      _ = _ := by simp [γ]
+/-- Evaluating the weight polynomial of `F` at `denom γ z` gives the value at `γ • z` of the
+(mixed weight) function attached to `F`: this is just the slash equation, weight by weight. -/
+private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k) (z : ℍ)
+    (γ : SL(2, ℤ)) :
+    (levelOneWeightPolynomial z F).eval (denom γ z) = levelOneCoeAddHom F (γ • z) := by
   induction F using DirectSum.induction_on with
   | zero => simp
   | of k f =>
@@ -139,11 +149,8 @@ private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k)
       · let : SlashInvariantFormClass (ModularForm 𝒮ℒ k) Γ(1) k :=
           Gamma_one_coe_eq_SL ▸ inferInstance
         have hf := SlashInvariantForm.slash_action_eqn_SL'' f (mem_Gamma_one γ) z
-        rw [hdenom] at hf
-        have hp : ((z : ℂ) + n) ^ k = ((z : ℂ) + n) ^ k.toNat := by
-          calc _ = ((z : ℂ) + n) ^ (k.toNat : ℤ) :=
-              congrArg (fun e : ℤ ↦ ((z : ℂ) + n) ^ e) (Int.toNat_of_nonneg hk).symm
-            _ = _ := zpow_natCast _ _
+        have hp : (denom γ z) ^ k = (denom γ z) ^ k.toNat := by
+          rw [← zpow_natCast, Int.toNat_of_nonneg hk]
         rw [hp] at hf
         simpa [levelOneWeightPolynomial, hk, Polynomial.eval_monomial, mul_comm] using hf.symm
       · have hf : f = 0 := (coe_eq_zero_iff f).mp
@@ -161,34 +168,30 @@ private theorem levelOneWeightPolynomial_coeff
       · simp [levelOneWeightPolynomial, hk]
       · rw [of_eq_of_ne j k f (fun h ↦ hjk h.symm)]
         by_cases hj : 0 ≤ j
-        · have hnat : j.toNat ≠ k.toNat := fun h ↦ hjk <| by
-            calc j = j.toNat := (Int.toNat_of_nonneg hj).symm
-                 _ = k.toNat := congrArg (fun n : ℕ ↦ (n : ℤ)) h
-                 _ = k := Int.toNat_of_nonneg hk
+        · have hnat : j.toNat ≠ k.toNat := by lia
           simp [levelOneWeightPolynomial, hj, Polynomial.coeff_monomial, hnat]
         · simp [levelOneWeightPolynomial, hj]
   | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
 
+/-- The matrix `!![0, -1; 1, n] ∈ SL(2, ℤ)`, whose `denom` at `z` is `z + n`. -/
+private def levelOneShift (n : ℕ) : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩
+
+private theorem denom_levelOneShift (n : ℕ) (z : ℍ) : denom (levelOneShift n) z = (z : ℂ) + n := by
+  rw [ModularGroup.denom_apply]
+  simp [levelOneShift]
+
 private theorem levelOneCoeAddHom_injective : Function.Injective levelOneCoeAddHom := by
-  suffices hker : ∀ F, levelOneCoeAddHom F = 0 → F = 0 by
-    intro F G hFG
-    rw [← sub_eq_zero]
-    apply hker (F - G)
-    rw [map_sub, hFG, sub_self]
+  rw [injective_iff_map_eq_zero]
   intro F hF
-  apply DirectSum.ext fun k ↦ ?_
+  refine DirectSum.ext fun k ↦ ?_
   by_cases hk : 0 ≤ k
-  · apply ext fun z ↦ ?_
-    have hpoly : levelOneWeightPolynomial z F = 0 := by
-      apply Polynomial.eq_zero_of_infinite_isRoot
-      apply Set.Infinite.mono (t := {x | (levelOneWeightPolynomial z F).IsRoot x})
-        (s := Set.range fun n : ℕ ↦ (z : ℂ) + n) ?_
-        (Set.infinite_range_of_injective fun n m hnm ↦ ?_)
-      · rintro x ⟨n, rfl⟩
-        let γ : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩
-        have hz := congrFun hF (γ • z)
-        simpa [levelOneWeightPolynomial_eval, γ] using hz
-      · exact_mod_cast (add_left_cancel hnm)
+  · refine ext fun z ↦ ?_
+    have hpoly : levelOneWeightPolynomial z F = 0 :=
+      Polynomial.eq_zero_of_infinite_isRoot _ <| Set.infinite_of_injective_forall_mem
+        (f := fun n : ℕ ↦ (z : ℂ) + n) (fun n m hnm ↦ by exact_mod_cast add_left_cancel hnm)
+        fun n ↦ by
+          simpa [IsRoot, ← denom_levelOneShift n z, levelOneWeightPolynomial_eval] using
+            congrFun hF (levelOneShift n • z)
     simpa [hpoly] using (levelOneWeightPolynomial_coeff F z hk).symm
   · exact (coe_eq_zero_iff (F k)).mp
       (ModularFormClass.levelOne_neg_weight_eq_zero (lt_of_not_ge hk) (F k))
@@ -196,11 +199,11 @@ private theorem levelOneCoeAddHom_injective : Function.Injective levelOneCoeAddH
 /-- The `q`-expansion homomorphism on the graded ring of level-one modular forms is injective. -/
 theorem levelOne_qExpansionRingHom_injective : Function.Injective
       (qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL) := by
-  intro F G hFG
-  apply levelOneCoeAddHom_injective
-  rw [← sub_eq_zero, ← map_sub]
-  apply (qExpansion_eq_zero_iff one_pos (levelOneCoeAddHom_periodic (F - G))
-    (levelOneCoeAddHom_holo (F - G)) (levelOneCoeAddHom_bdd (F - G))).mp
-  rw [qExpansion_levelOneCoeAddHom, map_sub, hFG, sub_self]
+  rw [injective_iff_map_eq_zero]
+  intro F hF
+  refine levelOneCoeAddHom_injective (map_zero levelOneCoeAddHom ▸ ?_)
+  refine (qExpansion_eq_zero_iff one_pos (levelOneCoeAddHom_periodic F)
+    (levelOneCoeAddHom_holo F) (levelOneCoeAddHom_bdd F)).mp ?_
+  rw [qExpansion_levelOneCoeAddHom, hF]
 
 end ModularForm
