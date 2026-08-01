@@ -14,97 +14,13 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.RingTheory.MvPowerSeries.NoZeroDivisors
 
 /-!
-This file backports mathlib4 PR #38813 in one place.  The following declarations are the
-small prerequisite lemmas from that PR which are not available in the pinned mathlib revision.
+This file backports mathlib4 PR #38813 in one place.  The following declaration is the only
+prerequisite lemma from that PR which is not available in the pinned mathlib revision.
 -/
 
 @[expose] public noncomputable section
 
 open UpperHalfPlane ModularForm ModularFormClass MatrixGroups EisensteinSeries DirectSum
-
-namespace MvPolynomial
-
-variable {R : Type*} [CommSemiring R]
-
-/-- A monomial in two variables equals `C a * X 0 ^ d 0 * X 1 ^ d 1`. -/
-theorem monomial_fin_two (d : Fin 2 →₀ ℕ) (a : R) :
-    monomial d a = C a * X 0 ^ d 0 * X 1 ^ d 1 := by
-  rw [monomial_eq, mul_assoc, d.prod_fintype _ fun _ ↦ pow_zero _, Fin.prod_univ_two]
-
-end MvPolynomial
-
-namespace MvPolynomial
-
-variable {R σ : Type*} [CommRing R]
-variable (p : MvPolynomial σ R)
-
-open Classical in
-/-- Subtracting `monomial d c - monomial d' c` from `p`, where `c = coeff d p` and `d ≠ d'`,
-removes `d` from the support and leaves the support inside `p.support.erase d ∪ {d'}`. -/
-theorem support_sub_monomial_sub_monomial [DecidableEq σ] (d d' : σ →₀ ℕ)
-    (c : R) (hdd' : d ≠ d') (hc : coeff d p = c) :
-    d ∉ (p - (monomial d c - monomial d' c)).support ∧
-      (p - (monomial d c - monomial d' c)).support ⊆ p.support.erase d ∪ {d'} := by
-  have hd_not : d ∉ (p - (monomial d c - monomial d' c)).support := by
-    rw [notMem_support_iff, coeff_sub, coeff_sub, coeff_monomial, coeff_monomial,
-      if_pos rfl, if_neg hdd'.symm, sub_zero, hc, sub_self]
-  refine ⟨hd_not, fun x hx ↦ ?_⟩
-  rcases Finset.mem_union.mp (support_sub σ p _ hx) with hp | hdelta
-  · by_cases hxd : x = d
-    · exact absurd (hxd ▸ hx) hd_not
-    exact Finset.mem_union_left _ (Finset.mem_erase.mpr ⟨hxd, hp⟩)
-  rcases Finset.mem_union.mp (support_sub σ _ _ hdelta) with h1 | h2
-  · rw [support_monomial] at h1
-    split_ifs at h1
-    · exact absurd h1 (Finset.notMem_empty _)
-    exact absurd ((Finset.mem_singleton.mp h1) ▸ hx) hd_not
-  rw [support_monomial] at h2
-  split_ifs at h2
-  · exact absurd h2 (Finset.notMem_empty _)
-  exact Finset.mem_union_right _ (by rwa [Finset.mem_singleton] at h2 ⊢)
-
-end MvPolynomial
-
-namespace Finset
-
-/-- In a canonically-ordered monoid, if `S'` is contained in `(S.erase d) ∪ {d'}` and
-`f d' < f d` for some `d ∈ S`, then the product of `f` over `S'` is strictly less than over `S`. -/
-@[to_additive /-- In a canonically-ordered additive monoid, if `S'` is contained in
-`(S.erase d) ∪ {d'}` and `f d' < f d` for some `d ∈ S`, then the sum of `f` over `S'` is
-strictly less than over `S`. -/]
-lemma prod_lt_prod_of_subset_erase_union_singleton {ι M : Type*} [DecidableEq ι] [CommMonoid M]
-    [PartialOrder M] [CanonicallyOrderedMul M] [MulLeftStrictMono M] {S S' : Finset ι} {f : ι → M}
-    {d d' : ι} (hd_mem : d ∈ S) (hd_not : d ∉ S') (hS' : S' ⊆ S.erase d ∪ {d'}) (hlt : f d' < f d) :
-    ∏ x ∈ S', f x < ∏ x ∈ S, f x := by
-  by_cases hd'S : d' ∈ S
-  · calc ∏ x ∈ S', f x
-        ≤ ∏ x ∈ S.erase d, f x := Finset.prod_le_prod_of_subset' (fun x hx ↦
-          Finset.mem_erase.mpr ⟨fun h ↦ hd_not (h ▸ hx),
-            match Finset.mem_union.mp (hS' hx) with
-            | .inl h => Finset.mem_of_mem_erase h
-            | .inr h => Finset.mem_singleton.mp h ▸ hd'S⟩)
-      _ < (∏ x ∈ S.erase d, f x) * f d :=
-          lt_mul_of_one_lt_right' _ (one_le.trans_lt hlt)
-      _ = ∏ x ∈ S, f x := Finset.prod_erase_mul S f hd_mem
-  · calc ∏ x ∈ S', f x
-        ≤ ∏ x ∈ S.erase d ∪ {d'}, f x := Finset.prod_le_prod_of_subset' hS'
-      _ = (∏ x ∈ S.erase d, f x) * f d' := by
-          rw [Finset.prod_union (Finset.disjoint_singleton_right.mpr
-            (fun h ↦ hd'S (Finset.mem_of_mem_erase h))), Finset.prod_singleton]
-      _ < (∏ x ∈ S.erase d, f x) * f d := mul_lt_mul_right hlt _
-      _ = ∏ x ∈ S, f x := Finset.prod_erase_mul S f hd_mem
-
-end Finset
-
-namespace Finsupp
-
-variable {σ M R : Type*} [Semiring R] (w : σ → M)
-variable [AddCommMonoid M] [Module R M]
-
-theorem weight_eq_sum [Fintype σ] (f : σ →₀ R) : weight w f = ∑ i, f i • w i := by
-  rw [weight_apply, f.sum_fintype (fun i c ↦ c • w i) fun _ ↦ zero_smul _ _]
-
-end Finsupp
 
 namespace ModularForm
 
@@ -117,81 +33,6 @@ theorem cast_apply {Γ : Subgroup (GL (Fin 2) ℝ)} {k₁ k₂ : ℤ}
   rfl
 
 end ModularForm
-
-namespace ModularForm
-
-variable {k : ℤ}
-
-/-- Subtracting `(qExpansion 1 f).coeff 0 • g` from `f` (where `g` has constant qExpansion 1)
-gives a cusp form. -/
-lemma sub_smul_isCuspForm (f g : ModularForm 𝒮ℒ k)
-    (hg : (qExpansion 1 g).coeff 0 = 1) :
-    ModularForm.IsCuspForm (f - (qExpansion 1 f).coeff 0 • g) := by
-  rw [isCuspForm_iff_coeffZero_eq_zero, ModularForm.coe_sub,
-    ModularForm.qExpansion_sub one_pos one_mem_strictPeriods_SL, IsGLPos.coe_smul,
-    ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL,
-    map_sub, PowerSeries.coeff_smul]
-  simp [hg]
-
-end ModularForm
-
-namespace ModularForm
-
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ}
-
-/-- The product of two non-zero modular forms is non-zero. -/
-protected lemma mul_ne_zero [Γ.HasDetPlusMinusOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    {a b : ℤ} {f : ModularForm Γ a} {g : ModularForm Γ b} (hf : f ≠ 0) (hg : g ≠ 0) :
-    f.mul g ≠ 0 := by
-  simp only [ne_eq, ← ModularForm.qExpansion_eq_zero_iff hh hΓ,
-    ModularForm.qExpansion_mul hh hΓ] at hf hg ⊢
-  exact mul_ne_zero hf hg
-
-end ModularForm
-
-namespace MvPolynomial
-
-variable {σ : Type*}
-open Finsupp
-
-/-- A polynomial all of whose support degrees equal a fixed `d₀` is the single monomial
-`monomial d₀ (coeff d₀ φ)`. -/
-theorem eq_monomial_of_support_subset_singleton {R : Type*} [CommSemiring R] {φ : MvPolynomial σ R}
-    {d₀ : σ →₀ ℕ} (h : ∀ d ∈ φ.support, d = d₀) :
-    φ = monomial d₀ (coeff d₀ φ) := by
-  apply MvPolynomial.ext
-  intro d
-  change φ.coeff d = (Finsupp.single d₀ (φ.coeff d₀)) d
-  exact DFunLike.congr_fun
-    (Finsupp.support_subset_singleton.mp fun e he ↦ Finset.mem_singleton.mpr (h e he)) d
-
-namespace IsWeightedHomogeneous
-
-variable {R M : Type*} [CommSemiring R] [AddCommMonoid M]
-variable {φ ψ : MvPolynomial σ R} {m n : M}
-
-/-- The difference of two weighted homogeneous polynomials of degree `n` is weighted homogeneous
-  of weighted degree `n`. -/
-theorem sub {R : Type*} [CommRing R] {w : σ → M} {φ ψ : MvPolynomial σ R}
-    (hφ : IsWeightedHomogeneous w φ n) (hψ : IsWeightedHomogeneous w ψ n) :
-    IsWeightedHomogeneous w (φ - ψ) n :=
-  (weightedHomogeneousSubmodule R w n).sub_mem hφ hψ
-
-/-- A weighted homogeneous polynomial of degree `n` is zero if no monomial has weight `n`. -/
-theorem eq_zero_of_no_monomials {w : σ → M} (hφ : IsWeightedHomogeneous w φ n)
-    (hno : ∀ d : σ →₀ ℕ, weight w d ≠ n) : φ = 0 :=
-  support_eq_empty.mp <| Finset.eq_empty_of_forall_notMem
-    fun _ hd ↦ hno _ (hφ (mem_support_iff.mp hd))
-
-/-- A weighted homogeneous polynomial of degree `n` whose support degrees are all equal to a
-fixed `d₀` is a single monomial. -/
-theorem eq_monomial_of_unique_weight {w : σ → M} (hφ : IsWeightedHomogeneous w φ n) (d₀ : σ →₀ ℕ)
-    (huniq : ∀ d, weight w d = n → d = d₀) : φ = monomial d₀ (coeff d₀ φ) :=
-  eq_monomial_of_support_subset_singleton fun d hd ↦ huniq d (hφ (mem_support_iff.mp hd))
-
-end IsWeightedHomogeneous
-
-end MvPolynomial
 
 end
 
@@ -390,14 +231,14 @@ private lemma surj_at_small_weight {n : ℕ} (hn12 : n < 12) (hk_even : Even (n 
       (E_ne_zero (k := 6) (by norm_num) ⟨3, rfl⟩)
       (MvPolynomial.X 1) evalE₄E₆_X1 f
   · refine surj_of_rank_one (rank_one_of_lt_twelve (by norm_num) ⟨4, rfl⟩ (by norm_num))
-      (ModularForm.mul_ne_zero one_pos one_mem_strictPeriods_SL (f := E₄) (g := E₄)
+      (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₄)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨2, rfl⟩))
       (MvPolynomial.X 0 ^ 2) ?_ f
     rw [map_pow, evalE₄E₆_X0, pow_two, DirectSum.of_mul_of]
     exact DirectSum.of_eq_of_gradedMonoid_eq
       (ModularForm.gradedMonoid_eq_of_cast (by norm_num : (4 : ℤ) + 4 = 8) rfl)
   · refine surj_of_rank_one (rank_one_of_lt_twelve (by norm_num) ⟨5, rfl⟩ (by norm_num))
-      (ModularForm.mul_ne_zero one_pos one_mem_strictPeriods_SL (f := E₄) (g := E₆)
+      (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₆)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨3, rfl⟩))
       (MvPolynomial.X 0 * MvPolynomial.X 1) ?_ f
     rw [map_mul, evalE₄E₆_X0, evalE₄E₆_X1, DirectSum.of_mul_of]
@@ -550,7 +391,7 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
     (huniq : ∀ d : Fin 2 →₀ ℕ, Finsupp.weight (![4, 6] : Fin 2 → ℕ) d = n → d = d₀)
     (hmf_ne : (DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ d₀ 0 *
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ) ≠ 0) : p = 0 := by
-  have hpc := hp.eq_monomial_of_unique_weight d₀ huniq
+  have hpc := hp.eq_monomial_of_unique_weight huniq
   rw [hpc] at heval ⊢
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
@@ -585,7 +426,7 @@ private lemma per_weight_injective_zero
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p 0)
     (heval : (evalE₄E₆ p) (0 : ℤ) = 0) : p = 0 := by
   have hpc : p = MvPolynomial.monomial (0 : Fin 2 →₀ ℕ) (MvPolynomial.coeff 0 p) :=
-    hp.eq_monomial_of_unique_weight 0 (fun d hd ↦ by
+    hp.eq_monomial_of_unique_weight (fun d hd ↦ by
       rw [weight_eq_4a_6b] at hd
       ext i
       fin_cases i <;> simp <;> lia)
@@ -643,9 +484,9 @@ private lemma support_degreeSum_lt_of_sub_discriminantPoly_piece (p : MvPolynomi
     simp only [Fin.isValue, d', Finsupp.add_apply, Finsupp.single_eq_same,
       ne_eq, zero_ne_one, not_false_eq_true, Finsupp.single_eq_of_ne, add_zero] at h0
     lia
-  obtain ⟨hd_not, hsupp⟩ := (discriminantPoly_piece_eq_monomial_sub d hd_ge _ : _ = _) ▸
-    MvPolynomial.support_sub_monomial_sub_monomial p d d' _ hdd' rfl
-  refine Finset.sum_lt_sum_of_subset_erase_union_singleton hd_mem hd_not hsupp ?_
+  have hsupp := (discriminantPoly_piece_eq_monomial_sub d hd_ge _ : _ = _) ▸
+    MvPolynomial.support_sub_monomial_sub_monomial_subset p d d' _ hdd' rfl
+  refine Finset.sum_lt_sum_of_subset_erase_union_singleton hd_mem hsupp ?_
   simp [d', Finsupp.add_apply]
   lia
 
