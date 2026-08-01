@@ -118,7 +118,7 @@ theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) 
   funext i
   fin_cases i <;> simp
 
-theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := fun P Q hPQ ↦ by
+public theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat := fun P Q hPQ ↦ by
   refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
   simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
 

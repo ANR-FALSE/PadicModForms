@@ -101,4 +101,8 @@ theorem pLocalIntModularFormsToRat_evalE₄E₆Int (P : MvPolynomial (Fin 2) (pL
   funext i
   fin_cases i <;> simp [pLocalIntModularFormToRat, E₄_int_map, E₆_int_map, rationalQExpansion_apply]
 
+theorem evalE₄E₆Int_injective : Function.Injective (evalE₄E₆Int (p := p)) := fun P Q hPQ ↦ by
+  refine map_injective (algebraMap _ ℚ) (fun _ _ ↦ Subtype.ext) (evalE₄E₆Rat_injective ?_)
+  simp [← pLocalIntModularFormsToRat_evalE₄E₆Int, hPQ]
+
 end ModularForm
