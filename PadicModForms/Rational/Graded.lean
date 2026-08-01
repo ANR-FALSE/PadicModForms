@@ -107,7 +107,7 @@ end GradedMonoid
 
 /-- Evaluation in the graded ring of rational modular forms, sending `X₀` to `E₄` and `X₁`
 to `E₆`. -/
-def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
+@[expose] public def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
   aeval ![of _ _ E₄Rat, of _ _ E₆Rat]
 
 /-- The scalar-extension square for evaluation at `E₄` and `E₆` commutes. -/
