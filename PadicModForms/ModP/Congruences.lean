@@ -6,7 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Basic
+public import PadicModForms.ModP.Eisenstein
 
 /-!
 # Congruences for Eisenstein series
