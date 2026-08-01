@@ -21,3 +21,4 @@ import PadicModForms.Rational.Basic
 import PadicModForms.Rational.E2
 import PadicModForms.Rational.Eisenstein
 import PadicModForms.Rational.Graded
+import PadicModForms.pLocalInt.Basic
