@@ -138,6 +138,10 @@ theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rationalQEx
 theorem E₄_int_mem_pLocalIntModularForms :  E₄_int ∈ pLocalIntModularForms p 4 :=
   ⟨E₄Rat, E₄_int_map⟩
 
+/-- `E₄_int ^ 3` is a `p`-integral modular form of weight `12`. -/
+theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := by
+  simpa using SetLike.pow_mem_graded 3 (E₄_int_mem_pLocalIntModularForms (p := p))
+
 /-- The coefficients of `E₆Rat` are integral at every prime. -/
 theorem coeff_E₆Rat_mem_pLocalInt (n : ℕ) : coeff n (E₆Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
   rw [coeff_E₆Rat]
@@ -179,5 +183,9 @@ theorem E₆_int_map :
 /-- `E₆_int` is a `p`-integral modular form of weight `6`. -/
 theorem E₆_int_mem_pLocalIntModularForms : E₆_int ∈ pLocalIntModularForms p 6 :=
   ⟨E₆Rat, E₆_int_map⟩
+
+/-- `E₆_int ^ 2` is a `p`-integral modular form of weight `12`. -/
+theorem E₆_int_pow_two_mem : E₆_int ^ 2 ∈ pLocalIntModularForms p 12 := by
+  simpa using SetLike.pow_mem_graded 2 (E₆_int_mem_pLocalIntModularForms (p := p))
 
 end EisensteinSeries
