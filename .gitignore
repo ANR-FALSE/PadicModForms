@@ -37,3 +37,6 @@
 *.synctex.gz(busy)
 *.pdfsync
 serre.pdf
+
+## Notes
+/notes/
