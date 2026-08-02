@@ -9,6 +9,7 @@ module
 public import Mathlib.Algebra.DirectSum.Internal
 public import Mathlib.Algebra.Algebra.Hom.Rat
 public import Mathlib.RingTheory.MvPolynomial.Tower
+public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.MvPolynomial
@@ -122,13 +123,16 @@ public theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat :=
   refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
   simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
 
-abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
+/-- The weights `(4, 6)` of `E₄` and `E₆`, used to grade `R[X₀, X₁]` by modular weight. -/
+public abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
 variable (k : ℕ)
 
 abbrev E₄E₆WeightedMonomials := {d : Fin 2 →₀ ℕ // Finsupp.weight E₄E₆Weights d = k}
 
-abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] :=
+/-- The polynomials in `X₀, X₁` that are weighted homogeneous of weight `k` for the weights
+`E₄E₆Weights`, that is, the isobaric polynomials of modular weight `k`. -/
+public abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] :=
   weightedHomogeneousSubmodule R E₄E₆Weights k
 
 noncomputable def E₄E₆WeightedMonomialBasis (R : Type*) [Field R] :
