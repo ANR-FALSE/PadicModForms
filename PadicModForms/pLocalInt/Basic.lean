@@ -88,6 +88,24 @@ public instance (p : ℕ) [Fact p.Prime] : SetLike.GradedMonoid (pLocalIntModula
   one_mem := PowerSeries.one_isPLocalIntModularForm
   mul_mem _ _ := PowerSeries.IsPLocalIntModularForm.mul
 
+namespace ModularForm
+
+open DirectSum
+
+/-- Forgetting the weight gives the `q`-expansion homomorphism from the graded ring of
+`p`-integral modular forms to power series over `pLocalInt p`. -/
+public noncomputable def pLocalIntQExpansionAlgHom :
+    (⨁ i, pLocalIntModularForms p i) →ₐ[pLocalInt p] (pLocalInt p)⟦X⟧ :=
+  coeAlgHom (pLocalIntModularForms p)
+
+/-- Forgetting the weight of a form concentrated in weight `k` gives back its power series. -/
+@[simp]
+public theorem pLocalIntQExpansionAlgHom_of {k : ℤ} (f : pLocalIntModularForms p k) :
+    pLocalIntQExpansionAlgHom (of _ k f) = f :=
+  coeAlgHom_of ..
+
+end ModularForm
+
 namespace pLocalIntModularForms
 
 open DirectSum
