@@ -60,8 +60,7 @@ theorem coeff_E_int_zero (hpk : p - 1 ∣ k) : coeff 0 (E_int hk hk2 hpk) = 1 :=
 theorem coeff_E_int_of_ne_zero (hpk : p - 1 ∣ k) {m : ℕ} (hm : m ≠ 0) :
     coeff m (E_int hk hk2 hpk) =
       -(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ * σ (k - 1) m := Subtype.ext <| by
-  simp [coeff_E_int, hm, div_eq_mul_inv, show ((2 : pLocalInt p) : ℚ) = 2 from
-    map_ofNat (pLocalInt p).subtype 2]
+  simp [coeff_E_int, hm, div_eq_mul_inv]
 
 /-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
 `ERat`. -/
@@ -130,7 +129,6 @@ theorem coeff_zero_E₄_int : coeff 0 (E₄_int (p := p)) = 1 :=
 theorem coeff_one_E₄_int : coeff 1 (E₄_int (p := p)) = 240 := Subtype.ext <| by
   rw [coeff_E₄_int]
   norm_num
-  exact (map_ofNat (pLocalInt p).subtype 240).symm
 
 /-- Extending scalars to `ℚ` sends `E₄_int` to the rational `q`-expansion of `E₄Rat`. -/
 theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rationalQExpansion E₄Rat := by
@@ -172,7 +170,6 @@ theorem coeff_zero_E₆_int : coeff 0 (E₆_int (p := p)) = 1 :=
 theorem coeff_one_E₆_int : coeff 1 (E₆_int (p := p)) = -504 := Subtype.ext <| by
   rw [coeff_E₆_int]
   norm_num
-  exact (map_ofNat (pLocalInt p).subtype 504).symm
 
 /-- Extending scalars to `ℚ` sends `E₆_int` to the rational `q`-expansion of `E₆Rat`. -/
 theorem E₆_int_map :
