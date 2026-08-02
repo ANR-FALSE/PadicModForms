@@ -103,6 +103,19 @@ theorem evalE₄E₆Int_injective : Function.Injective (evalE₄E₆Int (p := p)
   refine map_injective (algebraMap _ ℚ) (fun _ _ ↦ Subtype.ext) (evalE₄E₆Rat_injective ?_)
   simp [← pLocalIntModularFormsToRat_evalE₄E₆Int, hPQ]
 
+/-- Evaluation at `E₄_int` and `E₆_int` directly in power series, forgetting the weight. -/
+def evalE₄E₆IntSeries : MvPolynomial (Fin 2) (pLocalInt p) →ₐ[pLocalInt p] (pLocalInt p)⟦X⟧ :=
+  aeval ![E₄_int, E₆_int]
+
+/-- Forgetting the weight after evaluating at `E₄_int` and `E₆_int` is evaluation in power
+series. -/
+theorem pLocalIntQExpansionAlgHom_evalE₄E₆Int (P : MvPolynomial (Fin 2) (pLocalInt p)) :
+    pLocalIntQExpansionAlgHom (evalE₄E₆Int P) = evalE₄E₆IntSeries P := by
+  rw [evalE₄E₆Int, comp_aeval_apply, evalE₄E₆IntSeries]
+  congr 2
+  funext i
+  fin_cases i <;> simp
+
 section
 
 variable {k : ℕ}
