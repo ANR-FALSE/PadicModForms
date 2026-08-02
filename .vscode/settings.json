@@ -1,6 +1,7 @@
 {
 
     "files.exclude": {
+        "**/AGENTS.md": true,
         "**/*.vo": true,
         "**/*.vok": true,
         "**/*.vos": true,
