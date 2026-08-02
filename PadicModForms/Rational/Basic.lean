@@ -84,12 +84,15 @@ end PowerSeries
 
 namespace ModularForm
 
+/-! ### Comparison with complex modular forms -/
+
 public instance {n : ℤ} : Module ℚ (ModularForm 𝒮ℒ n) := restrictScalars ℚ ℂ _
 
 public instance : Algebra ℚ (⨁ k, ModularForm 𝒮ℒ k) := Algebra.restrictScalars ℚ ℂ _
 
 variable {n : ℤ} (f g : rationalModularForms n)
 
+/-- A choice of complex modular form with the given rational `q`-expansion. -/
 def rationalModularFormToComplexAux : ModularForm 𝒮ℒ n := f.property.choose
 
 @[simp]
@@ -102,6 +105,7 @@ theorem rationalModularFormToComplexAux_add : rationalModularFormToComplexAux (f
   simp [← qExpansion_inj one_pos one_mem_strictPeriods_SL, ModularForm.qExpansion_add one_pos
     one_mem_strictPeriods_SL]
 
+/-- Scalar extension to complex modular forms, as a `ℚ`-linear map. -/
 def rationalModularFormToComplexLinear : rationalModularForms n →ₗ[ℚ] ModularForm 𝒮ℒ n :=
   (AddMonoidHom.mk' rationalModularFormToComplexAux
     (rationalModularFormToComplexAux_add (n := n))).toRatLinearMap
@@ -148,6 +152,8 @@ public theorem linearIndepOn_rationalModularFormToComplex (s : Set (rationalModu
     LinearIndepOn ℂ (rationalModularFormToComplex) s :=
   linearIndependent_rationalModularFormToComplex _ hs
 
+/-! ### Descent of bases and finite dimensionality -/
+
 /-- Descent of a basis: a `ℂ`-basis of the complex modular forms of weight `n` whose members are
 scalar extensions of rational modular forms yields a `ℚ`-basis of `rationalModularForms n`. -/
 public def basisOfComplexBasis {ι : Type*} (b : ι → rationalModularForms n)
@@ -180,6 +186,8 @@ public theorem rationalModularForms_finrank_le (k : ℤ) :
     finrank ℚ (rationalModularForms k) ≤ finrank ℂ (ModularForm 𝒮ℒ k) := by
   rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
   exact rationalModularForms_rank_le k
+
+/-! ### The graded structure -/
 
 /-- The submodules of rational modular forms form a graded monoid under multiplication. -/
 public instance : GradedMonoid rationalModularForms where

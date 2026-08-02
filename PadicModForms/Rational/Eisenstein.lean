@@ -24,6 +24,8 @@ variable (n k : ℕ) (hk : 3 ≤ k) (hk2 : Even k)
 
 namespace EisensteinSeries
 
+/-! ### The `q`-expansions as power series -/
+
 /-- The auxiliary rational `q`-series underlying the Eisenstein series of weight `k`. -/
 def ERatAux := mk fun n ↦ if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n
 
@@ -100,6 +102,8 @@ theorem qExpansion_coeff : coeff n (qExpansion 1 (ModularForm.E hk)) =
 
 end EisensteinSeries
 
+/-! ### The Eisenstein series as rational modular forms -/
+
 namespace ModularForm
 
 variable {k}
@@ -132,8 +136,12 @@ public theorem ERat_map_complex :
     (ERat hk hk2 : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 (E hk) := by
   simpa using (qExpansion_E_eq_ERatAux_map hk hk2).symm
 
+/-! ### `E₄` and `E₆` -/
+
+/-- The normalized Eisenstein series `E₄` as a rational modular form. -/
 public abbrev E₄Rat : rationalModularForms 4 := ERat (by norm_num) ⟨2, rfl⟩
 
+/-- The normalized Eisenstein series `E₆` as a rational modular form. -/
 public abbrev E₆Rat : rationalModularForms 6 := ERat (by norm_num) ⟨3, rfl⟩
 
 @[simp]

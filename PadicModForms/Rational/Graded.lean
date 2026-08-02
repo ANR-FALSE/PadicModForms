@@ -101,6 +101,8 @@ theorem rationalModularFormsToComplex_apply (F : ⨁ i, rationalModularForms i) 
 
 end GradedMonoid
 
+/-! ### Evaluation at `E₄` and `E₆` -/
+
 /-- Evaluation in the graded ring of rational modular forms, sending `X₀` to `E₄` and `X₁`
 to `E₆`. -/
 @[expose] public def evalE₄E₆Rat : MvPolynomial (Fin 2) ℚ →ₐ[ℚ] ⨁ i, rationalModularForms i :=
@@ -118,11 +120,14 @@ public theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat :=
   refine map_injective (algebraMap ℚ ℂ) (algebraMap ℚ ℂ).injective (evalE₄E₆_injective ?_)
   simp [← rationalModularFormsToComplex_evalE₄E₆Rat, hPQ]
 
+/-! ### The weight grading on `R[X₀, X₁]` -/
+
 /-- The weights `(4, 6)` of `E₄` and `E₆`, used to grade `R[X₀, X₁]` by modular weight. -/
 public abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
 variable (k : ℕ)
 
+/-- The monomials in `X₀, X₁` of weight `k` for the weights `E₄E₆Weights`. -/
 abbrev E₄E₆WeightedMonomials := {d : Fin 2 →₀ ℕ // Finsupp.weight E₄E₆Weights d = k}
 
 /-- The polynomials in `X₀, X₁` that are weighted homogeneous of weight `k` for the weights
@@ -130,11 +135,13 @@ abbrev E₄E₆WeightedMonomials := {d : Fin 2 →₀ ℕ // Finsupp.weight E₄
 public abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] :=
   weightedHomogeneousSubmodule R E₄E₆Weights k
 
+/-- The isobaric polynomials of weight `k` are free on the monomials of weight `k`. -/
 noncomputable def E₄E₆WeightedMonomialBasis (R : Type*) [Field R] :
     Basis (E₄E₆WeightedMonomials k) R (E₄E₆WeightedHomogeneous k R) :=
   (basisRestrictSupport R {d | Finsupp.weight E₄E₆Weights d = k}).map
     (.ofEq _ _ (weightedHomogeneousSubmodule_eq_finsupp_supported R _ k).symm)
 
+/-- Evaluation at `E₄` and `E₆`, restricted to isobaric polynomials of weight `k`. -/
 noncomputable def evalE₄E₆AtWeight : E₄E₆WeightedHomogeneous k ℂ →ₗ[ℂ] ModularForm 𝒮ℒ k :=
   (component ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k).comp
     (evalE₄E₆.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℂ).subtype)
@@ -154,6 +161,8 @@ theorem evalE₄E₆AtWeight_surjective : Function.Surjective (evalE₄E₆AtWei
   refine ⟨⟨_, weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
   simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congrArg (fun F ↦ F k) hp
 
+/-- The complex modular forms of weight `k` are exactly the isobaric polynomials of weight `k`
+in `E₄` and `E₆`. -/
 noncomputable def evalE₄E₆AtWeightEquiv : E₄E₆WeightedHomogeneous k ℂ ≃ₗ[ℂ] ModularForm 𝒮ℒ k :=
   .ofBijective _ ⟨evalE₄E₆AtWeight_injective k, evalE₄E₆AtWeight_surjective k⟩
 
@@ -162,6 +171,7 @@ theorem isWeightedHomogeneous_map_rat {k} {p : MvPolynomial (Fin 2) ℚ}
     IsWeightedHomogeneous E₄E₆Weights (p.map (algebraMap ℚ ℂ)) k :=
   fun d hd ↦ hp (fun hzero ↦ hd <| by simp [coeff_map, hzero])
 
+/-- Evaluation at `E₄` and `E₆` over `ℚ`, restricted to isobaric polynomials of weight `k`. -/
 noncomputable def evalE₄E₆RatAtWeight : E₄E₆WeightedHomogeneous k ℚ →ₗ[ℚ] rationalModularForms k :=
   (DirectSum.component ℚ ℤ (fun k ↦ rationalModularForms k) k).comp
     (evalE₄E₆Rat.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℚ).subtype)
@@ -169,6 +179,8 @@ noncomputable def evalE₄E₆RatAtWeight : E₄E₆WeightedHomogeneous k ℚ �
 @[simp]
 theorem evalE₄E₆RatAtWeight_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
     evalE₄E₆RatAtWeight k p = (evalE₄E₆Rat p) k := rfl
+
+/-! ### Monomial bases -/
 
 /-- The weighted-homogeneous monomial basis consists of the monomials themselves. -/
 theorem coe_E₄E₆WeightedMonomialBasis (R : Type*) [Field R] (d : E₄E₆WeightedMonomials k) :
@@ -231,6 +243,8 @@ theorem evalE₄E₆Rat_eq_of_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
       simpa using congrArg (fun F ↦ F j) (rationalModularFormsToComplex_evalE₄E₆Rat p)
     rw [hsquare, map_zero, evalE₄E₆_eq_of_apply k _
       (isWeightedHomogeneous_map_rat p.property), DirectSum.of_eq_of_ne _ _ _ hj]
+
+/-! ### The structure theorem -/
 
 theorem evalE₄E₆Rat_surjective : Function.Surjective evalE₄E₆Rat := fun F ↦ by
   induction F using DirectSum.induction_on with

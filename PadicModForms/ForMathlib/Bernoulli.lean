@@ -23,6 +23,8 @@ open Finset Ideal
 
 variable {k : ℕ}
 
+/-! ### Nonvanishing and denominators -/
+
 theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k ≠ 0 :=
     fun h ↦ by
   rcases hk2 with ⟨m, rfl⟩
@@ -103,6 +105,8 @@ theorem dvd_den_bernoulli {p : ℕ} (hk : 0 < k) (hk2 : Even k) (hp : p.Prime)
     exact Nat.Coprime.of_dvd_left (Rat.sub_den_dvd _ _) (hzB_cop.mul_left hrest)
   exact (hp.coprime_iff_not_dvd.mp hpterm_cop.symm) (by simp [hp.ne_zero])
 
+/-! ### Integrality of `Bₖ⁻¹` at `p` -/
+
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral. -/
 theorem inv_bernoulli_mem_pLocalInt {p : ℕ} [hp : Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p :=
@@ -151,6 +155,8 @@ theorem toZMod_inv_bernoulli_eq_zero {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk
   change IsLocalization.lift _ (IsLocalization.mk' (pLocalInt p) q.num qden) = 0
   rw [IsLocalization.lift_mk'_spec]
   simpa using (ZMod.intCast_zmod_eq_zero_iff_dvd q.num p).2 hpnum
+
+/-! ### Small values -/
 
 -- should go to Mathlib.NumberTheory.Bernoulli
 @[simp]

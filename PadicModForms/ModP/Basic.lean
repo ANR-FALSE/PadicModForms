@@ -89,6 +89,8 @@ theorem mem_modPModularForms : f ∈ modPModularForms p k ↔ f.isModPModularFor
 
 end PowerSeries
 
+/-! ### The graded structure -/
+
 /-- The submodules of mod-`p` modular forms form a graded monoid under multiplication. -/
 public instance (p : ℕ) [Fact p.Prime] : SetLike.GradedMonoid (modPModularForms p) where
   one_mem := PowerSeries.one_isModPModularForm

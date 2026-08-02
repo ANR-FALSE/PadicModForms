@@ -34,6 +34,8 @@ namespace WithUniformConvergence
 
 variable {R : Type*} [Ring R]
 
+/-! ### The uniform structure -/
+
 -- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 variable (R) in
 /-- The coefficient map `f ↦ (n ↦ coeff n f)` as an additive monoid homomorphism
@@ -103,6 +105,8 @@ variable [IsUniformAddGroup R]
 /-- `R⟦X⟧` is a uniform additive group for the topology of uniform convergence of coefficients. -/
 instance : IsUniformAddGroup R⟦X⟧ :=
   (isUniformInducing_iff_uniformSpace.2 rfl).isUniformAddGroup (coeffAddMonoidHom _)
+
+/-! ### The ring structure -/
 
 -- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- `R⟦X⟧` is a topological ring for the topology of uniform convergence of coefficients. -/

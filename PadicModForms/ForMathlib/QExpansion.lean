@@ -44,6 +44,8 @@ theorem qExpansion_inj (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
     {f g : ModularForm Γ k} : qExpansion h f = qExpansion h g ↔ f = g :=
   (qExpansion_injective hh hΓ).eq_iff
 
+/-! ### The `q`-expansion on the graded ring -/
+
 /-- The `q`-expansion map on the graded ring of modular forms, as a linear map. -/
 def qExpansionLinearMap [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
     (⨁ k, ModularForm Γ k) →ₗ[ℂ] ℂ⟦X⟧ :=
@@ -80,6 +82,8 @@ It remains to see that modular forms of distinct weights are linearly independen
 polynomial, so all its coefficients `F k z` vanish.
 -/
 
+/-- Sending `F : ⨁ k, ModularForm 𝒮ℒ k` to the function `∑ k, F k : ℍ → ℂ`, forgetting the
+weights. -/
 private def levelOneCoeAddHom : (⨁ k, ModularForm 𝒮ℒ k) →+ (ℍ → ℂ) :=
   toAddMonoid fun _ ↦
     { toFun := fun f ↦ f
@@ -130,6 +134,8 @@ private theorem qExpansion_levelOneCoeAddHom (F : ⨁ k, ModularForm 𝒮ℒ k) 
       rw [map_add, map_add, qExpansion_add (levelOneCoeAddHom_analyticAt F)
         (levelOneCoeAddHom_analyticAt G), hF, hG]
 
+/-- The polynomial `∑ k, (F k z) • X ^ k`, recording the values at `z` of the components of
+`F` together with their weights. -/
 private noncomputable def levelOneWeightPolynomial (z : ℍ) : (⨁ k, ModularForm 𝒮ℒ k) →+ ℂ[X] :=
   toAddMonoid fun k ↦ if hk : 0 ≤ k then
     { toFun := fun f ↦ Polynomial.monomial k.toNat (f z)

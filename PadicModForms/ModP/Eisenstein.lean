@@ -10,10 +10,10 @@ public import PadicModForms.ModP.Basic
 public import PadicModForms.pLocalInt.Eisenstein
 
 /-!
-# The weight `p - 1` Eisenstein series used modulo `p`
+# Eisenstein series modulo `p`
 
-This file specializes the integral Eisenstein series to weight `p - 1`. The general integral
-construction is in `PadicModForms.pLocalInt.Eisenstein`.
+This file specializes the integral Eisenstein series to weight `p - 1`, and reduces `E₄` and
+`E₆` modulo `p`. The general integral construction is in `PadicModForms.pLocalInt.Eisenstein`.
 -/
 
 @[expose] public noncomputable section
@@ -23,6 +23,8 @@ open PowerSeries ArithmeticFunction sigma ModularForm
 variable {p : ℕ} [Fact p.Prime]
 
 namespace EisensteinSeries
+
+/-! ### Weight `p - 1` -/
 
 namespace ModP
 
@@ -46,5 +48,21 @@ theorem E_map_eq_rationalQExpansion (hp : 5 ≤ p) :
     E_int_map (p := p) (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
 
 end ModP
+
+/-! ### Reduction of `E₄` and `E₆` modulo `p` -/
+
+/-- The reduction of `E₄_int` modulo `p`. -/
+def E₄ModP : (ZMod p)⟦X⟧ := E₄_int.map pLocalInt.toZMod
+
+/-- The reduction of `E₆_int` modulo `p`. -/
+def E₆ModP : (ZMod p)⟦X⟧ := E₆_int.map pLocalInt.toZMod
+
+/-- `E₄ModP` is a mod-`p` modular form of weight `4`. -/
+theorem E₄ModP_mem_modPModularForms : E₄ModP ∈ modPModularForms p 4 :=
+  ⟨_, _, E₄_int_map, rfl⟩
+
+/-- `E₆ModP` is a mod-`p` modular form of weight `6`. -/
+theorem E₆ModP_mem_modPModularForms : E₆ModP ∈ modPModularForms p 6 :=
+  ⟨_, _, E₆_int_map, rfl⟩
 
 end EisensteinSeries

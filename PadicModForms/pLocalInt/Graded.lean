@@ -27,6 +27,8 @@ namespace ModularForm
 variable {p : ℕ} [Fact p.Prime] {n m : ℤ}
   (f : pLocalIntModularForms p n) (g : pLocalIntModularForms p m)
 
+/-! ### Scalar extension to rational modular forms -/
+
 /-- Scalar extension from a `p`-integral modular form of fixed weight to a rational modular form. -/
 def pLocalIntModularFormToRat :
     pLocalIntModularForms p n →ₗ[pLocalInt p] rationalModularForms n where
@@ -83,6 +85,8 @@ theorem pLocalIntModularFormsToRat_of :
   exact DirectSum.toSemiring_of
     (fun i ↦ (pLocalIntModularFormsToRatComponent (p := p) i).toAddMonoidHom)
     pLocalIntModularFormsToRatComponent_one pLocalIntModularFormsToRatComponent_mul n f
+
+/-! ### Evaluation at `E₄_int` and `E₆_int` -/
 
 /-- Evaluation in the graded ring of `p`-integral modular forms, sending `X₀` to `E₄_int` and
 `X₁` to `E₆_int`. -/

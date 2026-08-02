@@ -25,6 +25,8 @@ variable {p : ℕ} [Fact p.Prime]
 
 namespace EisensteinSeries
 
+/-! ### The series `P`, `Q` and `R` -/
+
 /-- `P = E₂`, regarded as a power series over `ℚ_[p]`. -/
 abbrev P : ℚ_[p]⟦X⟧ := E₂Rat.map (algebraMap ℚ ℚ_[p])
 
@@ -44,6 +46,8 @@ abbrev R : ℚ_[p]⟦X⟧ := (rationalQExpansion E₆Rat).map (algebraMap ℚ �
   by_cases hn : n = 0 <;> simp [hn, coeff_E₆Rat]
 
 variable {k : ℕ} (hk : 3 ≤ k) (hk2 : Even k) (p)
+
+/-! ### `p`-adic modularity -/
 
 include hk hk2 in
 /-- A rational Eisenstein series becomes a p-adic modular form after extending scalars. -/

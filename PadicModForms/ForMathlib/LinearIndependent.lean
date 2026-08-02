@@ -38,6 +38,8 @@ open scoped PowerSeries
 
 variable {A B M N ι : Type*}
 
+/-! ### Linear independence along a semilinear map -/
+
 section Ring
 
 variable [Ring A] [Ring B] {σ : A →+* B}
@@ -53,6 +55,8 @@ theorem LinearIndependent.of_comp_semilinear (f : M →ₛₗ[σ] N) (hσ : Inje
   exact hσ (by simpa using h s _ key i hi)
 
 end Ring
+
+/-! ### Descending a basis along a semilinear map -/
 
 section DivisionRing
 
@@ -100,6 +104,8 @@ theorem Module.Basis.coe_ofCompSemilinear (hc : c = f ∘ b) :
 
 end DivisionRing
 
+/-! ### Coefficients of power series -/
+
 section CoeffPi
 
 variable {R : Type*} [Semiring R]
@@ -112,6 +118,8 @@ theorem PowerSeries.coeffPi_injective : Injective (coeffPi (R := R)) :=
   fun _ _ hpq ↦ ext fun n ↦ congrFun hpq n
 
 end CoeffPi
+
+/-! ### Base change -/
 
 section Pi
 

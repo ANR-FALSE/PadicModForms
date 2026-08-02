@@ -82,6 +82,8 @@ theorem mem_pLocalIntModularForms :
 
 end PowerSeries
 
+/-! ### The graded structure -/
+
 /-- The submodules of `p`-integral rational modular forms form a graded monoid under
 multiplication. -/
 public instance (p : ℕ) [Fact p.Prime] : SetLike.GradedMonoid (pLocalIntModularForms p) where

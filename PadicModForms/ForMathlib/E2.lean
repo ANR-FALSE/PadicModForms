@@ -27,6 +27,8 @@ open scoped Topology ModularForm Real
 
 namespace EisensteinSeries
 
+/-! ### Behaviour at the cusp -/
+
 private lemma summable_sigma_one_mul_exp_neg_pi :
     Summable fun n : ℕ+ ↦ (σ 1 n : ℂ) * (Real.exp (-π) : ℂ) ^ (n : ℕ) := by
   refine Summable.of_norm_bounded ((summable_norm_pow_mul_geometric_of_norm_lt_one 2
@@ -100,6 +102,8 @@ lemma E2_isBoundedAtImInfty : IsBoundedAtImInfty E2 := by
     funext z
     simp
   exact heq ▸ h
+
+/-! ### The `q`-expansion -/
 
 private lemma summable_sigma_one_mul_qParam (z : ℍ) :
     Summable fun n : ℕ ↦ (σ 1 n) * Periodic.qParam 1 z ^ n := by

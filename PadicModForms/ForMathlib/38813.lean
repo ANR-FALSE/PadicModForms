@@ -71,6 +71,8 @@ private theorem of_eq_sub_add_smul {ι : Type*} [DecidableEq ι] {R : Type*} [Se
     DirectSum.of M i f = DirectSum.of M i (f - c • g) + c • DirectSum.of M i g := by
   rw [← DirectSum.of_smul, ← map_add, sub_add_cancel]
 
+/-! ### Evaluation at `E₄` and `E₆` -/
+
 /-- Evaluation homomorphism sending `ℂ[X₀, X₁]` to the graded ring of level 1 modular forms
 via `X₀ ↦ E₄` and `X₁ ↦ E₆`. -/
 noncomputable def evalE₄E₆ :
@@ -156,6 +158,7 @@ private lemma cuspForm_eq_discriminant_mul {n : ℕ} (g : ModularForm 𝒮ℒ �
   rw [ModularForm.coe_mul, Pi.mul_apply, CuspForm.discriminantEquiv_apply]
   exact div_mul_cancel₀ _ (discriminant_ne_zero z)
 
+/-- The polynomial `(X₀³ - X₁²) / 1728`, which evaluates to the modular discriminant. -/
 private noncomputable def discriminantPoly : MvPolynomial (Fin 2) ℂ :=
   (1 / 1728 : ℂ) • (MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2)
 
@@ -264,6 +267,8 @@ private lemma surj_of_weight : ∀ (k : ℤ) (f : ModularForm 𝒮ℒ k),
   push Not at hn12
   exact surj_at_weight_inductive hn12 hk_odd ih f
 
+/-! ### Surjectivity -/
+
 /-- The evaluation homomorphism `evalE₄E₆` is surjective. -/
 theorem evalE₄E₆_surjective : Function.Surjective evalE₄E₆ := by
   classical
@@ -271,6 +276,8 @@ theorem evalE₄E₆_surjective : Function.Surjective evalE₄E₆ := by
   rw [show x = x.sum (fun i m ↦ DirectSum.of _ i m) from (DFinsupp.sum_single (f := x)).symm,
     ← AlgHom.mem_range]
   exact Subalgebra.sum_mem _ fun k _ ↦ surj_of_weight k (x k)
+
+/-! ### Weighted homogeneity -/
 
 private lemma weight_eq_4a_6b (d : Fin 2 →₀ ℕ) :
     Finsupp.weight (![4, 6] : Fin 2 → ℕ) d = d 0 * 4 + d 1 * 6 := by
@@ -653,6 +660,8 @@ private lemma per_weight_injective : ∀ (n : ℕ) (p : MvPolynomial (Fin 2) ℂ
   · exact per_weight_injective_at_small_weight hn12 hk_odd p hp heval
   push Not at hn12
   exact per_weight_injective_inductive_step n ih p hp heval hn12
+
+/-! ### Injectivity -/
 
 /-- The evaluation homomorphism `evalE₄E₆` is injective: `E₄` and `E₆` are algebraically
 independent. -/

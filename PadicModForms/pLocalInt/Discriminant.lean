@@ -82,6 +82,8 @@ theorem coeff_discriminant_int_one (hp : 5 ≤ p) : coeff 1 (discriminant_int hp
   Subtype.ext <| by
     simp [discriminant_int, coeff_one_pow, smul_eq_mul, coe_isUnit_1728_unit_inv hp]; norm_num
 
+/-! ### `Δ` is `X` times a unit -/
+
 /-- The unit factor in the decomposition `discriminant_int hp = discriminantUnitSeries hp * X`. -/
 def discriminantUnitSeries (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
   .mk fun n ↦ coeff (n + 1) (discriminant_int hp)
@@ -107,6 +109,8 @@ theorem coe_discriminantUnit (hp : 5 ≤ p) :
 theorem discriminant_int_eq_unit_mul_X (hp : 5 ≤ p) :
     discriminant_int hp = (discriminantUnit hp : (pLocalInt p)⟦X⟧) * X := by
   simpa [discriminantUnitSeries] using eq_shift_mul_X (constantCoeff_discriminant_int hp)
+
+/-! ### Comparison with the classical discriminant -/
 
 /-- Extending the coefficients of `discriminant_int` to `ℚ` gives the usual rational formula. -/
 theorem discriminant_int_map_rat (hp : 5 ≤ p) :
@@ -153,6 +157,8 @@ theorem evalE₄E₆Int_discriminantPoly_int (hp : 5 ≤ p) : evalE₄E₆Int (d
     ← map_sub, ← of_smul]
   exact congrArg _ (Subtype.ext (by simp [discriminantIntModularForm, discriminant_int]))
 
+/-! ### Division by the discriminant -/
+
 /-- Divide a power series with vanishing constant coefficient by `discriminant_int`. -/
 def divDiscriminant_int (hp : 5 ≤ p) (f : (pLocalInt p)⟦X⟧) : (pLocalInt p)⟦X⟧ :=
   (.mk fun n ↦ coeff (n + 1) f) * (discriminantUnit hp)⁻¹
@@ -176,6 +182,8 @@ theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : ℤ}
   refine mul_left_cancel₀ qExpansion_discriminant_ne_zero ?_
   rw [← qExpansion_eq_qExpansion_discriminant_mul Fℂ hFℂ₀, ← discriminant_int_map_complex hp,
     ← map_mul, ← map_mul, discriminant_int_mul_divDiscriminant_int hp hf₀, hfℂ]
+
+/-! ### `E₄_int` and `E₆_int` generate -/
 
 private theorem pLocalIntModularForm_eq_zero_of_complex_eq_zero {k : ℤ}
     (f : pLocalIntModularForms p k)
@@ -271,6 +279,8 @@ variables over `pLocalInt p` with the graded ring of `p`-integral modular forms.
 def pLocalIntModularFormsEquivMvPolynomial (hp : 5 ≤ p) :
     MvPolynomial (Fin 2) (pLocalInt p) ≃ₐ[pLocalInt p] ⨁ i, pLocalIntModularForms p i :=
   .ofBijective evalE₄E₆Int (evalE₄E₆Int_bijective hp)
+
+/-! ### The structure theorem weight by weight -/
 
 /-- For `p ≥ 5`, every `p`-integral modular form of weight `k` is the evaluation of a polynomial
 that is weighted homogeneous of weight `k`. -/
