@@ -87,3 +87,29 @@ multiplication. -/
 public instance (p : ℕ) [Fact p.Prime] : SetLike.GradedMonoid (pLocalIntModularForms p) where
   one_mem := PowerSeries.one_isPLocalIntModularForm
   mul_mem _ _ := PowerSeries.IsPLocalIntModularForm.mul
+
+namespace pLocalIntModularForms
+
+open DirectSum
+
+variable {i j l : ℤ}
+
+/-- Taking a power in the graded ring of `p`-integral modular forms, with the resulting weight
+computed. -/
+theorem of_pow_eq_of {n : ℕ} (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
+    (hij : n • i = j) (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
+    (of (fun i ↦ pLocalIntModularForms p i) i x) ^ n = of _ j y := by
+  subst hij
+  simpa [ofPow] using congrArg _ (Subtype.ext hxy)
+
+/-- Multiplying in the graded ring of `p`-integral modular forms, with the resulting weight
+computed. -/
+theorem of_mul_of_eq_of (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
+    (z : pLocalIntModularForms p l) (hij : i + j = l)
+    (hxyz : (x : (pLocalInt p)⟦X⟧) * (y : (pLocalInt p)⟦X⟧) = (z : (pLocalInt p)⟦X⟧)) :
+    of (fun i ↦ pLocalIntModularForms p i) i x * of (fun i ↦ pLocalIntModularForms p i) j y =
+      of (fun i ↦ pLocalIntModularForms p i) l z := by
+  subst hij
+  simpa [of_mul_of] using congrArg _ (Subtype.ext hxyz)
+
+end pLocalIntModularForms
