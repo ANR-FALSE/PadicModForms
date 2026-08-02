@@ -19,7 +19,7 @@ canonical integral models of `E₂`, `E₄`, and `E₆`; the latter two are inte
 
 @[expose] public noncomputable section
 
-open PowerSeries ArithmeticFunction sigma ModularForm
+open PowerSeries ArithmeticFunction sigma ModularForm SetLike
 
 variable {p k : ℕ} [Fact p.Prime]
 
@@ -140,7 +140,7 @@ theorem E₄_int_mem_pLocalIntModularForms :  E₄_int ∈ pLocalIntModularForms
 
 /-- `E₄_int ^ 3` is a `p`-integral modular form of weight `12`. -/
 theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := by
-  simpa using SetLike.pow_mem_graded 3 (E₄_int_mem_pLocalIntModularForms (p := p))
+  simpa using pow_mem_graded 3 (E₄_int_mem_pLocalIntModularForms (p := p))
 
 /-- The coefficients of `E₆Rat` are integral at every prime. -/
 theorem coeff_E₆Rat_mem_pLocalInt (n : ℕ) : coeff n (E₆Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
@@ -186,6 +186,12 @@ theorem E₆_int_mem_pLocalIntModularForms : E₆_int ∈ pLocalIntModularForms 
 
 /-- `E₆_int ^ 2` is a `p`-integral modular form of weight `12`. -/
 theorem E₆_int_pow_two_mem : E₆_int ^ 2 ∈ pLocalIntModularForms p 12 := by
-  simpa using SetLike.pow_mem_graded 2 (E₆_int_mem_pLocalIntModularForms (p := p))
+  simpa using pow_mem_graded 2 (E₆_int_mem_pLocalIntModularForms (p := p))
+
+/-- The monomial `E₄_int ^ a * E₆_int ^ b` is a `p`-integral modular form of weight `4a + 6b`. -/
+theorem E₄_int_pow_mul_E₆_int_pow_mem {a b n : ℕ} (hab : 4 * a + 6 * b = n) :
+    E₄_int ^ a * E₆_int ^ b ∈ pLocalIntModularForms p n := by
+  simpa [show a * 4 + (b : ℤ) * 6 = n by grind] using mul_mem_graded (pow_mem_graded a
+    (E₄_int_mem_pLocalIntModularForms (p := p))) (pow_mem_graded b E₆_int_mem_pLocalIntModularForms)
 
 end EisensteinSeries
