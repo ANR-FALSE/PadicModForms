@@ -6,6 +6,7 @@ import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.LinearIndependent
 import PadicModForms.ForMathlib.MvPolynomial
 import PadicModForms.ForMathlib.Padic
+import PadicModForms.ForMathlib.PowerSeries
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
 import PadicModForms.ForMathlib.SpecificLimits
@@ -22,5 +23,6 @@ import PadicModForms.Rational.E2
 import PadicModForms.Rational.Eisenstein
 import PadicModForms.Rational.Graded
 import PadicModForms.pLocalInt.Basic
+import PadicModForms.pLocalInt.Discriminant
 import PadicModForms.pLocalInt.Eisenstein
 import PadicModForms.pLocalInt.Graded
