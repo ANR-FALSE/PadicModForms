@@ -26,8 +26,9 @@ the inductive step needed to prove that `E₄_int` and `E₆_int` generate the g
 * `discriminant_int_map_complex`: its image in `ℂ⟦X⟧` is the `q`-expansion of `Δ`.
 * `divDiscriminant_int_isPLocalIntModularForm`: division by the discriminant preserves
   `p`-integrality and lowers the weight by `12`.
-* `evalE₄E₆Int_surjective`: for `p ≥ 5` evaluation at `E₄_int` and `E₆_int` is surjective, that
-  is, `E₄_int` and `E₆_int` generate the graded ring of `p`-integral modular forms.
+* `pLocalIntModularFormsEquivMvPolynomial`: for `p ≥ 5` evaluation at `E₄_int` and `E₆_int`
+  identifies the polynomial ring in two variables over `pLocalInt p` with the graded ring of
+  `p`-integral modular forms.
 -/
 
 @[expose] public noncomputable section
