@@ -53,15 +53,12 @@ theorem pLocalIntModularFormToRat_mul :
   Subtype.ext (by simp [pLocalIntModularFormToRat])
 
 /-- Scalar extension from modular forms of weight `i` over `pLocalInt p` to rational ones. -/
+@[simps]
 def pLocalIntModularFormsToRatComponent (i : ℤ) :
     pLocalIntModularForms p i →ₗ[pLocalInt p] (⨁ i, rationalModularForms i) where
   toFun f := of (fun i ↦ rationalModularForms i) i (pLocalIntModularFormToRat f)
   map_add' := by intros; simp
   map_smul' := by intros; rw [map_smul, of_smul]; simp
-
-@[simp]
-theorem pLocalIntModularFormsToRatComponent_apply : pLocalIntModularFormsToRatComponent n f =
-      of (fun i ↦ rationalModularForms i) n (pLocalIntModularFormToRat f) := rfl
 
 theorem pLocalIntModularFormsToRatComponent_one : pLocalIntModularFormsToRatComponent 0
     (1 : pLocalIntModularForms p 0) = 1 := by
@@ -161,11 +158,14 @@ theorem evalE₄E₆Int_eq_of {P : MvPolynomial (Fin 2) (pLocalInt p)}
 
 /-- Evaluation at `E₄_int` and `E₆_int`, restricted to polynomials that are weighted homogeneous
 of weight `k`. -/
-@[simps!]
 def evalE₄E₆IntAtWeight (k : ℕ) :
     E₄E₆WeightedHomogeneous k (pLocalInt p) →ₗ[pLocalInt p] pLocalIntModularForms p k :=
   (component (pLocalInt p) ℤ (fun i ↦ pLocalIntModularForms p i) k).comp
     ((evalE₄E₆Int (p := p)).toLinearMap.comp (E₄E₆WeightedHomogeneous k (pLocalInt p)).subtype)
+
+@[simp]
+theorem evalE₄E₆IntAtWeight_apply (P : E₄E₆WeightedHomogeneous k (pLocalInt p)) :
+    evalE₄E₆IntAtWeight k P = (evalE₄E₆Int (P : MvPolynomial (Fin 2) (pLocalInt p))) k := rfl
 
 theorem evalE₄E₆Int_eq_of_apply (P : E₄E₆WeightedHomogeneous k (pLocalInt p)) :
     evalE₄E₆Int (P : MvPolynomial (Fin 2) (pLocalInt p)) = of _ (k : ℤ) (evalE₄E₆IntAtWeight k P) :=

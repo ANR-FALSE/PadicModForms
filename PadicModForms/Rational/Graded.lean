@@ -73,16 +73,11 @@ theorem rationalModularFormsToComplex_gMul : of _ (n + m) (rationalModularFormTo
   exact congrArg (of (ModularForm 𝒮ℒ) (n + m)) rfl
 
 /-- The underlying ring homomorphism for scalar extension from rational to complex modular forms. -/
+@[simps!]
 def rationalModularFormsToComplexRingHom :
     (⨁ i, rationalModularForms i) →+* (⨁ k, ModularForm 𝒮ℒ k) :=
   toSemiring (fun m ↦ (of _ m).comp (rationalModularFormToComplex).toAddMonoidHom)
     rationalModularFormsToComplex_gOne rationalModularFormsToComplex_gMul
-
-@[simp]
-theorem rationalModularFormsToComplexRingHom_apply (F : ⨁ i, rationalModularForms i) :
-    rationalModularFormsToComplexRingHom F = DirectSum.toAddMonoid
-      (fun m ↦ (of (fun k ↦ ModularForm 𝒮ℒ k) m).comp
-        (rationalModularFormToComplex).toAddMonoidHom) F := rfl
 
 @[simp]
 theorem rationalModularFormsToComplexRingHom_of :

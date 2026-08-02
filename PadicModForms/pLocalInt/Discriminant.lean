@@ -278,7 +278,7 @@ theorem evalE₄E₆IntAtWeight_surjective (hp : 5 ≤ p) {k : ℕ} :
     Function.Surjective (evalE₄E₆IntAtWeight (p := p) k) := fun f ↦ by
   obtain ⟨P, hP⟩ := evalE₄E₆Int_surjective hp (of _ (k : ℤ) f)
   exact ⟨⟨_, MvPolynomial.weightedHomogeneousComponent_isWeightedHomogeneous k P⟩, by
-    simpa [← apply_eq_component, evalE₄E₆Int_component_eq] using congrArg (fun F ↦ F k) hP⟩
+    simpa [evalE₄E₆Int_component_eq] using congrArg (fun F ↦ F k) hP⟩
 
 theorem evalE₄E₆IntAtWeight_bijective (hp : 5 ≤ p) {k : ℕ} :
     Function.Bijective (evalE₄E₆IntAtWeight (p := p) k) :=

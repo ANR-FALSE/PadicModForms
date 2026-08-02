@@ -38,15 +38,11 @@ variable {R : Type*} [Ring R]
 variable (R) in
 /-- The coefficient map `f ↦ (n ↦ coeff n f)` as an additive monoid homomorphism
 `R⟦X⟧ →+ (ℕ →ᵤ R)`. -/
+@[simps]
 noncomputable def coeffAddMonoidHom : R⟦X⟧ →+ UniformFun ℕ R where
-  toFun f := UniformFun.ofFun (coeff · f)
+  toFun f := UniformFun.ofFun fun n ↦ coeff n f
   map_zero' := rfl
   map_add' _ _ := rfl
-
--- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
-@[simp]
-theorem coeffAddMonoidHom_apply (f : R⟦X⟧) :
-    coeffAddMonoidHom _ f = UniformFun.ofFun fun n ↦ coeff n f := rfl
 
 variable [UniformSpace R]
 
