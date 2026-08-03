@@ -27,4 +27,12 @@ theorem eq_shift_mul_X {f : R⟦X⟧} (hf : constantCoeff f = 0) :
     f = (mk fun n ↦ coeff (n + 1) f) * X := by
   simpa [hf] using eq_shift_mul_X_add_const f
 
+-- should go to Mathlib.RingTheory.PowerSeries.Basic
+/-- A power series all of whose coefficients are divisible by `a` is `a` times a power series,
+namely the one obtained by dividing each coefficient by `a`. -/
+theorem exists_smul_eq_of_forall_dvd_coeff {a : R} {f : R⟦X⟧} (hf : ∀ n, a ∣ coeff n f) :
+    ∃ g : R⟦X⟧, a • g = f := by
+  choose c hc using hf
+  exact ⟨mk c, ext fun n ↦ by simp [hc n]⟩
+
 end PowerSeries
