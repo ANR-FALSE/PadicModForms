@@ -8,6 +8,7 @@ module
 
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.Rational.Basic
+import PadicModForms.ForMathlib.PowerSeries
 
 /-!
 # Modular forms over the localization of `ℤ` at `p`
@@ -73,6 +74,15 @@ public theorem IsPLocalIntModularForm.of_smul {c : pLocalInt p} (hc : c ≠ 0)
   refine ⟨(c : ℚ)⁻¹ • F, ?_⟩
   ext m
   simp [← hF, ← mul_assoc, inv_mul_cancel₀ (fun h ↦ hc (Subtype.ext h))]
+
+omit hg in
+/-- A `p`-integral modular form all of whose coefficients are divisible by a nonzero `c` is `c`
+times a `p`-integral modular form of the same weight. -/
+public theorem IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff {c : pLocalInt p}
+    (hc : c ≠ 0) (hdvd : ∀ n, c ∣ coeff n f) :
+    ∃ g : (pLocalInt p)⟦X⟧, g.isPLocalIntModularForm k ∧ c • g = f := by
+  obtain ⟨g, hg⟩ := _root_.PowerSeries.exists_smul_eq_of_forall_dvd_coeff hdvd
+  exact ⟨g, IsPLocalIntModularForm.of_smul hc (hg ▸ hf), hg⟩
 
 /-- The `p`-integral rational modular forms of weight `k`, as a submodule of power series over
 `pLocalInt p`. -/
