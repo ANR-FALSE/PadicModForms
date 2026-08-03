@@ -10,6 +10,7 @@ import PadicModForms.ForMathlib.PowerSeries
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
 import PadicModForms.ForMathlib.SpecificLimits
+import PadicModForms.ForMathlib.Theta
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
 import PadicModForms.ModP.Congruences
