@@ -64,6 +64,16 @@ public theorem IsPLocalIntModularForm.add : (f + g).isPLocalIntModularForm k := 
   obtain ⟨G, hG⟩ := hg
   exact ⟨F + G, by simp [hF, hG]⟩
 
+omit hf hg in
+/-- Being a `p`-integral modular form is detected after clearing a nonzero scalar: if `c • f` is
+one, so is `f`. In particular `pLocalIntModularForms p k` is saturated in `(pLocalInt p)⟦X⟧`. -/
+public theorem IsPLocalIntModularForm.of_smul {c : pLocalInt p} (hc : c ≠ 0)
+    (h : (c • f).isPLocalIntModularForm k) : f.isPLocalIntModularForm k := by
+  obtain ⟨F, hF⟩ := h
+  refine ⟨(c : ℚ)⁻¹ • F, ?_⟩
+  ext m
+  simp [← hF, ← mul_assoc, inv_mul_cancel₀ (fun h ↦ hc (Subtype.ext h))]
+
 /-- The `p`-integral rational modular forms of weight `k`, as a submodule of power series over
 `pLocalInt p`. -/
 public def _root_.pLocalIntModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
