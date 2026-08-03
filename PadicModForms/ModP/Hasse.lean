@@ -7,27 +7,18 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ModP.Congruences
-public import PadicModForms.pLocalInt.Discriminant
+public import PadicModForms.ModP.Graded
 
 /-!
 # The Hasse invariant as a polynomial in `E₄` and `E₆`
 
-For a prime `p ≥ 5` this file defines evaluation at the reductions of `E₄` and `E₆` modulo `p`,
-landing in `(ZMod p)⟦X⟧`, and the polynomial `hasseInvPoly` expressing the Hasse invariant
-`Ẽ_{p-1}` in terms of them.
+For a prime `p ≥ 5` this file defines `hasseInvPoly`, the isobaric polynomial of weight `p - 1`
+in `E₄` and `E₆` representing the Hasse invariant `Ẽ_{p-1}`, and proves that it evaluates to `1`.
 
-Unlike `evalE₄E₆Int`, the map `evalE₄E₆ModP` forgets the weight: its target is a ring of power
-series rather than a graded ring. This is essential, and is what makes the mod-`p` theory
-different from the characteristic-zero one. Over `pLocalInt p` the map `evalE₄E₆Int` is
-injective, so `E₄` and `E₆` satisfy no relation; modulo `p` the congruence `E_{p-1} ≡ 1` becomes
-the relation `hasseInvPoly hp = 1`, and Swinnerton-Dyer's theorem states that
-`hasseInvPoly hp - 1` generates the whole kernel of `evalE₄E₆ModP`.
-
-## Main definitions
-
-* `evalE₄E₆ModP`: evaluation of a polynomial at the reductions of `E₄` and `E₆`.
-* `hasseInvPoly`: the isobaric polynomial of weight `p - 1` with `hasseInvPoly hp = 1` after
-  evaluation, that is, Serre's polynomial `A`.
+Over `pLocalInt p` the map `evalE₄E₆Int` is injective, so `E₄` and `E₆` satisfy no relation.
+Modulo `p` the congruence `E_{p-1} ≡ 1` becomes the relation `hasseInvPoly hp = 1`, and
+Swinnerton-Dyer's theorem states that `hasseInvPoly hp - 1` generates the whole kernel of
+`evalE₄E₆ModP`. Serre calls this polynomial `A`.
 -/
 
 @[expose] public noncomputable section
@@ -37,37 +28,6 @@ open DirectSum EisensteinSeries MvPolynomial PowerSeries
 namespace ModularForm
 
 variable {p : ℕ} [Fact p.Prime]
-
-/-! ### Evaluation modulo `p` -/
-
-/-- Evaluation at the reductions of `E₄` and `E₆` modulo `p`. Unlike `evalE₄E₆Int` this lands in
-power series, so it forgets the weight; its kernel is the subject of Swinnerton-Dyer's theorem. -/
-def evalE₄E₆ModP : MvPolynomial (Fin 2) (ZMod p) →ₐ[ZMod p] (ZMod p)⟦X⟧ :=
-  aeval ![E₄ModP, E₆ModP]
-
-@[simp]
-theorem evalE₄E₆ModP_X_zero :
-    evalE₄E₆ModP (MvPolynomial.X 0 : MvPolynomial _ (ZMod p)) = E₄ModP := by
-  simp [evalE₄E₆ModP]
-
-@[simp]
-theorem evalE₄E₆ModP_X_one :
-    evalE₄E₆ModP (MvPolynomial.X 1 : MvPolynomial _ (ZMod p)) = E₆ModP := by
-  simp [evalE₄E₆ModP]
-
-/-- Reducing coefficients commutes with evaluation at `E₄` and `E₆`. -/
-theorem evalE₄E₆ModP_map (P : MvPolynomial (Fin 2) (pLocalInt p)) :
-    evalE₄E₆ModP (P.map pLocalInt.toZMod) = (evalE₄E₆IntSeries P).map pLocalInt.toZMod := by
-  have hX (i : Fin 2) :
-      evalE₄E₆ModP ((MvPolynomial.X i : MvPolynomial (Fin 2) (pLocalInt p)).map
-          pLocalInt.toZMod) = (evalE₄E₆IntSeries (MvPolynomial.X i)).map pLocalInt.toZMod := by
-    fin_cases i <;> simp [evalE₄E₆ModP, evalE₄E₆IntSeries, E₄ModP, E₆ModP]
-  induction P using MvPolynomial.induction_on with
-  | C a => simp [evalE₄E₆ModP, evalE₄E₆IntSeries]
-  | add P Q hP hQ => simp [hP, hQ]
-  | mul_X P i hP =>
-      simp only [map_mul]
-      rw [hP, hX i]
 
 /-! ### The Hasse invariant -/
 
