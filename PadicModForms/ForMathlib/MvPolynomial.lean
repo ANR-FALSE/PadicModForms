@@ -7,19 +7,27 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.RingTheory.MvPolynomial.Basic
+public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 /-!
-# The monomial basis of `MvPolynomial.restrictSupport`
+# Additional lemmas about multivariable polynomials
+
+Two unrelated additions to Mathlib.
 
 `MvPolynomial.basisRestrictSupport R s` is the canonical `R`-basis, indexed by `s`, of the
 submodule of polynomials supported on a set `s` of exponent vectors. It is defined through its
-`repr`, so this file records the value of the basis itself: the member indexed by `d` is the
-monomial `X ^ d`.
+`repr`, so we record the value of the basis itself: the member indexed by `d` is the monomial
+`X ^ d`.
+
+We also show that a weighted homogeneous polynomial lifts, along a surjective map of coefficient
+rings, to a weighted homogeneous polynomial of the same weight.
 -/
 
 @[expose] public section
 
 namespace MvPolynomial
+
+/-! ### The monomial basis of `restrictSupport` -/
 
 variable {σ R : Type*} [CommSemiring R] (s : Set (σ →₀ ℕ)) (d : s)
 
@@ -41,5 +49,24 @@ theorem basisRestrictSupport_apply : basisRestrictSupport R s d =
 theorem basisRestrictSupport_apply_coe :
     (basisRestrictSupport R s d : MvPolynomial σ R) = monomial (d : σ →₀ ℕ) 1 := by
   rw [basisRestrictSupport_apply]
+
+/-! ### Lifting a weighted homogeneous polynomial -/
+
+variable {S M : Type*} [CommSemiring S] [AddCommMonoid M]
+
+/-- Reducing coefficients commutes with taking a weighted homogeneous component. -/
+theorem map_weightedHomogeneousComponent (f : R →+* S) (w : σ → M) (n : M) (P : MvPolynomial σ R) :
+    (weightedHomogeneousComponent w n P).map f = weightedHomogeneousComponent w n (P.map f) := by
+  classical
+  ext d
+  simp [coeff_weightedHomogeneousComponent, coeff_map, apply_ite f]
+
+/-- A weighted homogeneous polynomial lifts to a weighted homogeneous polynomial. -/
+theorem exists_map_eq_of_isWeightedHomogeneous {f : R →+* S} (hf : Function.Surjective f)
+    {w : σ → M} {n : M} {P : MvPolynomial σ S} (hP : IsWeightedHomogeneous w P n) :
+    ∃ Q : MvPolynomial σ R, IsWeightedHomogeneous w Q n ∧ Q.map f = P := by
+  obtain ⟨Q, rfl⟩ := map_surjective f hf P
+  refine ⟨_, weightedHomogeneousComponent_isWeightedHomogeneous n Q, ?_⟩
+  rw [map_weightedHomogeneousComponent, hP.weightedHomogeneousComponent_same]
 
 end MvPolynomial
