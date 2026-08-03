@@ -95,6 +95,38 @@ noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m)
 theorem pLocalInt.toZModPow_pow (m : ℕ) : pLocalInt.toZModPow m ((p : pLocalInt p) ^ m) = 0 := by
   simp [map_natCast, ← Nat.cast_pow]
 
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- Reduction modulo `p` is surjective. -/
+theorem pLocalInt.toZMod_surjective : Function.Surjective (pLocalInt.toZMod (p := p)) :=
+  fun z ↦ ⟨algebraMap ℤ (pLocalInt p) (z.val : ℤ), by simp [pLocalInt.toZMod]⟩
+
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- `p` generates the maximal ideal of the local ring `pLocalInt p`. -/
+theorem pLocalInt.maximalIdeal_eq_span :
+    IsLocalRing.maximalIdeal (pLocalInt p) = span {(p : pLocalInt p)} := by
+  refine le_antisymm (fun y hy ↦ ?_) ?_
+  · obtain ⟨x, s, rfl⟩ := IsLocalization.exists_mk'_eq (span {(p : ℤ)}).primeCompl y
+    rw [IsLocalization.AtPrime.mk'_mem_maximal_iff (pLocalInt p) (span {(p : ℤ)}) x s,
+      mem_span_singleton] at hy
+    obtain ⟨b, rfl⟩ := hy
+    rw [mem_span_singleton, IsLocalization.mk'_eq_mul_mk'_one]
+    exact dvd_mul_of_dvd_left ⟨algebraMap ℤ (pLocalInt p) b, by push_cast; ring⟩ _
+  · rw [span_le, Set.singleton_subset_iff, SetLike.mem_coe]
+    simpa using (IsLocalization.AtPrime.to_map_mem_maximal_iff (pLocalInt p)
+      (span {(p : ℤ)}) p).mpr (mem_span_singleton.mpr dvd_rfl)
+
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- Reduction modulo `p` is the residue map of the local ring `pLocalInt p`: being surjective
+onto a field, its kernel is the maximal ideal. -/
+theorem pLocalInt.ker_toZMod :
+    RingHom.ker pLocalInt.toZMod = IsLocalRing.maximalIdeal (pLocalInt p) :=
+  IsLocalRing.eq_maximalIdeal (RingHom.ker_isMaximal_of_surjective _ pLocalInt.toZMod_surjective)
+
+/-- An element of `pLocalInt p` killed by reduction modulo `p` is divisible by `p`. -/
+theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod x = 0) :
+    (p : pLocalInt p) ∣ x := by
+  rwa [← mem_span_singleton, ← pLocalInt.maximalIdeal_eq_span, ← pLocalInt.ker_toZMod]
+
 theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
   (hx : (p : pLocalInt p) ^ m ∣ x) : pLocalInt.toZModPow m x = 0 := by
   obtain ⟨y, rfl⟩ := hx
