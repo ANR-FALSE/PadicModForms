@@ -72,6 +72,12 @@ theorem pLocalInt.coe_ofNat (n : ℕ) [n.AtLeastTwo] :
     ((ofNat(n) : pLocalInt p) : ℚ) = OfNat.ofNat n :=
   map_ofNat (pLocalInt p).subtype n
 
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- The prime `p` is nonzero in `pLocalInt p`, which is a subring of `ℚ`. -/
+@[simp]
+theorem pLocalInt.natCast_ne_zero : (p : pLocalInt p) ≠ 0 := by
+  simpa [Subtype.ext_iff] using hp.1.ne_zero
+
 /-! ### Reduction modulo powers of `p` -/
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
