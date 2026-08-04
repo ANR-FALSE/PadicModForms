@@ -104,6 +104,12 @@ lemma E2_isBoundedAtImInfty : IsBoundedAtImInfty E2 := by
     simp
   exact heq ▸ h
 
+-- should go to Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.QExpansion
+/-- The cusp function of `E2` is analytic at `q = 0`, for the period `1`. -/
+lemma E2_analyticAt_cuspFunction_zero : AnalyticAt ℂ (cuspFunction 1 E2) 0 :=
+  UpperHalfPlane.analyticAt_cuspFunction_zero one_pos E2_periodic E2_mdifferentiable
+    E2_isBoundedAtImInfty
+
 /-! ### The `q`-expansion -/
 
 private lemma summable_sigma_one_mul_qParam (z : ℍ) :
