@@ -74,7 +74,8 @@ private lemma denom_T (z : ℍ) : UpperHalfPlane.denom ModularGroup.T z = 1 := b
   rw [ModularGroup.denom_apply, ModularGroup.coe_T]
   norm_num
 
-private lemma E2_periodic : Periodic (E2 ∘ UpperHalfPlane.ofComplex) 1 := by
+-- should go to Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.QExpansion
+lemma E2_periodic : Periodic (E2 ∘ UpperHalfPlane.ofComplex) 1 := by
   have hT : E2 ∣[(2 : ℤ)] ModularGroup.T = E2 := by
     simpa [D2_T] using E2_slash_action ModularGroup.T
   have hvadd (z : ℍ) : E2 ((1 : ℝ) +ᵥ z) = E2 z := by
