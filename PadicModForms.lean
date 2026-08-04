@@ -1,4 +1,5 @@
 import PadicModForms.ForMathlib.Bernoulli
+import PadicModForms.ForMathlib.Choose
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.EInt
