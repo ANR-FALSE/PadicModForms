@@ -26,6 +26,7 @@ from the `Derivation` API instead of being reproved coefficientwise.
 
 * `PowerSeries.coeff_Θ`: `Θ` multiplies the `n`-th coefficient by `n`.
 * `PowerSeries.Θ_eq_mk`: the coefficientwise description of `Θ`.
+* `PowerSeries.map_Θ`: `Θ` commutes with coefficientwise ring maps.
 -/
 
 @[expose] public noncomputable section
@@ -56,5 +57,11 @@ theorem Θ_eq_mk (f : R⟦X⟧) : Θ R f = mk fun n ↦ n • coeff n f :=
 @[simp]
 theorem constantCoeff_Θ (f : R⟦X⟧) : constantCoeff (Θ R f) = 0 := by
   simp [Θ_apply]
+
+/-- `Θ` commutes with extension of the coefficient ring: it only rescales coefficients by natural
+numbers. -/
+theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) (f : R⟦X⟧) :
+    (Θ R f).map φ = Θ S (f.map φ) :=
+  ext fun n ↦ by simp [nsmul_eq_mul]
 
 end PowerSeries
