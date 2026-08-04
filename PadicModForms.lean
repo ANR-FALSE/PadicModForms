@@ -19,6 +19,7 @@ import PadicModForms.ModP.Congruences
 import PadicModForms.ModP.Eisenstein
 import PadicModForms.ModP.Graded
 import PadicModForms.ModP.Hasse
+import PadicModForms.ModP.Ramanujan
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs
 import PadicModForms.PAdic.Eisenstein
@@ -33,3 +34,4 @@ import PadicModForms.pLocalInt.Basic
 import PadicModForms.pLocalInt.Discriminant
 import PadicModForms.pLocalInt.Eisenstein
 import PadicModForms.pLocalInt.Graded
+import PadicModForms.pLocalInt.Ramanujan
