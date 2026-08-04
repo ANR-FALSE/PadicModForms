@@ -78,6 +78,12 @@ theorem pLocalInt.coe_ofNat (n : ℕ) [n.AtLeastTwo] :
 theorem pLocalInt.natCast_ne_zero : (p : pLocalInt p) ≠ 0 := by
   simpa [Subtype.ext_iff] using hp.1.ne_zero
 
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- The inverse of a nonzero natural number prime to `p` is `p`-integral. -/
+theorem inv_natCast_mem_pLocalInt {n : ℕ} (hn : n ≠ 0) (hpn : ¬ p ∣ n) :
+    ((n : ℚ))⁻¹ ∈ pLocalInt p := by
+  rwa [mem_pLocalInt_iff, ← one_div, show ((1 : ℚ) / n).den = n from by simp [hn]]
+
 /-! ### Reduction modulo powers of `p` -/
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
@@ -132,6 +138,17 @@ theorem pLocalInt.ker_toZMod :
 theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod x = 0) :
     (p : pLocalInt p) ∣ x := by
   rwa [← mem_span_singleton, ← pLocalInt.maximalIdeal_eq_span, ← pLocalInt.ker_toZMod]
+
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- A `p`-integral rational with nonzero reduction modulo `p` has a `p`-integral inverse. -/
+theorem inv_mem_pLocalInt {x : ℚ} (hx : x ∈ pLocalInt p) (h : pLocalInt.toZMod ⟨x, hx⟩ ≠ 0) :
+    x⁻¹ ∈ pLocalInt p := by
+  obtain ⟨u, hu⟩ : IsUnit (⟨x, hx⟩ : pLocalInt p) :=
+    IsLocalRing.notMem_maximalIdeal.mp (by rwa [← pLocalInt.ker_toZMod, RingHom.mem_ker])
+  suffices x * ((u⁻¹ : (pLocalInt p)ˣ) : ℚ) = 1 by simp [inv_eq_of_mul_eq_one_right this]
+  suffices (⟨x, hx⟩ : pLocalInt p) * ((u⁻¹ : (pLocalInt p)ˣ) : pLocalInt p) = 1 by
+    simpa using congrArg Subtype.val this
+  rw [← hu, ← Units.val_mul, mul_inv_cancel, Units.val_one]
 
 theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
   (hx : (p : pLocalInt p) ^ m ∣ x) : pLocalInt.toZModPow m x = 0 := by
