@@ -84,6 +84,18 @@ theorem inv_natCast_mem_pLocalInt {n : ℕ} (hn : n ≠ 0) (hpn : ¬ p ∣ n) :
     ((n : ℚ))⁻¹ ∈ pLocalInt p := by
   rwa [mem_pLocalInt_iff, ← one_div, show ((1 : ℚ) / n).den = n from by simp [hn]]
 
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- A finite sum of `p`-integral terms weighted by naturals divisible by `p` is `p` times a
+`p`-integral rational. -/
+theorem exists_sum_natCast_mul_eq_mul {ι : Type*} {s : Finset ι} {c : ι → ℕ} {b : ι → ℚ}
+    (hc : ∀ i ∈ s, p ∣ c i) (hb : ∀ i ∈ s, b i ∈ pLocalInt p) :
+    ∃ T ∈ pLocalInt p, ∑ i ∈ s, (c i : ℚ) * b i = p * T := by
+  refine ⟨∑ i ∈ s, ((c i / p : ℕ) : ℚ) * b i,
+    sum_mem fun i hi ↦ mul_mem (natCast_mem _ _) (hb i hi), ?_⟩
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i hi ↦ by
+    rw [← mul_assoc, ← Nat.cast_mul, Nat.mul_div_cancel' (hc i hi)]
+
 /-! ### Reduction modulo powers of `p` -/
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
