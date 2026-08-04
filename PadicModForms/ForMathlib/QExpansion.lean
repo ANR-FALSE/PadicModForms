@@ -22,9 +22,36 @@ open UpperHalfPlane MatrixGroups CongruenceSubgroup DirectSum Polynomial Set
 
 open scoped Manifold MatrixGroups Polynomial PowerSeries
 
-namespace ModularForm
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ} (k : ℤ) {f g : ℍ → ℂ}
 
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ} (k : ℤ)
+/-! ### Analyticity of cusp functions
+
+Mathlib knows that `cuspFunction` turns products and differences of functions on `ℍ` into products
+and differences of functions on the `q`-disc; these are the resulting closure properties of
+analyticity at `q = 0`, which is the hypothesis all the `qExpansion_*` algebra lemmas take.
+-/
+
+-- should go to Mathlib.NumberTheory.ModularForms.QExpansion
+/-- Analyticity of the cusp function at `q = 0` is preserved by products. -/
+theorem AnalyticAt.cuspFunction_mul (hf : AnalyticAt ℂ (cuspFunction h f) 0)
+    (hg : AnalyticAt ℂ (cuspFunction h g) 0) : AnalyticAt ℂ (cuspFunction h (f * g)) 0 := by
+  rw [UpperHalfPlane.cuspFunction_mul hf.continuousAt hg.continuousAt]
+  exact hf.mul hg
+
+-- should go to Mathlib.NumberTheory.ModularForms.QExpansion
+/-- Analyticity of the cusp function at `q = 0` is preserved by differences. -/
+theorem AnalyticAt.cuspFunction_sub (hf : AnalyticAt ℂ (cuspFunction h f) 0)
+    (hg : AnalyticAt ℂ (cuspFunction h g) 0) : AnalyticAt ℂ (cuspFunction h (f - g)) 0 := by
+  rw [UpperHalfPlane.cuspFunction_sub hf.continuousAt hg.continuousAt]
+  exact hf.sub hg
+
+-- should go to Mathlib.NumberTheory.ModularForms.QExpansion
+/-- The cusp function of a level-one modular form is analytic at `q = 0`, for the period `1`. -/
+theorem ModularFormClass.analyticAt_cuspFunction_zero_levelOne {F : Type*} [FunLike F ℍ ℂ]
+    {k} [ModularFormClass F 𝒮ℒ k] (f : F) : AnalyticAt ℂ (cuspFunction 1 (f : ℍ → ℂ)) 0 :=
+  ModularFormClass.analyticAt_cuspFunction_zero f one_pos one_mem_strictPeriods_SL
+
+namespace ModularForm
 
 @[simp]
 theorem qExpansionAddHom_apply (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
