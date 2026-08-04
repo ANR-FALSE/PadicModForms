@@ -63,13 +63,13 @@ theorem mem_pLocalInt_iff {q : ℚ} : q ∈ pLocalInt p ↔ ¬ p ∣ q.den := by
     Rat.valuation_le_one_iff_den]
   simp [heightOneSpec, mem_span_singleton, Int.natCast_dvd_natCast]
 
+variable {p}
+
 -- should go to Mathlib.RingTheory.Valuation.ValuationSubring, for a general `ValuationSubring`
 /-- Extension of scalars from `pLocalInt p` to `ℚ` is injective: it is the inclusion of a subring
 of `ℚ`. -/
 theorem pLocalInt.algebraMap_injective :
     Function.Injective (algebraMap (pLocalInt p) ℚ) := fun _ _ ↦ Subtype.ext
-
-variable {p}
 
 -- should go to Mathlib.Algebra.Ring.Subsemiring.Defs, for a general `SubsemiringClass`
 /-- A numeral of `pLocalInt p` is the corresponding numeral of `ℚ`. -/
