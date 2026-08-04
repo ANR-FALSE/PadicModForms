@@ -187,6 +187,17 @@ public theorem rationalModularForms_finrank_le (k : ℤ) :
   rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
   exact rationalModularForms_rank_le k
 
+/-- There are no nonzero rational modular forms of negative weight. -/
+public theorem rationalModularForms_eq_bot_of_neg {k : ℤ} (hk : k < 0) :
+    rationalModularForms k = ⊥ := by
+  refine (Submodule.eq_bot_iff _).mpr fun f hf ↦ ?_
+  suffices rationalModularFormToComplex (⟨f, hf⟩ : rationalModularForms k) = 0 by
+    suffices (⟨f, hf⟩ : rationalModularForms k) = 0 by
+      exact congrArg Subtype.val this
+    exact rationalModularFormToComplex_injective (by simp_all)
+  exact rank_zero_iff_forall_zero.mp (ModularForm.levelOne_neg_weight_rank_zero hk) _
+
+
 /-! ### The graded structure -/
 
 /-- The submodules of rational modular forms form a graded monoid under multiplication. -/
