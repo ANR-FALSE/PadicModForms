@@ -24,6 +24,8 @@ of the algebraic operator `PowerSeries.Θ`.
   `q ↦ h⁻¹ * q * (cusp function of f)' q`.
 * `UpperHalfPlane.qExpansion_normalizedDeriv`: `qExpansion h (D f) = h⁻¹ • Θ (qExpansion h f)`.
 * `UpperHalfPlane.qExpansion_normalizedDeriv_one`: the case `h = 1`, where `D` is exactly `Θ`.
+* `UpperHalfPlane.qExpansion_normalizedDeriv_levelOne`: the same for a level-one modular form,
+  whose hypotheses come from its `ModularFormClass` instance.
 -/
 
 @[expose] public noncomputable section
@@ -53,7 +55,7 @@ theorem iteratedDeriv_id_mul_zero {n : ℕ} {g : ℂ → ℂ} (hg : ContDiffAt �
 
 namespace UpperHalfPlane
 
-variable {h : ℝ} {f : ℍ → ℂ}
+variable {h : ℝ} {f : ℍ → ℂ} {k : ℤ}
 
 /-! ### The cusp function of `D f` -/
 
@@ -134,5 +136,17 @@ end
 theorem qExpansion_normalizedDeriv_one (hfper : Periodic (f ∘ ofComplex) 1) (hfhol : MDiff f)
     (hfbdd : IsBoundedAtImInfty f) : qExpansion 1 (D f) = Θ ℂ (qExpansion 1 f) := by
   simpa using qExpansion_normalizedDeriv one_pos hfper hfhol hfbdd
+
+section LevelOne
+
+open scoped MatrixGroups
+
+/-- For a level-one modular form, `D` acts on `q`-expansions as `Θ`. -/
+theorem qExpansion_normalizedDeriv_levelOne {F : Type*} [FunLike F ℍ ℂ] [ModularFormClass F 𝒮ℒ k]
+    (g : F) : qExpansion 1 (D (g : ℍ → ℂ)) = Θ ℂ (qExpansion 1 (g : ℍ → ℂ)) :=
+  qExpansion_normalizedDeriv_one (SlashInvariantFormClass.periodic_comp_ofComplex g
+    one_mem_strictPeriods_SL) (ModularFormClass.holo g) (ModularFormClass.bdd_at_infty g)
+
+end LevelOne
 
 end UpperHalfPlane
