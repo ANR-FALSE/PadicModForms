@@ -41,18 +41,15 @@ open UpperHalfPlane EisensteinSeries Derivative
 namespace ModularForm
 
 /-- Ramanujan's identity for `E₂`: `12 D E₂ = E₂² - E₄`. -/
-theorem normalizedDeriv_E2 :
-    D E2 = 12⁻¹ * (E2 * E2 - (E₄ : ℍ → ℂ)) :=
-  _root_.ramanujan_E₂
+theorem normalizedDeriv_E2 : D E2 = 12⁻¹ * (E2 * E2 - E₄) :=
+  ramanujan_E₂
 
 /-- Ramanujan's identity for `E₄`: `3 D E₄ = E₂E₄ - E₆`. -/
-theorem normalizedDeriv_E₄ :
-    D (E₄ : ℍ → ℂ) = 3⁻¹ * (E2 * (E₄ : ℍ → ℂ) - (E₆ : ℍ → ℂ)) :=
-  _root_.ramanujan_E₄
+theorem normalizedDeriv_E₄ : D E₄ = 3⁻¹ * (E2 * E₄ - E₆) :=
+  ramanujan_E₄
 
 /-- Ramanujan's identity for `E₆`: `2 D E₆ = E₂E₆ - E₄²`. -/
-theorem normalizedDeriv_E₆ :
-    D (E₆ : ℍ → ℂ) = 2⁻¹ * (E2 * (E₆ : ℍ → ℂ) - (E₄ : ℍ → ℂ) * (E₄ : ℍ → ℂ)) :=
-  _root_.ramanujan_E₆
+theorem normalizedDeriv_E₆ : D E₆ = 2⁻¹ * (E2 * (E₆) - E₄ * E₄) :=
+  ramanujan_E₆
 
 end ModularForm
