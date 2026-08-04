@@ -30,7 +30,14 @@ namespace ModP
 
 /-- The normalized Eisenstein series of weight `p - 1` over the localization of `ℤ` at `p`. -/
 noncomputable abbrev E (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
-  E_int (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
+  E_int (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))
+    (inv_bernoulli_mem_pLocalInt (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl)
+
+/-- `E` is a `p`-integral modular form of weight `p - 1`. -/
+theorem E_mem_pLocalIntModularForms (hp : 5 ≤ p) :
+    E hp ∈ pLocalIntModularForms p (↑(p - 1)) :=
+  E_int_mem_pLocalIntModularForms (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))
+    (inv_bernoulli_mem_pLocalInt (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl)
 
 /-- The coefficients of `E`. -/
 @[simp]
@@ -45,7 +52,8 @@ theorem E_map_eq_rationalQExpansion (hp : 5 ≤ p) :
     (E hp).map (algebraMap _ ℚ) =
       rationalQExpansion (ERat (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))) := by
   simpa [Nat.cast_sub (by lia : 1 ≤ p)] using
-    E_int_map (p := p) (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl
+    E_int_map (p := p) (k := p - 1) (by lia) ((Fact.out : p.Prime).even_sub_one (by lia))
+      (inv_bernoulli_mem_pLocalInt (by lia) ((Fact.out : p.Prime).even_sub_one (by lia)) dvd_rfl)
 
 end ModP
 
