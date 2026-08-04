@@ -30,8 +30,8 @@ variable (hk : 3 ≤ k) (hk2 : Even k)
 /-! ### The Eisenstein series `E_k` in weight `k` -/
 
 include hk hk2 in
-/-- The coefficients of `ERat` are `p`-integral if `p - 1 ∣ k`. -/
-theorem coeff_ERat_mem_pLocalInt (hpk : p - 1 ∣ k) (n : ℕ) :
+/-- The coefficients of `ERat` are `p`-integral as soon as `Bₖ⁻¹` is. -/
+theorem coeff_ERat_mem_pLocalInt (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) (n : ℕ) :
     coeff n (rationalQExpansion (ERat hk hk2)) ∈ pLocalInt p := by
   rw [rationalQExpansion_apply, coeff_ERat _ hk hk2]
   by_cases hn : n = 0
@@ -39,42 +39,43 @@ theorem coeff_ERat_mem_pLocalInt (hpk : p - 1 ∣ k) (n : ℕ) :
   · have hk_mem : (k : ℚ) ∈ pLocalInt p := by simp
     have htwo_mem : (2 : ℚ) ∈ pLocalInt p := by simp
     have hsigma_mem : (σ (k - 1) n : ℚ) ∈ pLocalInt p := by simp
-    grind [div_eq_mul_inv, inv_bernoulli_mem_pLocalInt, mul_mem, neg_mem]
+    grind [div_eq_mul_inv, mul_mem, neg_mem]
 
 /-- The normalized Eisenstein series `E_k` over the localization of `ℤ` at `p`. -/
-noncomputable def E_int (hpk : p - 1 ∣ k) : (pLocalInt p)⟦X⟧ :=
+noncomputable def E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : (pLocalInt p)⟦X⟧ :=
   (rationalQExpansion (ERat hk hk2)).toSubring (pLocalInt p).toSubring
-    (coeff_ERat_mem_pLocalInt hk hk2 hpk)
+    (coeff_ERat_mem_pLocalInt hk hk2 hB)
 
 variable (n : ℕ)
 
 @[simp]
-theorem coeff_E_int (hpk : p - 1 ∣ k) : (coeff n (E_int hk hk2 hpk) : pLocalInt p) =
+theorem coeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+    (coeff n (E_int hk hk2 hB) : pLocalInt p) =
       if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
   rw [E_int, coeff_toSubring, rationalQExpansion_apply, coeff_ERat]
 
 /-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
-theorem coeff_E_int_zero (hpk : p - 1 ∣ k) : coeff 0 (E_int hk hk2 hpk) = 1 := by
+theorem coeff_E_int_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : coeff 0 (E_int hk hk2 hB) = 1 := by
   exact Subtype.ext <| by simp only [coeff_E_int, reduceIte, OneMemClass.coe_one]
 
 /-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
-theorem coeff_E_int_of_ne_zero (hpk : p - 1 ∣ k) {m : ℕ} (hm : m ≠ 0) :
-    coeff m (E_int hk hk2 hpk) =
-      -(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ * σ (k - 1) m := Subtype.ext <| by
+theorem coeff_E_int_of_ne_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) {m : ℕ} (hm : m ≠ 0) :
+    coeff m (E_int hk hk2 hB) =
+      -(2 * k) * ⟨_, hB⟩ * σ (k - 1) m := Subtype.ext <| by
   simp [coeff_E_int, hm, div_eq_mul_inv]
 
 /-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
 `ERat`. -/
-theorem E_int_map (hpk : p - 1 ∣ k) :
-    (E_int hk hk2 hpk).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
+theorem E_int_map (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+    (E_int hk hk2 hB).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
   ext
   simp [coeff_E_int, coeff_ERat]
 
 /-- `E_int` is a `p`-integral modular form of weight `k`. -/
-theorem E_int_mem_pLocalIntModularForms (hpk : p - 1 ∣ k) :
-    E_int hk hk2 hpk ∈ pLocalIntModularForms p k :=
-  ⟨ERat hk hk2, E_int_map hk hk2 hpk⟩
+theorem E_int_mem_pLocalIntModularForms (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+    E_int hk hk2 hB ∈ pLocalIntModularForms p k :=
+  ⟨ERat hk hk2, E_int_map hk hk2 hB⟩
 
 omit hk hk2
 
