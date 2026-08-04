@@ -35,14 +35,14 @@ variable {p : ℕ} [Fact p.Prime]
 and `E₆` with coefficients in `ZMod p`. This is the polynomial Serre calls `A`. -/
 def hasseInvPoly (hp : 5 ≤ p) : MvPolynomial (Fin 2) (ZMod p) :=
   (((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
-      ⟨ModP.E hp, E_int_mem_pLocalIntModularForms _ _ dvd_rfl⟩ : MvPolynomial _ _)).map
+      ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩ : MvPolynomial _ _)).map
         pLocalInt.toZMod
 
 /-- The Hasse invariant is isobaric of weight `p - 1`. -/
 theorem hasseInvPoly_isWeightedHomogeneous (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (hasseInvPoly hp) (p - 1) := fun d hd ↦
   ((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
-    ⟨ModP.E hp, E_int_mem_pLocalIntModularForms _ _ dvd_rfl⟩).property
+    ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩).property
       fun hzero ↦ hd <| by simp [hasseInvPoly, MvPolynomial.coeff_map, hzero]
 
 /-- Evaluating the Hasse invariant at `E₄` and `E₆` gives `1`: this is the congruence
