@@ -9,6 +9,7 @@ import PadicModForms.ForMathlib.Padic
 import PadicModForms.ForMathlib.PowerSeries
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
+import PadicModForms.ForMathlib.QExpansionDeriv
 import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.ForMathlib.Theta
 import PadicModForms.ForMathlib.«38813»
