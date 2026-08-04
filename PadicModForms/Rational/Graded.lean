@@ -292,46 +292,4 @@ theorem E₄E₆Rat_generate :
     Set.range ![of _ 4 E₄Rat, of _ 6 E₆Rat] by ext x; simp [or_comm], ← aeval_range, ← evalE₄E₆Rat]
   exact (AlgHom.range_eq_top evalE₄E₆Rat).mpr evalE₄E₆Rat_surjective
 
-/-! ### The structure theorem at the level of coefficients
-
-`rationalModularFormsEquivMvPolynomial` is a statement about the whole graded ring. The span
-statement below is its weight-by-weight shadow, phrased entirely in `ℚ⟦X⟧`: it is what lets one
-verify a property of all weight-`k` forms on the monomials `E₄^a E₆^b` alone.
--/
-
-/-- The monomial `E₄^a E₆^b` is a rational modular form of weight `4a + 6b`. -/
-public theorem E₄Rat_pow_mul_E₆Rat_pow_mem {a b k : ℕ} (hab : 4 * a + 6 * b = k) :
-    E₄Rat ^ a * (E₆Rat : ℚ⟦X⟧) ^ b ∈ rationalModularForms k := by
-  simpa [show (a : ℤ) * 4 + b * 6 = k by push_cast [← hab]; ring] using
-    SetLike.mul_mem_graded (SetLike.pow_mem_graded a E₄Rat.2) (SetLike.pow_mem_graded b E₆Rat.2)
-
-/-- The monomial basis of `rationalModularForms k`, read in `ℚ⟦X⟧`. -/
-private theorem coe_ratMonomial (d : E₄E₆WeightedMonomials k) :
-    (ratMonomial k d : ℚ⟦X⟧) = E₄Rat ^ (d : Fin 2 →₀ ℕ) 0 * E₆Rat ^ (d : Fin 2 →₀ ℕ) 1 := by
-  have hco : (ratMonomial k d : rationalModularForms k) = aeval ![(E₄Rat : ℚ⟦X⟧), E₆Rat]
-        (E₄E₆WeightedMonomialBasis k ℚ d : MvPolynomial (Fin 2) ℚ) := by
-    rw [ratMonomial, ← rationalQExpansionAlgHom_of, ← evalE₄E₆Rat_eq_of_apply,
-      rationalQExpansionAlgHom_evalE₄E₆Rat]
-  simp [hco, coe_E₄E₆WeightedMonomialBasis, aeval_monomial, Finsupp.prod_fintype, Fin.prod_univ_two]
-
-/-- The weight of a monomial of `E₄E₆WeightedMonomials k`, spelled out. -/
-private theorem E₄E₆WeightedMonomials_weight (d : E₄E₆WeightedMonomials k) :
-    4 * (d : Fin 2 →₀ ℕ) 0 + 6 * (d : Fin 2 →₀ ℕ) 1 = k := by
-  have hd := d.2
-  rw [Finsupp.weight_eq_sum, Fin.sum_univ_two] at hd
-  grind [Matrix.cons_val_zero, Matrix.cons_val_one, smul_eq_mul]
-
-/-- **Structure theorem, coefficient form**: the rational modular forms of weight `k` are spanned
-over `ℚ` by the monomials `E₄^a E₆^b` with `4a + 6b = k`. -/
-public theorem rationalModularForms_natCast_eq_span : rationalModularForms k =
-    span ℚ {f : ℚ⟦X⟧ | ∃ a b : ℕ, 4 * a + 6 * b = k ∧ f = E₄Rat ^ a * E₆Rat ^ b} := by
-  refine le_antisymm ?_ ?_
-  · rw [← map_subtype_top (rationalModularForms k), ← (ratMonomialBasis k).span_eq,
-      map_span, span_le]
-    rintro _ ⟨_, ⟨d, rfl⟩, rfl⟩
-    exact subset_span ⟨_, _, E₄E₆WeightedMonomials_weight k d, by simpa using coe_ratMonomial k d⟩
-  · rw [span_le]
-    rintro _ ⟨a, b, hab, rfl⟩
-    exact E₄Rat_pow_mul_E₆Rat_pow_mem hab
-
 end ModularForm
