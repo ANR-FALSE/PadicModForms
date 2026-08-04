@@ -176,4 +176,12 @@ public theorem rationalModularFormToComplex_E₄Rat : rationalModularFormToCompl
 public theorem rationalModularFormToComplex_E₆Rat : rationalModularFormToComplex E₆Rat = E₆ :=
   rationalModularFormToComplex_ERat (by norm_num) ⟨3, rfl⟩
 
+/-- Extending the coefficients of `E₄Rat` to `ℂ` gives the `q`-expansion of `E₄`. -/
+public theorem E₄Rat_map_complex : (E₄Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 E₄ := by
+  rw [← qExpansion_rationalModularFormToComplex, rationalModularFormToComplex_E₄Rat]
+
+/-- Extending the coefficients of `E₆Rat` to `ℂ` gives the `q`-expansion of `E₆`. -/
+public theorem E₆Rat_map_complex : (E₆Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 E₆ := by
+  rw [← qExpansion_rationalModularFormToComplex, rationalModularFormToComplex_E₆Rat]
+
 end ModularForm
