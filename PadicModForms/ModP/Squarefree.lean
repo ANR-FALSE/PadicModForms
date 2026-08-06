@@ -17,8 +17,10 @@ Let `p ≥ 5`. The Hasse invariant `hasseInvPoly hp` is weighted homogeneous of 
 `X₀, X₁` over `ZMod p`, and its evaluation under `evalE₄E₆ModP` is `1`. This file proves that it is
 relatively prime to its Ramanujan derivative and deduces that it is squarefree.
 
-The constraints come in four steps. To begin with `F` is weighted homogeneous, of some weight `c`
-with `1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`, `weight_le_of_dvd`).
+The proof rules out an irreducible common factor `F` of `hasseInvPoly hp` and of its Ramanujan
+derivative, in four steps. To begin with `F` is weighted homogeneous, of some weight `c` with
+`1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`,
+`weight_le_of_dvd_hasseInvPoly`).
 
 1. `F ∣ δ F` (`dvd_δModP_of_dvd_of_dvd_δModP`). Writing `hasseInvPoly hp = F ^ r * G` with
    `F ∤ G`, the Leibniz rule makes the order of vanishing at `F` drop by exactly one at each
@@ -72,20 +74,21 @@ theorem exists_isWeightedHomogeneous_of_irreducible_dvd (hp : 5 ≤ p) (hF : Irr
   · exact absurd (hc.isUnit_of_ne_zero E₄E₆Weights_ne_zero hF.ne_zero) hF.not_isUnit
   · exact hc0
 
+/-- The weight of a weighted homogeneous factor of the Hasse invariant is at most `p - 1`, the
+weight of the Hasse invariant itself. -/
+theorem weight_le_of_dvd_hasseInvPoly (hp : 5 ≤ p) (hr : IsWeightedHomogeneous E₄E₆Weights F r)
+    (hFA : F ∣ hasseInvPoly hp) : r ≤ p - 1 :=
+  hr.weight_le_of_dvd (hasseInvPoly_isWeightedHomogeneous hp) (hasseInvPoly_ne_zero hp) hFA
+
 /-- If `F ^ r` divides the Hasse invariant, with `F` irreducible, then `r ≤ p - 1`. -/
 theorem le_of_pow_dvd_hasseInvPoly (hp : 5 ≤ p) (hF : Irreducible F)
     (hr : F ^ r ∣ hasseInvPoly hp) : r ≤ p - 1 := by
   rcases Nat.eq_zero_or_pos r with rfl | hr0
   · exact Nat.zero_le _
-  obtain ⟨G, hG⟩ := hr
   obtain ⟨c, hc1, hc⟩ := exists_isWeightedHomogeneous_of_irreducible_dvd hp hF
-    ((dvd_pow_self F hr0.ne').trans ⟨G, hG⟩)
-  have hFr0 : F ^ r ≠ 0 := pow_ne_zero _ hF.ne_zero
-  have hG0 : G ≠ 0 := fun h ↦ (hasseInvPoly_ne_zero hp) (by rw [hG, h, mul_zero])
-  have : IsWeightedHomogeneous E₄E₆Weights (F ^ r * G) (p - 1) := by
-    simpa [← hG] using hasseInvPoly_isWeightedHomogeneous hp
-  obtain ⟨m, k, hm, _, hmk⟩ := this.mul_factors hFr0 hG0
-  grind [Nat.le_mul_of_pos_right r hc1, hm.inj_right hFr0 (by simpa using hc.pow r)]
+    ((dvd_pow_self F hr0.ne').trans hr)
+  have : r * c ≤ p - 1 := weight_le_of_dvd_hasseInvPoly hp (by simpa using hc.pow r) hr
+  grind [Nat.le_mul_of_pos_right r hc1]
 
 /-- A natural number that is positive and smaller than `p` is a unit of `(ZMod p)[X₀, X₁]`. -/
 private theorem isUnit_natCast (hk0 : 0 < k) (hkp : k < p) :
@@ -186,32 +189,14 @@ private theorem six_mul_pderiv_one (hk : IsWeightedHomogeneous E₄E₆Weights F
     6 * ((X 0 ^ 3 - X 1 ^ 2) * pderiv 1 F) = -((k : MvPolynomial (Fin 2) (ZMod p)) * X 1 * F) := by
   grind [euler_E₄E₆Weights hk, δModP_apply]
 
-/-- A polynomial divisible by `F` but of strictly smaller weight vanishes. -/
-private theorem eq_zero_of_dvd_of_lt {H : MvPolynomial (Fin 2) (ZMod p)} (hF0 : F ≠ 0)
-    (hr : IsWeightedHomogeneous E₄E₆Weights F r) (hk : IsWeightedHomogeneous E₄E₆Weights H k)
-    (hkr : k < r) (h : F ∣ H) : H = 0 := by
-  by_contra hH0
-  obtain ⟨K, rfl⟩ := h
-  obtain ⟨m, n, hm, _, _⟩ := hk.mul_factors hF0 (fun h0 ↦ hH0 (by rw [h0, mul_zero]))
-  grind [hm.inj_right hF0 hr]
-
 /-- A partial derivative of `F` divisible by `F` vanishes: it has strictly smaller weight. -/
-private theorem pderiv_eq_zero_of_dvd {i : Fin 2} (hF0 : F ≠ 0)
-    (hr : IsWeightedHomogeneous E₄E₆Weights F r) (hw : 0 < E₄E₆Weights i)
-    (h : F ∣ pderiv i F) : pderiv i F = 0 := by
+private theorem pderiv_eq_zero_of_dvd {i : Fin 2} (hr : IsWeightedHomogeneous E₄E₆Weights F r)
+    (hw : 0 < E₄E₆Weights i) (h : F ∣ pderiv i F) : pderiv i F = 0 := by
   rcases lt_or_ge r (E₄E₆Weights i) with hlt | hle
   · exact hr.pderiv_eq_zero hlt
   · obtain ⟨m, hm⟩ := Nat.exists_eq_add_of_le hle
-    exact eq_zero_of_dvd_of_lt hF0 hr (hr.pderiv (n' := m) (by lia)) (by lia) h
-
-/-- The weight of a nonzero weighted homogeneous factor of the Hasse invariant is at most
-`p - 1`, the weight of the Hasse invariant itself. -/
-theorem weight_le_of_dvd (hp : 5 ≤ p) (hF0 : F ≠ 0) (hr : IsWeightedHomogeneous E₄E₆Weights F r)
-    (hFA : F ∣ hasseInvPoly hp) : r ≤ p - 1 := by
-  obtain ⟨G, hG⟩ := hFA
-  have hG0 : G ≠ 0 := fun h ↦ (hasseInvPoly_ne_zero hp) (by grind)
-  obtain ⟨m, n, hm, _, _⟩ := (hG ▸ hasseInvPoly_isWeightedHomogeneous hp).mul_factors hF0 hG0
-  grind [hm.inj_right hF0 hr]
+    by_contra h0
+    exact absurd (hr.weight_le_of_dvd (hr.pderiv (n' := m) (by lia)) h0 h) (by lia)
 
 /-- **Step 3**: an irreducible factor of the Hasse invariant killed by `δ` divides `X₀³ - X₁²`,
 the polynomial whose evaluation is `1728 Δ`. -/
@@ -231,26 +216,16 @@ theorem dvd_X_zero_pow_three_sub_X_one_sq (hp : 5 ≤ p) (hF : Irreducible F)
     grind [show (6 : MvPolynomial (Fin 2) (ZMod p)) = 2 * 3 by norm_num]
   suffices pderiv 0 F = 0 ∧ pderiv 1 F = 0 by
     exact hF.ne_zero <| ((isUnit_natCast hc1
-    (by grind [weight_le_of_dvd hp hF.ne_zero hc hFA])).mul_right_eq_zero).mp
+    (by grind [weight_le_of_dvd_hasseInvPoly hp hc hFA])).mul_right_eq_zero).mp
       (by grind [euler_E₄E₆Weights hc])
-  refine ⟨pderiv_eq_zero_of_dvd hF.ne_zero hc (by simp) ?_,
-    pderiv_eq_zero_of_dvd hF.ne_zero hc (by simp) ?_⟩
+  refine ⟨pderiv_eq_zero_of_dvd hc (by simp) ?_,
+    pderiv_eq_zero_of_dvd hc (by simp) ?_⟩
   · exact (hprime.dvd_mul.mp (hu4.dvd_mul_left.mp ⟨(c : MvPolynomial (Fin 2) (ZMod p)) * X 0 ^ 2,
       by rw [four_mul_pderiv_zero hc hδ]; ring⟩)).resolve_left hdvd
   · exact (hprime.dvd_mul.mp (hu6.dvd_mul_left.mp ⟨-((c : MvPolynomial (Fin 2) (ZMod p)) * X 1),
       by rw [six_mul_pderiv_one hc hδ]; ring⟩)).resolve_left hdvd
 
 /-! ### Step 4: there is no common factor -/
-
-/-- Every positive weight below `12` supports at most one monomial in variables of weights `4`
-and `6`. -/
-theorem unique_E₄E₆Weights_of_lt_twelve :
-    ∀ n, 0 < n → n < 12 → ∀ d e : Fin 2 →₀ ℕ, Finsupp.weight E₄E₆Weights d = n →
-      Finsupp.weight E₄E₆Weights e = n → d = e := by
-  intro n _ hn d e hd he
-  rw [weight_E₄E₆_apply] at hd he
-  have h : d 0 = e 0 ∧ d 1 = e 1 := by omega
-  exact Finsupp.ext fun i ↦ by fin_cases i <;> simp [h.1, h.2]
 
 /-- `X₀³ - X₁²`, whose evaluation is `1728 Δ`, is weighted homogeneous of weight `12`. -/
 theorem isWeightedHomogeneous_X_zero_pow_three_sub_X_one_sq : IsWeightedHomogeneous E₄E₆Weights
@@ -308,10 +283,10 @@ theorem hasseInvPoly_squarefree (hp : 5 ≤ p) : Squarefree (hasseInvPoly hp) :=
   intro F hF hF_sq
   have hF_hasseInvPoly : F ∣ hasseInvPoly hp := (dvd_mul_right F F).trans hF_sq
   obtain ⟨G, hG⟩ := hF_sq
-  have hF_δModP : F ∣ δModP (hasseInvPoly hp) := by
-    refine ⟨leibnizCofactor F G 1, ?_⟩
-    rw [hG]
-    simpa [pow_two] using δModP_pow_succ_mul F G 1
-  exact hF.not_isUnit (isRelPrime_hasseInvPoly_δModP hp hF_hasseInvPoly hF_δModP)
+  suffices F ∣ δModP (hasseInvPoly hp) by
+    exact hF.not_isUnit (isRelPrime_hasseInvPoly_δModP hp hF_hasseInvPoly this)
+  refine ⟨leibnizCofactor F G 1, ?_⟩
+  simpa [hG, pow_two] using δModP_pow_succ_mul F G 1
+
 
 end ModularForm
