@@ -45,6 +45,10 @@ theorem Θ_apply (f : R⟦X⟧) : Θ R f = X * derivative R f := by
   rw [Θ, Derivation.smul_apply, smul_eq_mul]
 
 @[simp]
+theorem Θ_C (a : R) : Θ R (C a) = 0 := by
+  simp [Θ_apply]
+
+@[simp]
 theorem coeff_Θ (f : R⟦X⟧) (n : ℕ) : coeff n (Θ R f) = n • coeff n f := by
   cases n with
   | zero => simp [Θ_apply]
