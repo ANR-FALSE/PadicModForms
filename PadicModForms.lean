@@ -22,6 +22,7 @@ import PadicModForms.ModP.Eisenstein
 import PadicModForms.ModP.Graded
 import PadicModForms.ModP.Hasse
 import PadicModForms.ModP.Ramanujan
+import PadicModForms.ModP.Squarefree
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs
 import PadicModForms.PAdic.Eisenstein
