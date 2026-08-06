@@ -125,6 +125,8 @@ public theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat :=
 /-- The weights `(4, 6)` of `E₄` and `E₆`, used to grade `R[X₀, X₁]` by modular weight. -/
 public abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
+public theorem E₄E₆Weights_ne_zero (i : Fin 2) : E₄E₆Weights i ≠ 0 := by fin_cases i <;> simp
+
 variable (k : ℕ)
 
 /-- The monomials in `X₀, X₁` of weight `k` for the weights `E₄E₆Weights`. -/
