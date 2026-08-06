@@ -3,6 +3,7 @@ import PadicModForms.ForMathlib.Choose
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.E2
 import PadicModForms.ForMathlib.EInt
+import PadicModForms.ForMathlib.Finsupp
 import PadicModForms.ForMathlib.IntLocalization
 import PadicModForms.ForMathlib.LinearIndependent
 import PadicModForms.ForMathlib.MvPolynomial
