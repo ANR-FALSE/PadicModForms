@@ -73,4 +73,12 @@ theorem E₄ModP_mem_modPModularForms : E₄ModP ∈ modPModularForms p 4 :=
 theorem E₆ModP_mem_modPModularForms : E₆ModP ∈ modPModularForms p 6 :=
   ⟨_, _, E₆_int_map, rfl⟩
 
+@[simp]
+theorem coeff_zero_E₄ModP : coeff 0 (E₄ModP (p := p)) = 1 := by
+  simp [E₄ModP, coeff_zero_E₄_int]
+
+@[simp]
+theorem coeff_zero_E₆ModP : coeff 0 (E₆ModP (p := p)) = 1 := by
+  simp [E₆ModP, coeff_zero_E₆_int]
+
 end EisensteinSeries
