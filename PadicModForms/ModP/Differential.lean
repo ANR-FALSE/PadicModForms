@@ -7,6 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ModP.Graded
+public import PadicModForms.ModP.Hasse
 public import PadicModForms.ModP.Ramanujan
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
 
@@ -32,6 +33,12 @@ Ramanujan identities produce information about the Hasse invariant.
 * `ModularForm.twelve_Θ_evalE₄E₆ModP`: the differential identity
   `12 Θ (φ F) = w E₂ModP φ F + φ (δ F)` for `F` weighted homogeneous of weight `w`.
 * `ModularForm.isWeightedHomogeneous_δModP`: `δ` raises the weight by `2`.
+* `ModularForm.isWeightedHomogeneous_δModP_hasseInvPoly`: `δ hasseInvPoly` has weight
+  `p + 1`.
+* `ModularForm.evalE₄E₆ModP_δModP_hasseInvPoly`: the evaluation of `δ hasseInvPoly`
+  is `E₂ModP`.
+* `ModularForm.δModP_sq_hasseInvPoly`: the Hasse polynomial satisfies
+  `δ² hasseInvPoly = -X₀ hasseInvPoly`.
 -/
 
 @[expose] public noncomputable section
@@ -138,5 +145,54 @@ theorem isWeightedHomogeneous_δModP (hF : IsWeightedHomogeneous E₄E₆Weights
       rw [mul_assoc, show (6 : MvPolynomial (Fin 2) (ZMod p)) = C 6 by rw [map_ofNat],
         show 6 + m + 2 = 4 * 2 + m by omega]
       exact ((hX₀.pow 2).mul (hF.pderiv (by simp [add_comm]))).C_mul _
+
+/-! ### Differential equations for the Hasse invariant -/
+
+/-- The Ramanujan derivative of `hasseInvPoly` is weighted homogeneous of weight `p + 1`. -/
+theorem isWeightedHomogeneous_δModP_hasseInvPoly (hp : 5 ≤ p) :
+    IsWeightedHomogeneous E₄E₆Weights (δModP (hasseInvPoly hp)) (p + 1) := by
+  simpa [show p - 1 + 2 = p + 1 by omega] using
+    isWeightedHomogeneous_δModP (hasseInvPoly_isWeightedHomogeneous hp)
+
+/-- The evaluation of the Ramanujan derivative of the Hasse polynomial is `E₂ModP`. -/
+theorem evalE₄E₆ModP_δModP_hasseInvPoly (hp : 5 ≤ p) :
+    evalE₄E₆ModP (δModP (hasseInvPoly hp)) = E₂ModP :=
+  sub_eq_zero.mp <| by
+    simpa [sub_eq_add_neg, add_comm, evalE₄E₆ModP_hasseInvPoly hp, natCast_p_sub_one]
+      using (twelve_Θ_evalE₄E₆ModP (hasseInvPoly_isWeightedHomogeneous hp)).symm
+
+/-- The differential identity specialized to the Ramanujan derivative of `hasseInvPoly`. -/
+theorem twelve_Θ_E₂ModP_eq_eval_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
+    12 * Θ E₂ModP = E₂ModP * E₂ModP +
+      evalE₄E₆ModP (δModP (δModP (hasseInvPoly hp))) := by
+  simpa only [evalE₄E₆ModP_δModP_hasseInvPoly hp, natCast_p_add_one, one_mul] using
+    twelve_Θ_evalE₄E₆ModP (isWeightedHomogeneous_δModP_hasseInvPoly hp)
+
+/-- The second Ramanujan derivative of `hasseInvPoly` evaluates to `-E₄ModP`. -/
+theorem evalE₄E₆ModP_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
+    evalE₄E₆ModP (δModP (δModP (hasseInvPoly hp))) = -E₄ModP := by
+  grind [twelve_Θ_E₂ModP_eq_eval_δModP_sq_hasseInvPoly hp, Θ_E₂ModP]
+
+/-- The second Ramanujan derivative of `hasseInvPoly` is weighted homogeneous of weight
+`p + 3`. -/
+theorem isWeightedHomogeneous_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
+    IsWeightedHomogeneous E₄E₆Weights (δModP (δModP (hasseInvPoly hp))) (p + 3) := by
+  simpa [show p + 1 + 2 = p + 3 by omega] using
+    isWeightedHomogeneous_δModP (isWeightedHomogeneous_δModP_hasseInvPoly hp)
+
+/-- The polynomial `-X 0 * hasseInvPoly` is weighted homogeneous of weight `p + 3`. -/
+theorem isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly (hp : 5 ≤ p) :
+    IsWeightedHomogeneous E₄E₆Weights (-X 0 * hasseInvPoly hp) (p + 3) := by
+  simpa [E₄E₆Weights, Matrix.cons_val_zero, show 4 + (p - 1) = p + 3 by omega] using
+    (isWeightedHomogeneous_X _ E₄E₆Weights 0).neg.mul (hasseInvPoly_isWeightedHomogeneous hp)
+
+/-- The Hasse polynomial satisfies the equation `δ² hasseInvPoly = -X₀ hasseInvPoly`. -/
+theorem δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
+    δModP (δModP (hasseInvPoly hp)) = -X 0 * hasseInvPoly hp :=
+  (SetLike.coe_eq_coe (p := (E₄E₆WeightedHomogeneous (p + 3) (ZMod p)))
+    (x := ⟨_, isWeightedHomogeneous_δModP_sq_hasseInvPoly hp⟩)
+    (y := ⟨_, isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly hp⟩)).2 <|
+  (evalE₄E₆ModPAtWeight_inj hp).mp
+    (by simp [evalE₄E₆ModP_δModP_sq_hasseInvPoly hp, evalE₄E₆ModP_hasseInvPoly hp])
 
 end ModularForm
