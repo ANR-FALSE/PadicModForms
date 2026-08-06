@@ -13,6 +13,7 @@ import PadicModForms.ForMathlib.QExpansion
 import PadicModForms.ForMathlib.QExpansionDeriv
 import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.ForMathlib.Theta
+import PadicModForms.ForMathlib.WeightedHomogeneous
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
 import PadicModForms.ModP.Congruences
