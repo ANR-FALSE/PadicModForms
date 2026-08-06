@@ -8,7 +8,8 @@ module
 
 public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.RingTheory.MvPolynomial.Basic
-public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+public import PadicModForms.ForMathlib.WeightedHomogeneous
+import Mathlib.Data.Nat.ModEq
 
 /-!
 # Additional lemmas about multivariable polynomials
@@ -23,7 +24,8 @@ submodule of polynomials supported on a set `s` of exponent vectors. It is defin
 We also show that a weighted homogeneous polynomial lifts, along a surjective map of coefficient
 rings, to a weighted homogeneous polynomial of the same weight, and that a weighted homogeneous
 polynomial does not involve the variables whose weight exceeds its own. Finally, a sum of two
-distinct monomials with nonzero coefficients is not a monomial.
+distinct monomials with nonzero coefficients is not a monomial, and over a field such a binomial
+is irreducible when its exponents are positive and coprime.
 -/
 
 @[expose] public section
@@ -82,7 +84,7 @@ theorem IsWeightedHomogeneous.pderiv_eq_zero {w : σ → ℕ} {n : ℕ} {i : σ}
   obtain ⟨d, hd, hdi⟩ := (mem_vars_iff_mem_support i).1 hi
   exact hP (mem_support_iff.1 hd) ▸ Finsupp.le_weight_of_ne_zero' w (Finsupp.mem_support_iff.1 hdi)
 
-/-! ### A polynomial with two monomials -/
+/-! ### Binomials -/
 
 /-- A sum of two monomials in `Fin 2` variables with distinct exponent vectors and nonzero
 coefficients is not a monomial. -/
@@ -97,5 +99,37 @@ theorem not_exists_eq_monomial_add_monomial {m n : ℕ} {a b : R}
   rcases eq_or_ne d (Finsupp.single 0 m) with rfl | H
   · exact hmn (by simp_all)
   · simp_all
+
+/-- Over a field, a binomial in `Fin 2` variables with nonzero coefficients and positive coprime
+exponents is irreducible. -/
+theorem irreducible_add_monomial_of_coprime {K : Type*} [Field K] {m n : ℕ} {a b : K}
+    (hm : 0 < m) (hn : 0 < n) (hc : m.Coprime n) (ha : a ≠ 0) (hb : b ≠ 0) :
+    Irreducible (monomial (Finsupp.single (0 : Fin 2) m) a +
+      monomial (Finsupp.single 1 n) b) := by
+  let w : Fin 2 → ℕ := ![n, m]
+  refine IsWeightedHomogeneous.irreducible_of_unique_lower_weight (w := w) (n := m * n)
+    (IsWeightedHomogeneous.add ?_ ?_) (fun i ↦ ?_) (fun k _ hk d e hd he ↦ ?_)
+    (not_exists_eq_monomial_add_monomial (fun h ↦ ?_) ha hb)
+  · apply isWeightedHomogeneous_monomial
+    simp [w, Finsupp.weight_eq_sum, Fin.sum_univ_two, mul_comm]
+  · apply isWeightedHomogeneous_monomial
+    simp [w, Finsupp.weight_eq_sum, Fin.sum_univ_two, mul_comm]
+  · fin_cases i <;> simp [w, hm.ne', hn.ne']
+  · have weight_apply (x : Fin 2 →₀ ℕ) : Finsupp.weight w x = x 0 * n + x 1 * m := by
+      simp [w, Finsupp.weight_eq_sum, Fin.sum_univ_two, mul_comm]
+    rw [weight_apply] at hd he
+    have hd0 : d 0 < m := (Nat.mul_lt_mul_left hn).mp (by grind)
+    have he0 : e 0 < m := (Nat.mul_lt_mul_left hn).mp (by grind)
+    have hmod : n * d 0 ≡ n * e 0 [MOD m] := by
+      rw [Nat.ModEq]
+      calc n * d 0 % m = (n * d 0 + m * d 1) % m := by simp [Nat.add_mod]
+        _ = (n * e 0 + m * e 1) % m := by congr 1; simpa [mul_comm] using hd.trans he.symm
+        _ = _ := by simp [Nat.add_mod]
+    have hde0 : d 0 = e 0 := (hmod.cancel_left_of_coprime hc).eq_of_lt_of_lt hd0 he0
+    ext i
+    fin_cases i
+    · exact hde0
+    · exact Nat.eq_of_mul_eq_mul_right hm (Nat.add_left_cancel (hde0 ▸ hd.trans he.symm))
+  · exact hm.ne' (by simpa using Finsupp.ext_iff.1 h 0)
 
 end MvPolynomial
