@@ -6,13 +6,14 @@ Authors: Riccardo Brasca
 
 module
 
+public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 /-!
 # Additional lemmas about multivariable polynomials
 
-Two unrelated additions to Mathlib.
+Three unrelated additions to Mathlib.
 
 `MvPolynomial.basisRestrictSupport R s` is the canonical `R`-basis, indexed by `s`, of the
 submodule of polynomials supported on a set `s` of exponent vectors. It is defined through its
@@ -20,7 +21,8 @@ submodule of polynomials supported on a set `s` of exponent vectors. It is defin
 `X ^ d`.
 
 We also show that a weighted homogeneous polynomial lifts, along a surjective map of coefficient
-rings, to a weighted homogeneous polynomial of the same weight.
+rings, to a weighted homogeneous polynomial of the same weight, and that a weighted homogeneous
+polynomial does not involve the variables whose weight exceeds its own.
 -/
 
 @[expose] public section
@@ -68,5 +70,15 @@ theorem exists_map_eq_of_isWeightedHomogeneous {f : R →+* S} (hf : Function.Su
   obtain ⟨Q, rfl⟩ := map_surjective f hf P
   refine ⟨_, weightedHomogeneousComponent_isWeightedHomogeneous n Q, ?_⟩
   rw [map_weightedHomogeneousComponent, hP.weightedHomogeneousComponent_same]
+
+/-! ### Partial derivatives in a variable that is too heavy -/
+
+/-- A polynomial that is weighted homogeneous of weight `n` does not involve a variable of weight
+larger than `n`, so its partial derivative in that variable vanishes. -/
+theorem IsWeightedHomogeneous.pderiv_eq_zero {w : σ → ℕ} {n : ℕ} {i : σ} {P : MvPolynomial σ R}
+    (hP : IsWeightedHomogeneous w P n) (hn : n < w i) : pderiv i P = 0 := by
+  refine pderiv_eq_zero_of_notMem_vars fun hi ↦ absurd hn (not_lt.2 ?_)
+  obtain ⟨d, hd, hdi⟩ := (mem_vars_iff_mem_support i).1 hi
+  exact hP (mem_support_iff.1 hd) ▸ Finsupp.le_weight_of_ne_zero' w (Finsupp.mem_support_iff.1 hdi)
 
 end MvPolynomial
