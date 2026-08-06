@@ -21,8 +21,11 @@ weighted homogeneous.
 
 ## Main results
 
+* `MvPolynomial.IsWeightedHomogeneous.exists_eq_monomial_of_unique_weight`: a weighted homogeneous
+  polynomial is a monomial when its weighted-degree fiber has at most one element.
 * `MvPolynomial.IsWeightedHomogeneous.eq_C_coeff_zero`: a polynomial which is weighted homogeneous
-  of weighted degree `0`, for a weight function taking no zero value, is a constant.
+  of weighted degree `0`, for a weight function taking no zero value, is a constant; over a field
+  it is a unit as soon as it is nonzero (`MvPolynomial.IsWeightedHomogeneous.isUnit_of_ne_zero`).
 * `MvPolynomial.IsWeightedHomogeneous.mul_factors`: if a product of two nonzero polynomials is
   weighted homogeneous, both factors are, and their weights add up.
 * `MvPolynomial.IsWeightedHomogeneous.irreducible_factor`: every irreducible factor of a nonzero
@@ -39,6 +42,19 @@ namespace MvPolynomial
 
 variable {σ R : Type*}
 
+/-- A weighted homogeneous polynomial is a monomial if at most one exponent vector has its
+weighted degree. This includes the case in which no exponent vector has that degree: then the
+polynomial is zero. -/
+theorem IsWeightedHomogeneous.exists_eq_monomial_of_unique_weight [CommSemiring R]
+    {M : Type*} [AddCommMonoid M] {w : σ → M} {φ : MvPolynomial σ R} {n : M}
+    (hφ : IsWeightedHomogeneous w φ n)
+    (hunique : ∀ d e : σ →₀ ℕ, weight w d = n → weight w e = n → d = e) :
+    ∃ d r, φ = monomial d r := by
+  by_cases hex : ∃ d : σ →₀ ℕ, weight w d = n
+  · obtain ⟨d, hd⟩ := hex
+    exact ⟨d, coeff d φ, hφ.eq_monomial_of_unique_weight fun e he ↦ hunique e d he hd⟩
+  · exact ⟨0, 0, by simpa using hφ.eq_zero_of_no_monomials fun d hd ↦ hex ⟨d, hd⟩⟩
+
 /-- A polynomial which is weighted homogeneous of weighted degree `0`, for a weight function taking
 no zero value, is a constant. -/
 theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddCommMonoid M]
@@ -46,6 +62,15 @@ theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddC
     {φ : MvPolynomial σ R} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) :
     φ = C (coeff 0 φ) :=
   hφ.weightedHomogeneousComponent_same.symm.trans (weightedHomogeneousComponent_zero φ hw)
+
+/-- Over a field, a nonzero polynomial which is weighted homogeneous of weighted degree `0`, for a
+weight function taking no zero value, is a unit. -/
+theorem IsWeightedHomogeneous.isUnit_of_ne_zero {K : Type*} [Field K] {M : Type*} [AddCommMonoid M]
+    [PartialOrder M] [CanonicallyOrderedAdd M] [IsAddTorsionFree M] {w : σ → M}
+    {φ : MvPolynomial σ K} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) (hφ0 : φ ≠ 0) :
+    IsUnit φ := by
+  refine hφ.eq_C_coeff_zero hw ▸ (isUnit_iff_ne_zero.mpr fun h ↦ hφ0 ?_).map C
+  rw [hφ.eq_C_coeff_zero hw, h, map_zero]
 
 variable [CommRing R] (w : σ → ℕ) (d : σ →₀ ℕ) (r : R) (P : MvPolynomial σ R) {n : ℕ}
 
