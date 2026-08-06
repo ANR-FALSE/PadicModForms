@@ -13,13 +13,16 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 /-!
-# Factors of weighted homogeneous polynomials
+# Weighted homogeneous polynomials
 
-Over a domain, every nonzero factor of a nonzero weighted homogeneous multivariate polynomial is
-itself weighted homogeneous.
+A polynomial which is weighted homogeneous of weighted degree `0` is a constant, and, over a
+domain, every nonzero factor of a nonzero weighted homogeneous multivariate polynomial is itself
+weighted homogeneous.
 
 ## Main results
 
+* `MvPolynomial.IsWeightedHomogeneous.eq_C_coeff_zero`: a polynomial which is weighted homogeneous
+  of weighted degree `0`, for a weight function taking no zero value, is a constant.
 * `MvPolynomial.IsWeightedHomogeneous.mul_factors`: if a product of two nonzero polynomials is
   weighted homogeneous, both factors are, and their weights add up.
 * `MvPolynomial.IsWeightedHomogeneous.irreducible_factor`: every irreducible factor of a nonzero
@@ -32,7 +35,19 @@ open Finsupp Finset
 
 namespace MvPolynomial
 
-variable {σ R : Type*} [CommRing R] (w : σ → ℕ) (d : σ →₀ ℕ) (r : R) (P : MvPolynomial σ R) {n : ℕ}
+-- everything in this file should go to Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+
+variable {σ R : Type*}
+
+/-- A polynomial which is weighted homogeneous of weighted degree `0`, for a weight function taking
+no zero value, is a constant. -/
+theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddCommMonoid M]
+    [PartialOrder M] [CanonicallyOrderedAdd M] [IsAddTorsionFree M] {w : σ → M}
+    {φ : MvPolynomial σ R} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) :
+    φ = C (coeff 0 φ) :=
+  hφ.weightedHomogeneousComponent_same.symm.trans (weightedHomogeneousComponent_zero φ hw)
+
+variable [CommRing R] (w : σ → ℕ) (d : σ →₀ ℕ) (r : R) (P : MvPolynomial σ R) {n : ℕ}
 
 /-- Record the weight grading in an auxiliary polynomial variable, while retaining each original
 monomial as a coefficient. A monomial of weight `n` is sent to that monomial times `X ^ n`. -/

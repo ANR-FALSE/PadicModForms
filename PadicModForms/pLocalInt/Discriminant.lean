@@ -197,8 +197,8 @@ private theorem exists_E₄E₆_monomial_weight {n : ℕ} (hnEven : Even n) (hnT
     ∃ a b : ℕ, 4 * a + 6 * b = n := by
   obtain ⟨m, rfl⟩ := hnEven
   rcases Nat.even_or_odd m with ⟨a, ha⟩ | ⟨b, hb⟩
-  · exact ⟨a, 0, by omega⟩
-  · exact ⟨b - 1, 1, by omega⟩
+  · exact ⟨a, 0, by lia⟩
+  · exact ⟨b - 1, 1, by lia⟩
 
 private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
     ∀ k (f : pLocalIntModularForms p k), ∃ P : MvPolynomial (Fin 2) (pLocalInt p),
@@ -208,7 +208,7 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
   · have hf : f = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero f <|
       rank_zero_iff_forall_zero.mp (levelOne_neg_weight_rank_zero hkNeg) _
     exact ⟨0, by simp [hf]⟩
-  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by omega⟩
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
   clear hkNeg
   induction n using Nat.strong_induction_on with | h n ih => ?_
   by_cases hnOdd : Odd (n : ℤ)
@@ -240,20 +240,20 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
       pLocalIntModularForms.of_mul_of_eq_of _ _ mn (by push_cast [← hab]; ring) rfl, ← of_smul]
   by_cases hnTwelve : 12 ≤ n
   · let g : pLocalIntModularForms p ((n - 12 : ℕ)) := ⟨divDiscriminant_int hp f₀, by
-      simpa [show ((n : ℤ) - 12) = ((n - 12 : ℕ)) by omega] using
+      simpa [show ((n : ℤ) - 12) = ((n - 12 : ℕ)) by lia] using
       divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
-    obtain ⟨Q, hQ⟩ := ih (n - 12) (by omega) g
+    obtain ⟨Q, hQ⟩ := ih (n - 12) (by lia) g
     have hprod : evalE₄E₆Int (discriminantPoly_int hp) * evalE₄E₆Int Q =
         of (fun i ↦ pLocalIntModularForms p i) n f₀ := by
       simpa [evalE₄E₆Int_discriminantPoly_int, hQ] using pLocalIntModularForms.of_mul_of_eq_of
-        _ _ _ (by omega) (discriminant_int_mul_divDiscriminant_int hp hf₀)
+        _ _ _ (by lia) (discriminant_int_mul_divDiscriminant_int hp hf₀)
     refine ⟨discriminantPoly_int hp * Q +
       MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b), ?_⟩
     rw [map_add, map_mul, hprod, hmonomial, ← map_add, ← hfDecomp]
   · let g : pLocalIntModularForms p (n - 12) :=
       ⟨_, divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
     have hg : g = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero g <|
-      rank_zero_iff_forall_zero.mp (levelOne_neg_weight_rank_zero (by omega)) _
+      rank_zero_iff_forall_zero.mp (levelOne_neg_weight_rank_zero (by lia)) _
     have hgVal : divDiscriminant_int hp f₀ = 0 := by simpa [g] using congrArg Subtype.val hg
     have hf₀Zero : f₀ = 0 := Subtype.ext <| by
       simpa [hgVal] using (discriminant_int_mul_divDiscriminant_int hp hf₀).symm

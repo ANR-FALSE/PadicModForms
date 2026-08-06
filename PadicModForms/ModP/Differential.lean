@@ -136,14 +136,14 @@ theorem isWeightedHomogeneous_δModP (hF : IsWeightedHomogeneous E₄E₆Weights
       exact isWeightedHomogeneous_zero ..
     · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le h
       rw [mul_assoc, show (-4 : MvPolynomial (Fin 2) (ZMod p)) = C (-4) by simp [map_ofNat],
-        show 4 + m + 2 = 6 + m by omega]
+        show 4 + m + 2 = 6 + m by lia]
       exact (hX₁.mul (hF.pderiv (by simp [add_comm]))).C_mul _
   · rcases lt_or_ge n 6 with h | h
     · rw [hF.pderiv_eq_zero (by simpa using h), mul_zero]
       exact isWeightedHomogeneous_zero ..
     · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le h
       rw [mul_assoc, show (6 : MvPolynomial (Fin 2) (ZMod p)) = C 6 by rw [map_ofNat],
-        show 6 + m + 2 = 4 * 2 + m by omega]
+        show 6 + m + 2 = 4 * 2 + m by lia]
       exact ((hX₀.pow 2).mul (hF.pderiv (by simp [add_comm]))).C_mul _
 
 /-! ### Differential equations for the Hasse invariant -/
@@ -151,7 +151,7 @@ theorem isWeightedHomogeneous_δModP (hF : IsWeightedHomogeneous E₄E₆Weights
 /-- The Ramanujan derivative of `hasseInvPoly` is weighted homogeneous of weight `p + 1`. -/
 theorem isWeightedHomogeneous_δModP_hasseInvPoly (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (δModP (hasseInvPoly hp)) (p + 1) := by
-  simpa [show p - 1 + 2 = p + 1 by omega] using
+  simpa [show p - 1 + 2 = p + 1 by lia] using
     isWeightedHomogeneous_δModP (hasseInvPoly_isWeightedHomogeneous hp)
 
 /-- The evaluation of the Ramanujan derivative of the Hasse polynomial is `E₂ModP`. -/
@@ -177,13 +177,13 @@ theorem evalE₄E₆ModP_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
 `p + 3`. -/
 theorem isWeightedHomogeneous_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (δModP (δModP (hasseInvPoly hp))) (p + 3) := by
-  simpa [show p + 1 + 2 = p + 3 by omega] using
+  simpa [show p + 1 + 2 = p + 3 by lia] using
     isWeightedHomogeneous_δModP (isWeightedHomogeneous_δModP_hasseInvPoly hp)
 
 /-- The polynomial `-X 0 * hasseInvPoly` is weighted homogeneous of weight `p + 3`. -/
 theorem isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (-X 0 * hasseInvPoly hp) (p + 3) := by
-  simpa [E₄E₆Weights, Matrix.cons_val_zero, show 4 + (p - 1) = p + 3 by omega] using
+  simpa [E₄E₆Weights, Matrix.cons_val_zero, show 4 + (p - 1) = p + 3 by lia] using
     (isWeightedHomogeneous_X _ E₄E₆Weights 0).neg.mul (hasseInvPoly_isWeightedHomogeneous hp)
 
 /-- The Hasse polynomial satisfies the equation `δ² hasseInvPoly = -X₀ hasseInvPoly`. -/

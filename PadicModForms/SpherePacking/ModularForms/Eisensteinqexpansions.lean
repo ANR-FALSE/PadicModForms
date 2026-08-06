@@ -57,7 +57,7 @@ lemma E_k_q_expansion (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) 
     F z =
         1 + (riemannZeta k)⁻¹ * (-2 * ↑π * Complex.I) ^ k / (k - 1)! *
           ∑' n : ℕ+, σ (k - 1) n * cexp (2 * ↑π * Complex.I * z) ^ (n : ℤ) := by
-      have hq := EisensteinSeries.q_expansion_riemannZeta (k := k) (by omega) hk2 z
+      have hq := EisensteinSeries.q_expansion_riemannZeta (k := k) (by lia) hk2 z
       rw [ModularForm.E] at hq
       change F z = _ at hq
       exact hq

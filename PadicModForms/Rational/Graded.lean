@@ -256,7 +256,7 @@ theorem evalE₄E₆Rat_surjective : Function.Surjective evalE₄E₆Rat := fun 
           rank_zero_iff_forall_zero.mp (ModularForm.levelOne_neg_weight_rank_zero hk) _
         have hf : f = 0 := rationalModularFormToComplex_injective (by simpa using hfC)
         exact ⟨0, by simp [hf]⟩
-      · obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by omega⟩
+      · obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
         obtain ⟨p, hp⟩ := evalE₄E₆RatAtWeight_surjective n f
         exact ⟨p, (evalE₄E₆Rat_eq_of_apply n p).trans
           (congrArg (DirectSum.of (fun k : ℤ ↦ rationalModularForms k) (n : ℤ)) hp)⟩

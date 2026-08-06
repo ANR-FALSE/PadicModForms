@@ -111,7 +111,7 @@ theorem v_ne_bot_add {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : v g ≠ ⊥
   have hp1 : (1 : ℝ) ≤ p := mod_cast hp.1.one_lt.le
   refine v_ne_bot_iff_norm.2 ⟨min m m', fun n ↦ (IsUltrametricDist.norm_add_le_max _ _).trans
     (max_le ((hm n).trans ?_) ((hm' n).trans ?_))⟩ <;>
-  exact (zpow_le_zpow_right₀ hp1 (by omega))
+  exact (zpow_le_zpow_right₀ hp1 (by lia))
 
 /-- Multiplying by a series with integral coefficients keeps the valuation finite. -/
 theorem v_ne_bot_mul_of_nonneg {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : 0 ≤ v g) : v (f * g) ≠ ⊥ := by

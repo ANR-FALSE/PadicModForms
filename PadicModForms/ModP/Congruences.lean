@@ -63,7 +63,7 @@ theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
   have hscalar : (p : pLocalInt p) ^ m ∣ 2 * k * B_i := by
     obtain ⟨a, ha⟩ := hkpow
     obtain ⟨b, hb⟩ := hB
-    exact ⟨2 * a * b, by rw [ha, hb, ← pow_sub_one_mul (by omega : m ≠ 0) _]; ring⟩
+    exact ⟨2 * a * b, by rw [ha, hb, ← pow_sub_one_mul (by lia : m ≠ 0) _]; ring⟩
   have hscalar_map : pLocalInt.toZModPow m ((2 * k : pLocalInt p) * B_i) = 0 :=
     pLocalInt.toZModPow_eq_zero_of_dvd hscalar
   ext n

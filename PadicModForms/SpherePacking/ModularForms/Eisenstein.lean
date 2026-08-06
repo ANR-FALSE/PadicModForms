@@ -294,7 +294,7 @@ theorem E_even_imag_axis_real (k : ℕ) (hk : (3 : ℤ) ≤ k) (hk2 : Even k) :
           apply mul_le_mul_of_nonneg_right
           · rw [Complex.norm_natCast, Complex.norm_pow, Complex.norm_natCast]
             have hbound := ArithmeticFunction.sigma_le_pow_succ (k - 1) n
-            have hk' : k - 1 + 1 = k := Nat.sub_add_cancel (by omega : 1 ≤ k)
+            have hk' : k - 1 + 1 = k := Nat.sub_add_cancel (by lia : 1 ≤ k)
             rw [hk'] at hbound
             exact_mod_cast hbound
           · exact norm_nonneg _
@@ -320,7 +320,7 @@ theorem E_even_imag_axis_real (k : ℕ) (hk : (3 : ℤ) ≤ k) (hk2 : Even k) :
   -- For ζ(k) when k ≥ 4, it's real (mathlib: riemannZeta_im_eq_zero_of_one_lt)
   have hzeta_im : (riemannZeta k).im = 0 := by
     rw [show (k : ℂ) = ((k : ℝ) : ℂ) from by push_cast; ring]
-    exact riemannZeta_im_eq_zero_of_one_lt (by exact_mod_cast show 1 < (k : ℤ) by omega)
+    exact riemannZeta_im_eq_zero_of_one_lt (by exact_mod_cast show 1 < (k : ℤ) by lia)
   have hinv_zeta_im : (1 / riemannZeta k).im = 0 := by simp [hzeta_im]
   simp only [mul_im, div_im, hinv_zeta_im, hsum_im, hpow_im, hfact_im]
   ring
