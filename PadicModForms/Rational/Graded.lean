@@ -131,17 +131,17 @@ variable (k : ℕ)
 abbrev E₄E₆WeightedMonomials := {d : Fin 2 →₀ ℕ // Finsupp.weight E₄E₆Weights d = k}
 
 /-- The polynomials in `X₀, X₁` that are weighted homogeneous of weight `k` for the weights
-`E₄E₆Weights`, that is, the isobaric polynomials of modular weight `k`. -/
+`E₄E₆Weights`, that is, the weighted homogeneous polynomials of modular weight `k`. -/
 public abbrev E₄E₆WeightedHomogeneous (R : Type*) [CommSemiring R] :=
   weightedHomogeneousSubmodule R E₄E₆Weights k
 
-/-- The isobaric polynomials of weight `k` are free on the monomials of weight `k`. -/
+/-- The weighted homogeneous polynomials of weight `k` are free on the monomials of weight `k`. -/
 noncomputable def E₄E₆WeightedMonomialBasis (R : Type*) [Field R] :
     Basis (E₄E₆WeightedMonomials k) R (E₄E₆WeightedHomogeneous k R) :=
   (basisRestrictSupport R {d | Finsupp.weight E₄E₆Weights d = k}).map
     (.ofEq _ _ (weightedHomogeneousSubmodule_eq_finsupp_supported R _ k).symm)
 
-/-- Evaluation at `E₄` and `E₆`, restricted to isobaric polynomials of weight `k`. -/
+/-- Evaluation at `E₄` and `E₆`, restricted to weighted homogeneous polynomials of weight `k`. -/
 noncomputable def evalE₄E₆AtWeight : E₄E₆WeightedHomogeneous k ℂ →ₗ[ℂ] ModularForm 𝒮ℒ k :=
   (component ℂ ℤ (fun k ↦ ModularForm 𝒮ℒ k) k).comp
     (evalE₄E₆.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℂ).subtype)
@@ -161,8 +161,8 @@ theorem evalE₄E₆AtWeight_surjective : Function.Surjective (evalE₄E₆AtWei
   refine ⟨⟨_, weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
   simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congrArg (fun F ↦ F k) hp
 
-/-- The complex modular forms of weight `k` are exactly the isobaric polynomials of weight `k`
-in `E₄` and `E₆`. -/
+/-- The complex modular forms of weight `k` are exactly the weighted homogeneous polynomials of
+weight `k` in `E₄` and `E₆`. -/
 noncomputable def evalE₄E₆AtWeightEquiv : E₄E₆WeightedHomogeneous k ℂ ≃ₗ[ℂ] ModularForm 𝒮ℒ k :=
   .ofBijective _ ⟨evalE₄E₆AtWeight_injective k, evalE₄E₆AtWeight_surjective k⟩
 
@@ -171,7 +171,8 @@ theorem isWeightedHomogeneous_map_rat {k} {p : MvPolynomial (Fin 2) ℚ}
     IsWeightedHomogeneous E₄E₆Weights (p.map (algebraMap ℚ ℂ)) k :=
   fun d hd ↦ hp (fun hzero ↦ hd <| by simp [coeff_map, hzero])
 
-/-- Evaluation at `E₄` and `E₆` over `ℚ`, restricted to isobaric polynomials of weight `k`. -/
+/-- Evaluation at `E₄` and `E₆` over `ℚ`, restricted to weighted homogeneous polynomials of
+weight `k`. -/
 noncomputable def evalE₄E₆RatAtWeight : E₄E₆WeightedHomogeneous k ℚ →ₗ[ℚ] rationalModularForms k :=
   (DirectSum.component ℚ ℤ (fun k ↦ rationalModularForms k) k).comp
     (evalE₄E₆Rat.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℚ).subtype)

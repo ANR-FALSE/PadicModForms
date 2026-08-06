@@ -66,7 +66,8 @@ theorem coe_evalE₄E₆IntAtWeight : (evalE₄E₆IntAtWeight n P : (pLocalInt 
   rw [← pLocalIntQExpansionAlgHom_evalE₄E₆Int, evalE₄E₆Int_eq_of_apply,
     pLocalIntQExpansionAlgHom_of]
 
-/-- Evaluation at `E₄` and `E₆` modulo `p`, restricted to isobaric polynomials of weight `n`. -/
+/-- Evaluation at `E₄` and `E₆` modulo `p`, restricted to weighted homogeneous polynomials of
+weight `n`. -/
 def evalE₄E₆ModPAtWeight (n : ℕ) :
     E₄E₆WeightedHomogeneous n (ZMod p) →ₗ[ZMod p] (ZMod p)⟦X⟧ :=
   evalE₄E₆ModP.toLinearMap.comp (E₄E₆WeightedHomogeneous n (ZMod p)).subtype
@@ -94,8 +95,8 @@ private theorem eq_zero_of_evalE₄E₆ModP_eq_zero (hp : 5 ≤ p) {F : MvPolyno
     simpa using congrArg Subtype.val this
   exact evalE₄E₆IntAtWeight_injective (by simpa [hH, ← hf] using Subtype.ext hpg.symm)
 
-/-- Evaluation modulo `p` is injective on isobaric polynomials of a fixed weight. This is the
-mod-`p` analogue of `evalE₄E₆Int_injective`. -/
+/-- Evaluation modulo `p` is injective on weighted homogeneous polynomials of a fixed weight.
+This is the mod-`p` analogue of `evalE₄E₆Int_injective`. -/
 theorem evalE₄E₆ModPAtWeight_injective (hp : 5 ≤ p) :
     Function.Injective (evalE₄E₆ModPAtWeight (p := p) n) := fun P Q hPQ ↦
   Subtype.ext <| sub_eq_zero.mp <| eq_zero_of_evalE₄E₆ModP_eq_zero hp (sub_mem P.2 Q.2)

@@ -12,8 +12,9 @@ public import PadicModForms.ModP.Graded
 /-!
 # The Hasse invariant as a polynomial in `E₄` and `E₆`
 
-For a prime `p ≥ 5` this file defines `hasseInvPoly`, the isobaric polynomial of weight `p - 1`
-in `E₄` and `E₆` representing the Hasse invariant `Ẽ_{p-1}`, and proves that it evaluates to `1`.
+For a prime `p ≥ 5` this file defines `hasseInvPoly`, the weighted homogeneous polynomial of
+weight `p - 1` in `E₄` and `E₆` representing the Hasse invariant `Ẽ_{p-1}`, and proves that it
+evaluates to `1`.
 
 Over `pLocalInt p` the map `evalE₄E₆Int` is injective, so `E₄` and `E₆` satisfy no relation.
 Modulo `p` the congruence `E_{p-1} ≡ 1` becomes the relation `hasseInvPoly hp = 1`, and
@@ -31,14 +32,14 @@ variable {p : ℕ} [Fact p.Prime]
 
 /-! ### The Hasse invariant -/
 
-/-- The Hasse invariant `Ẽ_{p-1}`, written as an isobaric polynomial of weight `p - 1` in `E₄`
-and `E₆` with coefficients in `ZMod p`. This is the polynomial Serre calls `A`. -/
+/-- The Hasse invariant `Ẽ_{p-1}`, written as a weighted homogeneous polynomial of weight
+`p - 1` in `E₄` and `E₆` with coefficients in `ZMod p`. This is the polynomial Serre calls `A`. -/
 def hasseInvPoly (hp : 5 ≤ p) : MvPolynomial (Fin 2) (ZMod p) :=
   (((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
       ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩ : MvPolynomial _ _)).map
         pLocalInt.toZMod
 
-/-- The Hasse invariant is isobaric of weight `p - 1`. -/
+/-- The Hasse invariant is weighted homogeneous of weight `p - 1`. -/
 theorem hasseInvPoly_isWeightedHomogeneous (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (hasseInvPoly hp) (p - 1) := fun d hd ↦
   ((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm

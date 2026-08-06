@@ -294,7 +294,7 @@ theorem evalE₄E₆IntAtWeight_bijective (hp : 5 ≤ p) {k : ℕ} :
     Function.Bijective (evalE₄E₆IntAtWeight (p := p) k) :=
   ⟨evalE₄E₆IntAtWeight_injective, evalE₄E₆IntAtWeight_surjective hp⟩
 
-/-- For `p ≥ 5` the `p`-integral modular forms of weight `k` are exactly the isobaric
+/-- For `p ≥ 5` the `p`-integral modular forms of weight `k` are exactly the weighted homogeneous
 polynomials of weight `k` in `E₄_int` and `E₆_int`. -/
 def evalE₄E₆IntAtWeightEquiv (hp : 5 ≤ p) (k : ℕ) :
     E₄E₆WeightedHomogeneous k (pLocalInt p) ≃ₗ[pLocalInt p] pLocalIntModularForms p k :=
@@ -305,8 +305,8 @@ theorem evalE₄E₆IntAtWeightEquiv_apply (hp : 5 ≤ p) (k : ℕ)
     (P : E₄E₆WeightedHomogeneous k (pLocalInt p)) :
     evalE₄E₆IntAtWeightEquiv hp k P = evalE₄E₆IntAtWeight k P := rfl
 
-/-- The isobaric polynomial of weight `k` representing a `p`-integral modular form of weight
-`k` is weighted homogeneous, and evaluates back to the form. -/
+/-- The weighted homogeneous polynomial of weight `k` attached to a `p`-integral modular form of
+weight `k` evaluates back to the form. -/
 theorem evalE₄E₆Int_symm_apply (hp : 5 ≤ p) {k : ℕ} (f : pLocalIntModularForms p k) :
     evalE₄E₆Int ((evalE₄E₆IntAtWeightEquiv hp k).symm f :
         MvPolynomial _ (pLocalInt p)) = of _ (k : ℤ) f := by
