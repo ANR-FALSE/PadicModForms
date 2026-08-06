@@ -20,6 +20,7 @@ squarefree.
 
 * `ModularForm.dvd_δModP_of_dvd_of_dvd_δModP`: an irreducible common factor `F` of the Hasse
   invariant and of its Ramanujan derivative divides `δ F`.
+* `ModularForm.δModP_eq_zero_of_dvd_of_dvd_δModP`: such an `F` in fact satisfies `δ F = 0`.
 * `ModularForm.le_of_pow_dvd_hasseInvPoly`: if `F ^ r` divides the Hasse invariant, with `F`
   irreducible, then `r ≤ p - 1`. In particular `r` is invertible in `ZMod p`.
 -/
@@ -74,6 +75,8 @@ private theorem isUnit_natCast_of_pow_dvd (hp : 5 ≤ p) (hF : Irreducible F)
     absurd (Nat.le_of_dvd hk0 ((ZMod.natCast_eq_zero_iff _ _).1 h)) (by lia)
   simpa using (isUnit_iff_ne_zero.mpr this).map C
 
+/-! ### Step 1: a common factor divides its own derivative -/
+
 /-- The cofactor left behind when `δ` is applied to `F ^ (n + 1) * G`; see `δModP_pow_succ_mul`. -/
 private def leibnizCofactor (F G : MvPolynomial (Fin 2) (ZMod p)) (n : ℕ) :
     MvPolynomial (Fin 2) (ZMod p) := (↑(n + 1)) * (G * δModP F) + F * δModP G
@@ -120,5 +123,29 @@ theorem dvd_δModP_of_dvd_of_dvd_δModP (hp : 5 ≤ p) (hF : Irreducible F) (hFA
       exact ⟨-X 0 * F * G, by ring⟩
     grind [δModP_sq_hasseInvPoly hp]
   rw [this, δModP_pow_succ_mul]
+
+/-! ### Step 2: the derivative of a common factor vanishes -/
+
+/-- In variables of weights `4` and `6` there is no nonzero weighted homogeneous polynomial of
+weight `2`. -/
+theorem eq_zero_of_isWeightedHomogeneous_two (hG : IsWeightedHomogeneous E₄E₆Weights G 2) :
+    G = 0 :=
+  hG.eq_zero_of_no_monomials fun d ↦ by rw [weight_E₄E₆_apply]; omega
+
+/-- An irreducible factor of the Hasse invariant dividing its own derivative is killed by `δ`. -/
+theorem δModP_eq_zero_of_dvd_δModP (hp : 5 ≤ p) (hF : Irreducible F) (hFA : F ∣ hasseInvPoly hp)
+    (h : F ∣ δModP F) : δModP F = 0 := by
+  by_contra hδ0
+  obtain ⟨c, _, hc⟩ := exists_isWeightedHomogeneous_of_irreducible_dvd hp hF hFA
+  obtain ⟨H, hH⟩ := h
+  have hH0 : H ≠ 0 := fun h0 ↦ hδ0 (by grind)
+  obtain ⟨m, k, hm, _, _⟩ := (hH ▸ isWeightedHomogeneous_δModP hc).mul_factors hF.ne_zero hH0
+  exact hH0 (eq_zero_of_isWeightedHomogeneous_two (by grind [hm.inj_right hF.ne_zero hc]))
+
+/-- **Steps 1 and 2**: an irreducible common factor of the Hasse invariant and of its Ramanujan
+derivative is killed by `δ`. -/
+theorem δModP_eq_zero_of_dvd_of_dvd_δModP (hp : 5 ≤ p) (hF : Irreducible F)
+    (hFA : F ∣ hasseInvPoly hp) (hFB : F ∣ δModP (hasseInvPoly hp)) : δModP F = 0 :=
+  δModP_eq_zero_of_dvd_δModP hp hF hFA (dvd_δModP_of_dvd_of_dvd_δModP hp hF hFA hFB)
 
 end ModularForm
