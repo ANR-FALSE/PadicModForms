@@ -35,37 +35,36 @@ namespace PowerSeries
 
 variable {R : Type*} [CommSemiring R]
 
-variable (R) in
 -- should go to Mathlib.RingTheory.PowerSeries.Derivative
 /-- The operator `Θ = q d/dq` on power series, sending `∑ aₙ qⁿ` to `∑ n aₙ qⁿ`. It is `X` times
 the formal derivative, hence a derivation. -/
 def Θ : Derivation R R⟦X⟧ R⟦X⟧ := (X : R⟦X⟧) • derivative R
 
-theorem Θ_apply (f : R⟦X⟧) : Θ R f = X * derivative R f := by
+theorem Θ_apply (f : R⟦X⟧) : Θ f = X * derivative R f := by
   rw [Θ, Derivation.smul_apply, smul_eq_mul]
 
 @[simp]
-theorem Θ_C (a : R) : Θ R (C a) = 0 := by
+theorem Θ_C (a : R) : Θ (C a) = 0 := by
   simp [Θ_apply]
 
 @[simp]
-theorem coeff_Θ (f : R⟦X⟧) (n : ℕ) : coeff n (Θ R f) = n • coeff n f := by
+theorem coeff_Θ (f : R⟦X⟧) (n : ℕ) : coeff n (Θ f) = n • coeff n f := by
   cases n with
   | zero => simp [Θ_apply]
   | succ n => simp [Θ_apply, coeff_succ_X_mul, coeff_derivative, mul_comm]
 
 /-- The coefficientwise description of `Θ`: it sends `∑ aₙ qⁿ` to `∑ n aₙ qⁿ`. -/
-theorem Θ_eq_mk (f : R⟦X⟧) : Θ R f = mk fun n ↦ n • coeff n f :=
+theorem Θ_eq_mk (f : R⟦X⟧) : Θ f = mk fun n ↦ n • coeff n f :=
   ext fun n ↦ by simp
 
 @[simp]
-theorem constantCoeff_Θ (f : R⟦X⟧) : constantCoeff (Θ R f) = 0 := by
+theorem constantCoeff_Θ (f : R⟦X⟧) : constantCoeff (Θ f) = 0 := by
   simp [Θ_apply]
 
 /-- `Θ` commutes with extension of the coefficient ring: it only rescales coefficients by natural
 numbers. -/
 theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) (f : R⟦X⟧) :
-    (Θ R f).map φ = Θ S (f.map φ) :=
+    (Θ f).map φ = Θ (f.map φ) :=
   ext fun n ↦ by simp [nsmul_eq_mul]
 
 end PowerSeries

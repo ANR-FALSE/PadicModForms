@@ -41,28 +41,28 @@ theorem E₂ModP_mem_modPModularForms (hp5 : 5 ≤ p) : E₂ModP ∈ modPModular
   E₂_int_map_toZMod_mem_modPModularForms hp5
 
 /-- **Ramanujan's identity** for `E₂` modulo `p`: `12 Θ E₂ = E₂² - E₄`. -/
-theorem Θ_E₂ModP : 12 * Θ (ZMod p) E₂ModP = E₂ModP * E₂ModP - E₄ModP := by
+theorem Θ_E₂ModP : 12 * Θ (R := ZMod p) E₂ModP = E₂ModP * E₂ModP - E₄ModP := by
   simpa [E₂ModP, E₄ModP, map_Θ, map_ofNat] using congrArg (map (pLocalInt.toZMod (p := p))) Θ_E₂_int
 
 /-- **Ramanujan's identity** for `E₄` modulo `p`: `3 Θ E₄ = E₂E₄ - E₆`. -/
-theorem Θ_E₄ModP : 3 * Θ (ZMod p) E₄ModP = E₂ModP * E₄ModP - E₆ModP := by
+theorem Θ_E₄ModP : 3 * Θ (R := ZMod p) E₄ModP = E₂ModP * E₄ModP - E₆ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
     congrArg (map (pLocalInt.toZMod (p := p))) Θ_E₄_int
 
 /-- **Ramanujan's identity** for `E₆` modulo `p`: `2 Θ E₆ = E₂E₆ - E₄²`. -/
-theorem Θ_E₆ModP : 2 * Θ (ZMod p) E₆ModP = E₂ModP * E₆ModP - E₄ModP * E₄ModP := by
+theorem Θ_E₆ModP : 2 * Θ (R := ZMod p) E₆ModP = E₂ModP * E₆ModP - E₄ModP * E₄ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
     congrArg (PowerSeries.map (pLocalInt.toZMod (p := p))) Θ_E₆_int
 
 /-- `12 Θ E₄ = 4E₂E₄ - 4E₆`, weight-normalized. -/
-theorem twelve_Θ_E₄ModP : 12 * Θ (ZMod p) E₄ModP = 4 * (E₂ModP * E₄ModP) - 4 * E₆ModP :=
-  calc _ = 4 * (3 * Θ (ZMod p) E₄ModP) := by ring
+theorem twelve_Θ_E₄ModP : 12 * Θ (R := ZMod p) E₄ModP = 4 * (E₂ModP * E₄ModP) - 4 * E₆ModP :=
+  calc _ = 4 * (3 * Θ (R := ZMod p) E₄ModP) := by ring
     _ = _ := by rw [Θ_E₄ModP]; ring
 
 /-- `12 Θ E₆ = 6E₂E₆ - 6E₄²`, weight-normalized. -/
 theorem twelve_Θ_E₆ModP :
-    12 * Θ (ZMod p) E₆ModP = 6 * (E₂ModP * E₆ModP) - 6 * (E₄ModP * E₄ModP) :=
-  calc _ = 6 * (2 * Θ (ZMod p) E₆ModP) := by ring
+    12 * Θ (R := ZMod p) E₆ModP = 6 * (E₂ModP * E₆ModP) - 6 * (E₄ModP * E₄ModP) :=
+  calc _ = 6 * (2 * Θ (R := ZMod p) E₆ModP) := by ring
     _ = _ := by rw [Θ_E₆ModP]; ring
 
 end EisensteinSeries

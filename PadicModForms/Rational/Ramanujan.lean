@@ -46,7 +46,7 @@ theorem analyticAt_E2 : AnalyticAt ℂ (cuspFunction 1 E2) 0 :=
   E2_analyticAt_cuspFunction_zero
 
 /-- Ramanujan's identity for `E₂` on `q`-expansions over `ℂ`. -/
-theorem Θ_qExpansion_E2 : Θ ℂ (qExpansion 1 E2) =
+theorem Θ_qExpansion_E2 : Θ (qExpansion 1 E2) =
     (12⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E2 - qExpansion 1 E₄) := by
   have hsmul : 12⁻¹ * (E2 * E2 - E₄) = (12⁻¹ : ℂ) • (E2 * E2 - E₄) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E2
@@ -57,7 +57,7 @@ theorem Θ_qExpansion_E2 : Θ ℂ (qExpansion 1 E2) =
     _ = _ := by rw [qExpansion_sub h analyticAt_E₄, qExpansion_mul analyticAt_E2 analyticAt_E2]
 
 /-- Ramanujan's identity for `E₄` on `q`-expansions over `ℂ`. -/
-theorem Θ_qExpansion_E₄ : Θ ℂ (qExpansion 1 E₄) =
+theorem Θ_qExpansion_E₄ : Θ (qExpansion 1 E₄) =
     (3⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E₄ - qExpansion 1 E₆) := by
   have hsmul : 3⁻¹ * (E2 * E₄ - E₆) = (3⁻¹ : ℂ) • (E2 * E₄ - E₆) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E₄
@@ -67,7 +67,7 @@ theorem Θ_qExpansion_E₄ : Θ ℂ (qExpansion 1 E₄) =
     _ = _ := by rw [qExpansion_sub h analyticAt_E₆, qExpansion_mul analyticAt_E2 analyticAt_E₄]
 
 /-- Ramanujan's identity for `E₆` on `q`-expansions over `ℂ`. -/
-theorem Θ_qExpansion_E₆ : Θ ℂ (qExpansion 1 E₆) =
+theorem Θ_qExpansion_E₆ : Θ (qExpansion 1 E₆) =
     (2⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E₆ - qExpansion 1 E₄ * qExpansion 1 E₄) := by
   have hsmul : 2⁻¹ * (E2 * E₆ - E₄ * E₄) = (2⁻¹ : ℂ) • (E2 * E₆ - E₄ * E₄) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E₆
@@ -81,7 +81,7 @@ theorem Θ_qExpansion_E₆ : Θ ℂ (qExpansion 1 E₆) =
 /-! ### The identities over `ℚ` -/
 
 /-- **Ramanujan's identity** for `E₂`: `12 Θ E₂ = E₂² - E₄`. -/
-public theorem Θ_E₂Rat : 12 * Θ ℚ E₂Rat = E₂Rat * E₂Rat - E₄Rat := by
+public theorem Θ_E₂Rat : 12 * Θ E₂Rat = E₂Rat * E₂Rat - E₄Rat := by
   refine map_injective _ (algebraMap ℚ ℂ).injective ?_
   rw [map_mul, map_Θ, ← qExpansion_E2_eq_E₂Rat_map, Θ_qExpansion_E2, map_sub, map_mul,
     ← qExpansion_E2_eq_E₂Rat_map, E₄Rat_map_complex, map_ofNat, smul_eq_C_mul, ← mul_assoc,
@@ -89,7 +89,7 @@ public theorem Θ_E₂Rat : 12 * Θ ℚ E₂Rat = E₂Rat * E₂Rat - E₄Rat :=
   norm_num
 
 /-- **Ramanujan's identity** for `E₄`: `3 Θ E₄ = E₂E₄ - E₆`. -/
-public theorem Θ_E₄Rat : 3 * Θ ℚ E₄Rat = E₂Rat * E₄Rat - E₆Rat := by
+public theorem Θ_E₄Rat : 3 * Θ (R := ℚ) E₄Rat = E₂Rat * E₄Rat - E₆Rat := by
   refine map_injective _ (algebraMap ℚ ℂ).injective ?_
   rw [map_mul, map_Θ, E₄Rat_map_complex, Θ_qExpansion_E₄, map_sub, map_mul,
     ← qExpansion_E2_eq_E₂Rat_map, E₄Rat_map_complex, E₆Rat_map_complex, map_ofNat, smul_eq_C_mul,
@@ -97,7 +97,7 @@ public theorem Θ_E₄Rat : 3 * Θ ℚ E₄Rat = E₂Rat * E₄Rat - E₆Rat := 
   norm_num
 
 /-- **Ramanujan's identity** for `E₆`: `2 Θ E₆ = E₂E₆ - E₄²`. -/
-public theorem Θ_E₆Rat : 2 * Θ ℚ E₆Rat = E₂Rat * E₆Rat - E₄Rat * E₄Rat := by
+public theorem Θ_E₆Rat : 2 * Θ (R := ℚ) E₆Rat = E₂Rat * E₆Rat - E₄Rat * E₄Rat := by
   refine map_injective _ (algebraMap ℚ ℂ).injective ?_
   rw [map_mul, map_Θ, E₆Rat_map_complex, Θ_qExpansion_E₆, map_sub, map_mul, map_mul,
     ← qExpansion_E2_eq_E₂Rat_map, E₄Rat_map_complex, E₆Rat_map_complex, map_ofNat,

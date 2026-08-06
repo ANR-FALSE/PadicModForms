@@ -117,7 +117,7 @@ theorem cuspFunction_normalizedDeriv {w : ℂ} (hw : ‖w‖ < 1) :
 /-! ### The `q`-expansion of `D f` -/
 
 /-- The normalized derivative multiplies the `n`-th `q`-expansion coefficient by `n / h`. -/
-theorem qExpansion_normalizedDeriv : qExpansion h (D f) = (h : ℂ)⁻¹ • Θ ℂ (qExpansion h f) := by
+theorem qExpansion_normalizedDeriv : qExpansion h (D f) = (h : ℂ)⁻¹ • Θ (qExpansion h f) := by
   ext n
   have heq : cuspFunction h (D f) =ᶠ[𝓝 0]
       fun w ↦ (h : ℂ)⁻¹ * (w * deriv (cuspFunction h f) w) := by
@@ -134,7 +134,7 @@ end
 
 /-- For period `1`, the normalized derivative is exactly `Θ` on `q`-expansions. -/
 theorem qExpansion_normalizedDeriv_one (hfper : Periodic (f ∘ ofComplex) 1) (hfhol : MDiff f)
-    (hfbdd : IsBoundedAtImInfty f) : qExpansion 1 (D f) = Θ ℂ (qExpansion 1 f) := by
+    (hfbdd : IsBoundedAtImInfty f) : qExpansion 1 (D f) = Θ (qExpansion 1 f) := by
   simpa using qExpansion_normalizedDeriv one_pos hfper hfhol hfbdd
 
 section LevelOne
@@ -143,7 +143,7 @@ open scoped MatrixGroups
 
 /-- For a level-one modular form, `D` acts on `q`-expansions as `Θ`. -/
 theorem qExpansion_normalizedDeriv_levelOne {F : Type*} [FunLike F ℍ ℂ] [ModularFormClass F 𝒮ℒ k]
-    (g : F) : qExpansion 1 (D (g : ℍ → ℂ)) = Θ ℂ (qExpansion 1 (g : ℍ → ℂ)) :=
+    (g : F) : qExpansion 1 (D (g : ℍ → ℂ)) = Θ (qExpansion 1 (g : ℍ → ℂ)) :=
   qExpansion_normalizedDeriv_one (SlashInvariantFormClass.periodic_comp_ofComplex g
     one_mem_strictPeriods_SL) (ModularFormClass.holo g) (ModularFormClass.bdd_at_infty g)
 
