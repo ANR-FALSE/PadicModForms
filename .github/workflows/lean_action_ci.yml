@@ -67,6 +67,9 @@ jobs:
       url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/docs
     steps:
       - uses: actions/checkout@v5
+      # `docgen-action` does not install a toolchain: it invokes `~/.elan/bin/lake` directly and
+      # relies on `lean-action` having run before it in the same job.
+      - uses: leanprover/lean-action@v1
       - uses: leanprover-community/docgen-action@v1
         with:
           blueprint: false
