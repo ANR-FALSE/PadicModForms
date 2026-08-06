@@ -26,11 +26,13 @@ namespace PowerSeries
 
 /-! ### Casts into power series modulo `p` -/
 
+@[simp]
 theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
   have hp : 1 ≤ p := Nat.Prime.one_le (Fact.out : p.Prime)
   rw [Nat.cast_sub hp, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
   simp
 
+@[simp]
 theorem natCast_p_add_one : ((p + 1 : ℕ) : (ZMod p)⟦X⟧) = 1 := by
   simp [Nat.cast_add, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
 
