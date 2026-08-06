@@ -16,6 +16,7 @@ import PadicModForms.ForMathlib.Theta
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
 import PadicModForms.ModP.Congruences
+import PadicModForms.ModP.Differential
 import PadicModForms.ModP.Eisenstein
 import PadicModForms.ModP.Graded
 import PadicModForms.ModP.Hasse
