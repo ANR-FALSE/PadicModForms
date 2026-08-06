@@ -27,7 +27,8 @@ weighted homogeneous.
   of weighted degree `0`, for a weight function taking no zero value, is a constant; over a field
   it is a unit as soon as it is nonzero (`MvPolynomial.IsWeightedHomogeneous.isUnit_of_ne_zero`).
 * `MvPolynomial.IsWeightedHomogeneous.mul_factors`: if a product of two nonzero polynomials is
-  weighted homogeneous, both factors are, and their weights add up.
+  weighted homogeneous, both factors are, and their weights add up; in particular a divisor has at
+  most the weight of its multiple (`MvPolynomial.IsWeightedHomogeneous.weight_le_of_dvd`).
 * `MvPolynomial.IsWeightedHomogeneous.irreducible_of_unique_lower_weight`: a non-monomial weighted
   homogeneous polynomial is irreducible if every positive lower weight supports at most one
   monomial.
@@ -161,6 +162,14 @@ theorem mul_factors (hPQ : IsWeightedHomogeneous w (P * Q) n) (hP : P ≠ 0) (hQ
     rw [← natTrailingDegree_mul hTP hTQ, hprod, natTrailingDegree_monomial (mul_ne_zero hP hQ)]
   exact ⟨_, _, isWeightedHomogeneous_natDegree (by grind [natTrailingDegree_le_natDegree]),
     isWeightedHomogeneous_natDegree (by grind [natTrailingDegree_le_natDegree]), hdegree⟩
+
+/-- A divisor of a nonzero weighted homogeneous polynomial has at most its weight. -/
+theorem weight_le_of_dvd {m : ℕ} (hP : IsWeightedHomogeneous w P m)
+    (hQ : IsWeightedHomogeneous w Q n) (hQ0 : Q ≠ 0) (hPQ : P ∣ Q) : m ≤ n := by
+  obtain ⟨K, rfl⟩ := hPQ
+  have hP0 : P ≠ 0 := fun h ↦ hQ0 (by rw [h, zero_mul])
+  obtain ⟨a, b, ha, _, _⟩ := hQ.mul_factors hP0 (right_ne_zero_of_mul hQ0)
+  grind [ha.inj_right hP0 hP]
 
 /-- Over a field, a non-monomial weighted homogeneous polynomial is irreducible if each positive
 weight below its weight supports at most one monomial. -/
