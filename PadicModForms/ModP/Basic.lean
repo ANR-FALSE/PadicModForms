@@ -24,6 +24,18 @@ variable {p : ℕ} [Fact p.Prime]
 
 namespace PowerSeries
 
+/-! ### Casts into power series modulo `p` -/
+
+theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
+  have hp : 1 ≤ p := Nat.Prime.one_le (Fact.out : p.Prime)
+  rw [Nat.cast_sub hp, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
+  simp
+
+theorem natCast_p_add_one : ((p + 1 : ℕ) : (ZMod p)⟦X⟧) = 1 := by
+  simp [Nat.cast_add, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
+
+/-! ### Modular forms -/
+
 /-- A power series with coefficients in `ℤ/pℤ` is a mod-`p` modular form of weight `k` if it is
 the reduction of a power series with coefficients in the localization of `ℤ` at `p` whose base
 change to `ℚ` is a modular form of weight `k`. -/
