@@ -28,6 +28,9 @@ weighted homogeneous.
   it is a unit as soon as it is nonzero (`MvPolynomial.IsWeightedHomogeneous.isUnit_of_ne_zero`).
 * `MvPolynomial.IsWeightedHomogeneous.mul_factors`: if a product of two nonzero polynomials is
   weighted homogeneous, both factors are, and their weights add up.
+* `MvPolynomial.IsWeightedHomogeneous.irreducible_of_unique_lower_weight`: a non-monomial weighted
+  homogeneous polynomial is irreducible if every positive lower weight supports at most one
+  monomial.
 * `MvPolynomial.IsWeightedHomogeneous.irreducible_factor`: every irreducible factor of a nonzero
   weighted homogeneous polynomial is weighted homogeneous.
 -/
@@ -40,7 +43,7 @@ namespace MvPolynomial
 
 -- everything in this file should go to Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
-variable {σ R : Type*}
+variable {σ R : Type*} {K : Type*} [Field K] {M : Type*} [AddCommMonoid M]
 
 /-- A weighted homogeneous polynomial is a monomial if at most one exponent vector has its
 weighted degree. This includes the case in which no exponent vector has that degree: then the
@@ -65,10 +68,9 @@ theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddC
 
 /-- Over a field, a nonzero polynomial which is weighted homogeneous of weighted degree `0`, for a
 weight function taking no zero value, is a unit. -/
-theorem IsWeightedHomogeneous.isUnit_of_ne_zero {K : Type*} [Field K] {M : Type*} [AddCommMonoid M]
-    [PartialOrder M] [CanonicallyOrderedAdd M] [IsAddTorsionFree M] {w : σ → M}
-    {φ : MvPolynomial σ K} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) (hφ0 : φ ≠ 0) :
-    IsUnit φ := by
+theorem IsWeightedHomogeneous.isUnit_of_ne_zero [PartialOrder M] [CanonicallyOrderedAdd M]
+  [IsAddTorsionFree M] {w : σ → M} {φ : MvPolynomial σ K} (hw : ∀ i, w i ≠ 0)
+    (hφ : IsWeightedHomogeneous w φ 0) (hφ0 : φ ≠ 0) : IsUnit φ := by
   refine hφ.eq_C_coeff_zero hw ▸ (isUnit_iff_ne_zero.mpr fun h ↦ hφ0 ?_).map C
   rw [hφ.eq_C_coeff_zero hw, h, map_zero]
 
@@ -159,6 +161,31 @@ theorem mul_factors (hPQ : IsWeightedHomogeneous w (P * Q) n) (hP : P ≠ 0) (hQ
     rw [← natTrailingDegree_mul hTP hTQ, hprod, natTrailingDegree_monomial (mul_ne_zero hP hQ)]
   exact ⟨_, _, isWeightedHomogeneous_natDegree (by grind [natTrailingDegree_le_natDegree]),
     isWeightedHomogeneous_natDegree (by grind [natTrailingDegree_le_natDegree]), hdegree⟩
+
+/-- Over a field, a non-monomial weighted homogeneous polynomial is irreducible if each positive
+weight below its weight supports at most one monomial. -/
+theorem irreducible_of_unique_lower_weight {P : MvPolynomial σ K}
+  (hP : IsWeightedHomogeneous w P n) (hw : ∀ i, w i ≠ 0)
+  (hunique : ∀ m, 0 < m → m < n → ∀ d e : σ →₀ ℕ, weight w d = m → weight w e = m → d = e)
+    (hP_not_monomial : ¬ ∃ d r, P = monomial d r) : Irreducible P := by
+  have hP0 : P ≠ 0 := fun h ↦ hP_not_monomial ⟨0, 0, by simpa using h⟩
+  have hn0 : n ≠ 0 := fun h ↦ hP_not_monomial ⟨0, coeff 0 P, by
+    simpa only [C_apply] using (h ▸ hP).eq_C_coeff_zero hw⟩
+  refine ⟨fun hunit ↦ (hunit.map constantCoeff).ne_zero ?_, fun {F G} hFG ↦ ?_⟩
+  · by_contra h
+    have hn := hP (d := 0) (by simpa only [constantCoeff_eq] using h)
+    exact hn0 (by simpa using hn.symm)
+  · by_contra! hcon
+    have hF0 : F ≠ 0 := fun h ↦ hP0 (by rw [hFG, h, zero_mul])
+    have hG0 : G ≠ 0 := fun h ↦ hP0 (by rw [hFG, h, mul_zero])
+    obtain ⟨a, b, ha, hb, hab⟩ := (hFG ▸ hP).mul_factors hF0 hG0
+    have ha0 : a ≠ 0 := fun h ↦ hcon.1 ((h ▸ ha).isUnit_of_ne_zero hw hF0)
+    have hb0 : b ≠ 0 := fun h ↦ hcon.2 ((h ▸ hb).isUnit_of_ne_zero hw hG0)
+    obtain ⟨d₁, r₁, hF⟩ := ha.exists_eq_monomial_of_unique_weight
+      (hunique a (Nat.pos_of_ne_zero ha0) (by omega))
+    obtain ⟨d₂, r₂, hG⟩ := hb.exists_eq_monomial_of_unique_weight
+      (hunique b (Nat.pos_of_ne_zero hb0) (by omega))
+    exact hP_not_monomial ⟨d₁ + d₂, r₁ * r₂, by rw [hFG, hF, hG, monomial_mul]⟩
 
 /-- Every irreducible factor of a nonzero weighted homogeneous multivariate polynomial over a
 domain is weighted homogeneous. -/
