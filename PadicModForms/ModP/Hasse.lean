@@ -19,7 +19,7 @@ evaluates to `1`.
 Over `pLocalInt p` the map `evalE₄E₆Int` is injective, so `E₄` and `E₆` satisfy no relation.
 Modulo `p` the congruence `E_{p-1} ≡ 1` becomes the relation `hasseInvPoly hp = 1`, and
 Swinnerton-Dyer's theorem states that `hasseInvPoly hp - 1` generates the whole kernel of
-`evalE₄E₆ModP`. Serre calls this polynomial `A`.
+`evalE₄E₆ModP`.
 -/
 
 @[expose] public noncomputable section
@@ -33,7 +33,7 @@ variable {p : ℕ} [Fact p.Prime]
 /-! ### The Hasse invariant -/
 
 /-- The Hasse invariant `Ẽ_{p-1}`, written as a weighted homogeneous polynomial of weight
-`p - 1` in `E₄` and `E₆` with coefficients in `ZMod p`. This is the polynomial Serre calls `A`. -/
+`p - 1` in `E₄` and `E₆` with coefficients in `ZMod p`. -/
 def hasseInvPoly (hp : 5 ≤ p) : MvPolynomial (Fin 2) (ZMod p) :=
   (((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
       ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩ : MvPolynomial _ _)).map
