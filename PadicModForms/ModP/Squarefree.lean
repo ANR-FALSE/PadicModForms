@@ -6,25 +6,25 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.WeightedHomogeneous
+public import PadicModForms.ForMathlib.MvPolynomial
 public import PadicModForms.ModP.Differential
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
 
 /-!
-# Common factors of the Hasse invariant and of its Ramanujan derivative
+# Squarefreeness of the Hasse invariant
 
-Let `p ≥ 5`, write `A = hasseInvPoly` for the Hasse invariant — weighted homogeneous of weight
-`p - 1` in `X₀, X₁` over `ZMod p`, with `evalE₄E₆ModP A = 1` — and let `δ = δModP` be Ramanujan's
-derivation. This file constrains an irreducible common factor `F` of `A` and `δ A`, the aim being
-to rule one out entirely and so prove that `A` and `δ A` are relatively prime.
+Let `p ≥ 5`. The Hasse invariant `hasseInvPoly hp` is weighted homogeneous of weight `p - 1` in
+`X₀, X₁` over `ZMod p`, and its evaluation under `evalE₄E₆ModP` is `1`. This file proves that it is
+relatively prime to its Ramanujan derivative and deduces that it is squarefree.
 
 The constraints come in four steps. To begin with `F` is weighted homogeneous, of some weight `c`
 with `1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`, `weight_le_of_dvd`).
 
-1. `F ∣ δ F` (`dvd_δModP_of_dvd_of_dvd_δModP`). Writing `A = F ^ r * G` with `F ∤ G`, the Leibniz
-   rule makes the order of vanishing at `F` drop by exactly one at each differentiation — the
-   scalars it produces are invertible because `r ≤ p - 1` — so `δ² A` vanishes to order `r - 2`
-   at `F`, whereas `δ² A = -X₀ A` vanishes to order at least `r`.
+1. `F ∣ δ F` (`dvd_δModP_of_dvd_of_dvd_δModP`). Writing `hasseInvPoly hp = F ^ r * G` with
+   `F ∤ G`, the Leibniz rule makes the order of vanishing at `F` drop by exactly one at each
+   differentiation — the scalars it produces are invertible because `r ≤ p - 1` — so the second
+   derivative of `hasseInvPoly hp` vanishes to order `r - 2` at `F`, whereas
+   `δModP (δModP (hasseInvPoly hp)) = -X₀ * hasseInvPoly hp` vanishes to order at least `r`.
 2. `δ F = 0` (`δModP_eq_zero_of_dvd_of_dvd_δModP`). Otherwise `δ F / F` would be weighted
    homogeneous of weight `2`, since `δ` raises the weight by `2`, and no monomial in variables of
    weights `4` and `6` has weight `2`.
@@ -33,8 +33,8 @@ with `1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`, `we
    `6 (X₀³ - X₁²) ∂₁F = -c X₁ F`. If `F` did not divide `X₀³ - X₁²` it would divide both partial
    derivatives, which have smaller weight, so both would vanish and Euler's identity would read
    `c F = 0`.
-4. *Still to be done.* `X₀³ - X₁²` is irreducible, so `F` is associated to it; but
-   `evalE₄E₆ModP F` is a unit, being a factor of `evalE₄E₆ModP A = 1`, while
+4. `X₀³ - X₁²` is irreducible, so `F` is associated to it; but `evalE₄E₆ModP F` is a unit, being
+   a factor of `evalE₄E₆ModP (hasseInvPoly hp) = 1`, while
    `evalE₄E₆ModP (X₀³ - X₁²) = 1728 Δ` has zero constant coefficient.
 
 ## Main results
@@ -44,6 +44,9 @@ with `1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`, `we
 * `ModularForm.dvd_X_zero_pow_three_sub_X_one_sq`: step 3.
 * `ModularForm.le_of_pow_dvd_hasseInvPoly`: if `F ^ r` divides the Hasse invariant, with `F`
   irreducible, then `r ≤ p - 1`. In particular `r` is invertible in `ZMod p`.
+* `ModularForm.isRelPrime_hasseInvPoly_δModP`: the Hasse invariant is relatively prime to its
+  Ramanujan derivative.
+* `ModularForm.hasseInvPoly_squarefree`: the Hasse invariant is squarefree.
 -/
 
 @[expose] public noncomputable section
@@ -66,10 +69,7 @@ theorem exists_isWeightedHomogeneous_of_irreducible_dvd (hp : 5 ≤ p) (hF : Irr
     (hasseInvPoly_ne_zero hp) hF hFA
   refine ⟨c, ?_, hc⟩
   rcases Nat.eq_zero_or_pos c with rfl | hc0
-  · exfalso
-    have hw : ∀ i, E₄E₆Weights i ≠ 0 := fun i ↦ by fin_cases i <;> simp
-    refine hF.not_isUnit (hc.eq_C_coeff_zero hw ▸ (isUnit_iff_ne_zero.mpr (fun h ↦ ?_)).map C)
-    exact hF.ne_zero <| by rw [hc.eq_C_coeff_zero hw, h, map_zero]
+  · exact absurd (hc.isUnit_of_ne_zero E₄E₆Weights_ne_zero hF.ne_zero) hF.not_isUnit
   · exact hc0
 
 /-- If `F ^ r` divides the Hasse invariant, with `F` irreducible, then `r ≤ p - 1`. -/
@@ -239,5 +239,79 @@ theorem dvd_X_zero_pow_three_sub_X_one_sq (hp : 5 ≤ p) (hF : Irreducible F)
       by rw [four_mul_pderiv_zero hc hδ]; ring⟩)).resolve_left hdvd
   · exact (hprime.dvd_mul.mp (hu6.dvd_mul_left.mp ⟨-((c : MvPolynomial (Fin 2) (ZMod p)) * X 1),
       by rw [six_mul_pderiv_one hc hδ]; ring⟩)).resolve_left hdvd
+
+/-! ### Step 4: there is no common factor -/
+
+/-- Every positive weight below `12` supports at most one monomial in variables of weights `4`
+and `6`. -/
+theorem unique_E₄E₆Weights_of_lt_twelve :
+    ∀ n, 0 < n → n < 12 → ∀ d e : Fin 2 →₀ ℕ, Finsupp.weight E₄E₆Weights d = n →
+      Finsupp.weight E₄E₆Weights e = n → d = e := by
+  intro n _ hn d e hd he
+  rw [weight_E₄E₆_apply] at hd he
+  have h : d 0 = e 0 ∧ d 1 = e 1 := by omega
+  exact Finsupp.ext fun i ↦ by fin_cases i <;> simp [h.1, h.2]
+
+/-- `X₀³ - X₁²`, whose evaluation is `1728 Δ`, is weighted homogeneous of weight `12`. -/
+theorem isWeightedHomogeneous_X_zero_pow_three_sub_X_one_sq : IsWeightedHomogeneous E₄E₆Weights
+    ((X 0 : MvPolynomial (Fin 2) (ZMod p)) ^ 3 - X 1 ^ 2) 12 :=
+  IsWeightedHomogeneous.sub
+    (by simpa using (isWeightedHomogeneous_X (ZMod p) E₄E₆Weights 0).pow 3)
+    (by simpa using (isWeightedHomogeneous_X (ZMod p) E₄E₆Weights 1).pow 2)
+
+/-- `X₀³ - X₁²` is irreducible. -/
+theorem irreducible_X_zero_pow_three_sub_X_one_sq :
+    Irreducible ((X 0 : MvPolynomial (Fin 2) (ZMod p)) ^ 3 - X 1 ^ 2) := by
+  simpa [X_pow_eq_monomial, sub_eq_add_neg] using
+    irreducible_add_monomial_of_coprime (K := ZMod p) (m := 3) (n := 2) (a := 1) (b := -1)
+      (by norm_num) (by norm_num) (by norm_num) one_ne_zero (neg_ne_zero.mpr one_ne_zero)
+
+/-- The evaluation of `X₀³ - X₁²` is `E₄³ - E₆²`, that is `1728 Δ`. -/
+theorem evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq :
+    evalE₄E₆ModP ((X 0 : MvPolynomial (Fin 2) (ZMod p)) ^ 3 - X 1 ^ 2) =
+      EisensteinSeries.E₄ModP ^ 3 - EisensteinSeries.E₆ModP ^ 2 := by
+  rw [map_sub, map_pow, map_pow, evalE₄E₆ModP_X_zero, evalE₄E₆ModP_X_one]
+
+/-- The evaluation of `X₀³ - X₁²` has zero constant coefficient. -/
+theorem constantCoeff_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq :
+    PowerSeries.constantCoeff (evalE₄E₆ModP (p := p) ((X 0) ^ 3 - X 1 ^ 2)) = 0 := by
+  have h4 : PowerSeries.constantCoeff (EisensteinSeries.E₄ModP (p := p)) = 1 := by
+    simp [← PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  have h6 : PowerSeries.constantCoeff (EisensteinSeries.E₆ModP (p := p)) = 1 := by
+    simp [← PowerSeries.coeff_zero_eq_constantCoeff_apply]
+  grind [evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq]
+
+/-- **Step 4**: an irreducible factor of the Hasse invariant does not divide its Ramanujan
+derivative. -/
+theorem not_dvd_δModP_hasseInvPoly (hp : 5 ≤ p) (hF : Irreducible F) (hFA : F ∣ hasseInvPoly hp) :
+    ¬F ∣ δModP (hasseInvPoly hp) := fun hFB ↦ by
+  obtain ⟨u, hu⟩ := hF.associated_of_dvd irreducible_X_zero_pow_three_sub_X_one_sq
+    (dvd_X_zero_pow_three_sub_X_one_sq hp hF hFA (δModP_eq_zero_of_dvd_of_dvd_δModP hp hF hFA hFB))
+  obtain ⟨G, hG⟩ := hFA
+  have hunit : IsUnit (evalE₄E₆ModP F) := .of_mul_eq_one (evalE₄E₆ModP G) <| by
+    rw [← map_mul, ← hG, evalE₄E₆ModP_hasseInvPoly hp]
+  have h0 := constantCoeff_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq (p := p)
+  rw [← hu, map_mul] at h0
+  exact ((hunit.mul (u.isUnit.map evalE₄E₆ModP)).map PowerSeries.constantCoeff).ne_zero h0
+
+/-- **The Hasse invariant is relatively prime to its Ramanujan derivative.** -/
+theorem isRelPrime_hasseInvPoly_δModP (hp : 5 ≤ p) :
+    IsRelPrime (hasseInvPoly hp) (δModP (hasseInvPoly hp)) := fun z hzA hzB ↦ by
+  by_contra hz
+  have hz0 : z ≠ 0 := fun h ↦ hasseInvPoly_ne_zero hp (zero_dvd_iff.mp (h ▸ hzA))
+  obtain ⟨F, hF, hFz⟩ := WfDvdMonoid.exists_irreducible_factor hz hz0
+  exact not_dvd_δModP_hasseInvPoly hp hF (hFz.trans hzA) (hFz.trans hzB)
+
+/-- **The Hasse invariant is squarefree.** -/
+theorem hasseInvPoly_squarefree (hp : 5 ≤ p) : Squarefree (hasseInvPoly hp) := by
+  rw [squarefree_iff_irreducible_sq_not_dvd_of_ne_zero (hasseInvPoly_ne_zero hp)]
+  intro F hF hF_sq
+  have hF_hasseInvPoly : F ∣ hasseInvPoly hp := (dvd_mul_right F F).trans hF_sq
+  obtain ⟨G, hG⟩ := hF_sq
+  have hF_δModP : F ∣ δModP (hasseInvPoly hp) := by
+    refine ⟨leibnizCofactor F G 1, ?_⟩
+    rw [hG]
+    simpa [pow_two] using δModP_pow_succ_mul F G 1
+  exact hF.not_isUnit (isRelPrime_hasseInvPoly_δModP hp hF_hasseInvPoly hF_δModP)
 
 end ModularForm
