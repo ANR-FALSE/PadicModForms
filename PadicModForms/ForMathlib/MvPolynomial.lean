@@ -13,7 +13,7 @@ public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 /-!
 # Additional lemmas about multivariable polynomials
 
-Three unrelated additions to Mathlib.
+Several additions to Mathlib.
 
 `MvPolynomial.basisRestrictSupport R s` is the canonical `R`-basis, indexed by `s`, of the
 submodule of polynomials supported on a set `s` of exponent vectors. It is defined through its
@@ -22,7 +22,8 @@ submodule of polynomials supported on a set `s` of exponent vectors. It is defin
 
 We also show that a weighted homogeneous polynomial lifts, along a surjective map of coefficient
 rings, to a weighted homogeneous polynomial of the same weight, and that a weighted homogeneous
-polynomial does not involve the variables whose weight exceeds its own.
+polynomial does not involve the variables whose weight exceeds its own. Finally, a sum of two
+distinct monomials with nonzero coefficients is not a monomial.
 -/
 
 @[expose] public section
@@ -80,5 +81,21 @@ theorem IsWeightedHomogeneous.pderiv_eq_zero {w : σ → ℕ} {n : ℕ} {i : σ}
   refine pderiv_eq_zero_of_notMem_vars fun hi ↦ absurd hn (not_lt.2 ?_)
   obtain ⟨d, hd, hdi⟩ := (mem_vars_iff_mem_support i).1 hi
   exact hP (mem_support_iff.1 hd) ▸ Finsupp.le_weight_of_ne_zero' w (Finsupp.mem_support_iff.1 hdi)
+
+/-! ### A polynomial with two monomials -/
+
+/-- A sum of two monomials in `Fin 2` variables with distinct exponent vectors and nonzero
+coefficients is not a monomial. -/
+theorem not_exists_eq_monomial_add_monomial {m n : ℕ} {a b : R}
+    (hmn : (Finsupp.single (0 : Fin 2) m) ≠ Finsupp.single 1 n) (ha : a ≠ 0) (hb : b ≠ 0) :
+    ¬ ∃ d r, monomial (Finsupp.single (0 : Fin 2) m) a + monomial (Finsupp.single 1 n) b =
+      monomial d r := fun h ↦ by
+  set P := monomial (Finsupp.single (0 : Fin 2) m) a + monomial (Finsupp.single 1 n) b
+  obtain ⟨d, r, h⟩ := h
+  have h0 : coeff (Finsupp.single 0 m) P = a := by simp [P, coeff_monomial, hmn.symm]
+  have h1 : coeff (Finsupp.single 1 n) P = b := by simp [P, coeff_monomial, hmn]
+  rcases eq_or_ne d (Finsupp.single 0 m) with rfl | H
+  · exact hmn (by simp_all)
+  · simp_all
 
 end MvPolynomial
