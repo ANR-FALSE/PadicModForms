@@ -8,19 +8,40 @@ module
 
 public import PadicModForms.ForMathlib.WeightedHomogeneous
 public import PadicModForms.ModP.Differential
+import Mathlib.RingTheory.MvPolynomial.EulerIdentity
 
 /-!
-# Towards the squarefreeness of the Hasse invariant
+# Common factors of the Hasse invariant and of its Ramanujan derivative
 
-Let `p ≥ 5`. This file works towards the statement that the Hasse invariant `hasseInvPoly` and its
-Ramanujan derivative `δ hasseInvPoly` are relatively prime, from which `hasseInvPoly` is
-squarefree.
+Let `p ≥ 5`, write `A = hasseInvPoly` for the Hasse invariant — weighted homogeneous of weight
+`p - 1` in `X₀, X₁` over `ZMod p`, with `evalE₄E₆ModP A = 1` — and let `δ = δModP` be Ramanujan's
+derivation. This file constrains an irreducible common factor `F` of `A` and `δ A`, the aim being
+to rule one out entirely and so prove that `A` and `δ A` are relatively prime.
+
+The constraints come in four steps. To begin with `F` is weighted homogeneous, of some weight `c`
+with `1 ≤ c ≤ p - 1` (`exists_isWeightedHomogeneous_of_irreducible_dvd`, `weight_le_of_dvd`).
+
+1. `F ∣ δ F` (`dvd_δModP_of_dvd_of_dvd_δModP`). Writing `A = F ^ r * G` with `F ∤ G`, the Leibniz
+   rule makes the order of vanishing at `F` drop by exactly one at each differentiation — the
+   scalars it produces are invertible because `r ≤ p - 1` — so `δ² A` vanishes to order `r - 2`
+   at `F`, whereas `δ² A = -X₀ A` vanishes to order at least `r`.
+2. `δ F = 0` (`δModP_eq_zero_of_dvd_of_dvd_δModP`). Otherwise `δ F / F` would be weighted
+   homogeneous of weight `2`, since `δ` raises the weight by `2`, and no monomial in variables of
+   weights `4` and `6` has weight `2`.
+3. `F ∣ X₀³ - X₁²` (`dvd_X_zero_pow_three_sub_X_one_sq`). Eliminating one partial derivative at a
+   time between `δ F = 0` and Euler's identity gives `4 (X₀³ - X₁²) ∂₀F = c X₀² F` and
+   `6 (X₀³ - X₁²) ∂₁F = -c X₁ F`. If `F` did not divide `X₀³ - X₁²` it would divide both partial
+   derivatives, which have smaller weight, so both would vanish and Euler's identity would read
+   `c F = 0`.
+4. *Still to be done.* `X₀³ - X₁²` is irreducible, so `F` is associated to it; but
+   `evalE₄E₆ModP F` is a unit, being a factor of `evalE₄E₆ModP A = 1`, while
+   `evalE₄E₆ModP (X₀³ - X₁²) = 1728 Δ` has zero constant coefficient.
 
 ## Main results
 
-* `ModularForm.dvd_δModP_of_dvd_of_dvd_δModP`: an irreducible common factor `F` of the Hasse
-  invariant and of its Ramanujan derivative divides `δ F`.
-* `ModularForm.δModP_eq_zero_of_dvd_of_dvd_δModP`: such an `F` in fact satisfies `δ F = 0`.
+* `ModularForm.dvd_δModP_of_dvd_of_dvd_δModP`: step 1.
+* `ModularForm.δModP_eq_zero_of_dvd_of_dvd_δModP`: steps 1 and 2 combined.
+* `ModularForm.dvd_X_zero_pow_three_sub_X_one_sq`: step 3.
 * `ModularForm.le_of_pow_dvd_hasseInvPoly`: if `F ^ r` divides the Hasse invariant, with `F`
   irreducible, then `r ≤ p - 1`. In particular `r` is invertible in `ZMod p`.
 -/
@@ -66,14 +87,18 @@ theorem le_of_pow_dvd_hasseInvPoly (hp : 5 ≤ p) (hF : Irreducible F)
   obtain ⟨m, k, hm, _, hmk⟩ := this.mul_factors hFr0 hG0
   grind [Nat.le_mul_of_pos_right r hc1, hm.inj_right hFr0 (by simpa using hc.pow r)]
 
-private theorem isUnit_natCast_of_pow_dvd (hp : 5 ≤ p) (hF : Irreducible F)
-  (hr : F ^ r ∣ hasseInvPoly hp) (hk0 : 0 < k) (hkr : k ≤ r) :
+/-- A natural number that is positive and smaller than `p` is a unit of `(ZMod p)[X₀, X₁]`. -/
+private theorem isUnit_natCast (hk0 : 0 < k) (hkp : k < p) :
     IsUnit (k : MvPolynomial (Fin 2) (ZMod p)) := by
-  have hkp : k < p := by
-    grind [Nat.Prime.two_le (Fact.out (p := p.Prime)), le_of_pow_dvd_hasseInvPoly hp hF hr]
   have : (k : ZMod p) ≠ 0 := fun h ↦
     absurd (Nat.le_of_dvd hk0 ((ZMod.natCast_eq_zero_iff _ _).1 h)) (by lia)
   simpa using (isUnit_iff_ne_zero.mpr this).map C
+
+private theorem isUnit_natCast_of_pow_dvd (hp : 5 ≤ p) (hF : Irreducible F)
+  (hr : F ^ r ∣ hasseInvPoly hp) (hk0 : 0 < k) (hkr : k ≤ r) :
+    IsUnit (k : MvPolynomial (Fin 2) (ZMod p)) :=
+  isUnit_natCast hk0 <| by
+    grind [Nat.Prime.two_le (Fact.out (p := p.Prime)), le_of_pow_dvd_hasseInvPoly hp hF hr]
 
 /-! ### Step 1: a common factor divides its own derivative -/
 
@@ -147,5 +172,72 @@ derivative is killed by `δ`. -/
 theorem δModP_eq_zero_of_dvd_of_dvd_δModP (hp : 5 ≤ p) (hF : Irreducible F)
     (hFA : F ∣ hasseInvPoly hp) (hFB : F ∣ δModP (hasseInvPoly hp)) : δModP F = 0 :=
   δModP_eq_zero_of_dvd_δModP hp hF hFA (dvd_δModP_of_dvd_of_dvd_δModP hp hF hFA hFB)
+
+/-! ### Step 3: a common factor divides `X₀³ - X₁²` -/
+
+/-- Eliminating `∂₁F` between `δ F = 0` and Euler's identity. -/
+private theorem four_mul_pderiv_zero (hk : IsWeightedHomogeneous E₄E₆Weights F k)
+    (hδ : δModP F = 0) :
+    4 * ((X 0 ^ 3 - X 1 ^ 2) * pderiv 0 F) = (k : MvPolynomial (Fin 2) (ZMod p)) * X 0 ^ 2 * F := by
+  grind [euler_E₄E₆Weights hk, δModP_apply]
+
+/-- Eliminating `∂₀F` between `δ F = 0` and Euler's identity. -/
+private theorem six_mul_pderiv_one (hk : IsWeightedHomogeneous E₄E₆Weights F k) (hδ : δModP F = 0) :
+    6 * ((X 0 ^ 3 - X 1 ^ 2) * pderiv 1 F) = -((k : MvPolynomial (Fin 2) (ZMod p)) * X 1 * F) := by
+  grind [euler_E₄E₆Weights hk, δModP_apply]
+
+/-- A polynomial divisible by `F` but of strictly smaller weight vanishes. -/
+private theorem eq_zero_of_dvd_of_lt {H : MvPolynomial (Fin 2) (ZMod p)} (hF0 : F ≠ 0)
+    (hr : IsWeightedHomogeneous E₄E₆Weights F r) (hk : IsWeightedHomogeneous E₄E₆Weights H k)
+    (hkr : k < r) (h : F ∣ H) : H = 0 := by
+  by_contra hH0
+  obtain ⟨K, rfl⟩ := h
+  obtain ⟨m, n, hm, _, _⟩ := hk.mul_factors hF0 (fun h0 ↦ hH0 (by rw [h0, mul_zero]))
+  grind [hm.inj_right hF0 hr]
+
+/-- A partial derivative of `F` divisible by `F` vanishes: it has strictly smaller weight. -/
+private theorem pderiv_eq_zero_of_dvd {i : Fin 2} (hF0 : F ≠ 0)
+    (hr : IsWeightedHomogeneous E₄E₆Weights F r) (hw : 0 < E₄E₆Weights i)
+    (h : F ∣ pderiv i F) : pderiv i F = 0 := by
+  rcases lt_or_ge r (E₄E₆Weights i) with hlt | hle
+  · exact hr.pderiv_eq_zero hlt
+  · obtain ⟨m, hm⟩ := Nat.exists_eq_add_of_le hle
+    exact eq_zero_of_dvd_of_lt hF0 hr (hr.pderiv (n' := m) (by lia)) (by lia) h
+
+/-- The weight of a nonzero weighted homogeneous factor of the Hasse invariant is at most
+`p - 1`, the weight of the Hasse invariant itself. -/
+theorem weight_le_of_dvd (hp : 5 ≤ p) (hF0 : F ≠ 0) (hr : IsWeightedHomogeneous E₄E₆Weights F r)
+    (hFA : F ∣ hasseInvPoly hp) : r ≤ p - 1 := by
+  obtain ⟨G, hG⟩ := hFA
+  have hG0 : G ≠ 0 := fun h ↦ (hasseInvPoly_ne_zero hp) (by grind)
+  obtain ⟨m, n, hm, _, _⟩ := (hG ▸ hasseInvPoly_isWeightedHomogeneous hp).mul_factors hF0 hG0
+  grind [hm.inj_right hF0 hr]
+
+/-- **Step 3**: an irreducible factor of the Hasse invariant killed by `δ` divides `X₀³ - X₁²`,
+the polynomial whose evaluation is `1728 Δ`. -/
+theorem dvd_X_zero_pow_three_sub_X_one_sq (hp : 5 ≤ p) (hF : Irreducible F)
+    (hFA : F ∣ hasseInvPoly hp) (hδ : δModP F = 0) :
+    F ∣ (X 0 : MvPolynomial (Fin 2) (ZMod p)) ^ 3 - X 1 ^ 2 := by
+  by_contra hdvd
+  have hprime : Prime F := UniqueFactorizationMonoid.irreducible_iff_prime.mp hF
+  obtain ⟨c, hc1, hc⟩ := exists_isWeightedHomogeneous_of_irreducible_dvd hp hF hFA
+  have hu4 : IsUnit (4 : MvPolynomial (Fin 2) (ZMod p)) := by
+    simpa using isUnit_natCast (k := 4) (by norm_num) (by lia)
+  have hu6 : IsUnit (6 : MvPolynomial (Fin 2) (ZMod p)) := by
+    have h2 : IsUnit (2 : MvPolynomial (Fin 2) (ZMod p)) := by
+      simpa using isUnit_natCast (k := 2) (by norm_num) (by lia)
+    have h3 : IsUnit (3 : MvPolynomial (Fin 2) (ZMod p)) := by
+      simpa using isUnit_natCast (k := 3) (by norm_num) (by lia)
+    grind [show (6 : MvPolynomial (Fin 2) (ZMod p)) = 2 * 3 by norm_num]
+  suffices pderiv 0 F = 0 ∧ pderiv 1 F = 0 by
+    exact hF.ne_zero <| ((isUnit_natCast hc1
+    (by grind [weight_le_of_dvd hp hF.ne_zero hc hFA])).mul_right_eq_zero).mp
+      (by grind [euler_E₄E₆Weights hc])
+  refine ⟨pderiv_eq_zero_of_dvd hF.ne_zero hc (by simp) ?_,
+    pderiv_eq_zero_of_dvd hF.ne_zero hc (by simp) ?_⟩
+  · exact (hprime.dvd_mul.mp (hu4.dvd_mul_left.mp ⟨(c : MvPolynomial (Fin 2) (ZMod p)) * X 0 ^ 2,
+      by rw [four_mul_pderiv_zero hc hδ]; ring⟩)).resolve_left hdvd
+  · exact (hprime.dvd_mul.mp (hu6.dvd_mul_left.mp ⟨-((c : MvPolynomial (Fin 2) (ZMod p)) * X 1),
+      by rw [six_mul_pderiv_one hc hδ]; ring⟩)).resolve_left hdvd
 
 end ModularForm

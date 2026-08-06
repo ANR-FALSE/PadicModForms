@@ -16,13 +16,13 @@ import PadicModForms.ForMathlib.Theta
 import PadicModForms.ForMathlib.WeightedHomogeneous
 import PadicModForms.ForMathlib.«38813»
 import PadicModForms.ModP.Basic
+import PadicModForms.ModP.CommonFactorHasse
 import PadicModForms.ModP.Congruences
 import PadicModForms.ModP.Differential
 import PadicModForms.ModP.Eisenstein
 import PadicModForms.ModP.Graded
 import PadicModForms.ModP.Hasse
 import PadicModForms.ModP.Ramanujan
-import PadicModForms.ModP.Squarefree
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs
 import PadicModForms.PAdic.Eisenstein
