@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import PadicModForms.ForMathlib.WeightedHomogeneous
-import Mathlib.Data.Nat.ModEq
+import PadicModForms.ForMathlib.Finsupp
 
 /-!
 # Additional lemmas about multivariable polynomials
@@ -115,21 +115,8 @@ theorem irreducible_add_monomial_of_coprime {K : Type*} [Field K] {m n : ℕ} {a
   · apply isWeightedHomogeneous_monomial
     simp [w, Finsupp.weight_eq_sum, Fin.sum_univ_two, mul_comm]
   · fin_cases i <;> simp [w, hm.ne', hn.ne']
-  · have weight_apply (x : Fin 2 →₀ ℕ) : Finsupp.weight w x = x 0 * n + x 1 * m := by
-      simp [w, Finsupp.weight_eq_sum, Fin.sum_univ_two, mul_comm]
-    rw [weight_apply] at hd he
-    have hd0 : d 0 < m := (Nat.mul_lt_mul_left hn).mp (by grind)
-    have he0 : e 0 < m := (Nat.mul_lt_mul_left hn).mp (by grind)
-    have hmod : n * d 0 ≡ n * e 0 [MOD m] := by
-      rw [Nat.ModEq]
-      calc n * d 0 % m = (n * d 0 + m * d 1) % m := by simp [Nat.add_mod]
-        _ = (n * e 0 + m * e 1) % m := by congr 1; simpa [mul_comm] using hd.trans he.symm
-        _ = _ := by simp [Nat.add_mod]
-    have hde0 : d 0 = e 0 := (hmod.cancel_left_of_coprime hc).eq_of_lt_of_lt hd0 he0
-    ext i
-    fin_cases i
-    · exact hde0
-    · exact Nat.eq_of_mul_eq_mul_right hm (Nat.add_left_cancel (hde0 ▸ hd.trans he.symm))
+  · exact Finsupp.eq_of_weight_eq_of_lt_lcm hn hm
+      (by rwa [Nat.Coprime.lcm_eq_mul (hc.symm), mul_comm]) hd he
   · exact hm.ne' (by simpa using Finsupp.ext_iff.1 h 0)
 
 end MvPolynomial
