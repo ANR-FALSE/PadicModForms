@@ -10,6 +10,7 @@ public import Mathlib.Algebra.Polynomial.Degree.Domain
 public import Mathlib.Algebra.Polynomial.Degree.Monomial
 public import Mathlib.Algebra.Polynomial.Degree.TrailingDegree
 public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import Mathlib.Algebra.Polynomial.Reverse
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 /-!
@@ -19,10 +20,18 @@ A polynomial which is weighted homogeneous of weighted degree `0` is a constant,
 domain, every nonzero factor of a nonzero weighted homogeneous multivariate polynomial is itself
 weighted homogeneous.
 
+The tool for the latter is `MvPolynomial.toWeightPolynomial`, which records the weight grading in
+an auxiliary polynomial variable: the coefficient of `X ^ n` of the image of `P` is the weighted
+homogeneous component of `P` of weight `n`. Reversing it gives the weighted homogenization
+`MvPolynomial.weightedHomogenize`, which fills each monomial up to a fixed weight with an auxiliary
+variable of weight one, and is multiplicative when the weights add up.
+
 ## Main results
 
 * `MvPolynomial.IsWeightedHomogeneous.exists_eq_monomial_of_unique_weight`: a weighted homogeneous
   polynomial is a monomial when its weighted-degree fiber has at most one element.
+* `MvPolynomial.weightedHomogenize_mul`: weighted homogenization is multiplicative in degrees that
+  add up to the degree of the product.
 * `MvPolynomial.IsWeightedHomogeneous.eq_C_coeff_zero`: a polynomial which is weighted homogeneous
   of weighted degree `0`, for a weight function taking no zero value, is a constant; over a field
   it is a unit as soon as it is nonzero (`MvPolynomial.IsWeightedHomogeneous.isUnit_of_ne_zero`).
@@ -78,11 +87,14 @@ theorem IsWeightedHomogeneous.isUnit_of_ne_zero [PartialOrder M] [CanonicallyOrd
 variable [CommRing R] (w : σ → ℕ) (d : σ →₀ ℕ) (r : R) (P : MvPolynomial σ R) {n : ℕ}
 
 /-- Record the weight grading in an auxiliary polynomial variable, while retaining each original
-monomial as a coefficient. A monomial of weight `n` is sent to that monomial times `X ^ n`. -/
-private def toWeightPolynomial : MvPolynomial σ R →+* Polynomial (MvPolynomial σ R) :=
+monomial as a coefficient. A monomial of weight `n` is sent to that monomial times `X ^ n`, so that
+the coefficient of `X ^ n` is the weighted homogeneous component of weight `n`
+(`coeff_toWeightPolynomial`) and evaluating at `X = 1` returns the polynomial
+(`eval_one_toWeightPolynomial`). -/
+def toWeightPolynomial : MvPolynomial σ R →+* Polynomial (MvPolynomial σ R) :=
   eval₂Hom (Polynomial.C.comp C) fun i ↦ Polynomial.C (X i) * Polynomial.X ^ w i
 
-private theorem toWeightPolynomial_monomial : toWeightPolynomial w (monomial d r) =
+theorem toWeightPolynomial_monomial : toWeightPolynomial w (monomial d r) =
     Polynomial.monomial (weight w d) (monomial d r) := by
   rw [toWeightPolynomial, eval₂Hom_monomial, monomial_eq, ← Polynomial.C_mul_X_pow_eq_monomial,
     map_mul]
@@ -90,13 +102,13 @@ private theorem toWeightPolynomial_monomial : toWeightPolynomial w (monomial d r
     prod_pow_eq_pow_sum, RingHom.comp_apply, smul_eq_mul, mul_comm]
   ring
 
-private theorem eval_one_toWeightPolynomial : Polynomial.eval 1 (toWeightPolynomial w P) = P := by
+theorem eval_one_toWeightPolynomial : Polynomial.eval 1 (toWeightPolynomial w P) = P := by
   induction P using induction_on' with
   | monomial d r => simp [toWeightPolynomial_monomial]
   | add p q hp hq => simp [hp, hq]
 
 /-- The coefficients of the auxiliary polynomial are the weighted homogeneous components. -/
-private theorem coeff_toWeightPolynomial (n : ℕ) :
+theorem coeff_toWeightPolynomial (n : ℕ) :
     (toWeightPolynomial w P).coeff n = weightedHomogeneousComponent w n P := by
   induction P using induction_on' with
   | monomial d r =>
@@ -109,14 +121,14 @@ private theorem coeff_toWeightPolynomial (n : ℕ) :
 
 variable {P}
 
-private theorem toWeightPolynomial_ne_zero (hP : P ≠ 0) : toWeightPolynomial w P ≠ 0 := fun h ↦
+theorem toWeightPolynomial_ne_zero (hP : P ≠ 0) : toWeightPolynomial w P ≠ 0 := fun h ↦
   hP <| by rw [← eval_one_toWeightPolynomial w P, h, Polynomial.eval_zero]
 
 variable {w}
 
 /-- A polynomial is weighted homogeneous of weight `n` exactly when its image is the monomial of
 degree `n`. -/
-private theorem toWeightPolynomial_eq_monomial_iff :
+theorem toWeightPolynomial_eq_monomial_iff :
     toWeightPolynomial w P = Polynomial.monomial n P ↔ IsWeightedHomogeneous w P n := by
   refine ⟨fun h ↦ ?_, fun hP ↦ Polynomial.ext fun k ↦ ?_⟩
   · have hn : weightedHomogeneousComponent w n P = P := by
@@ -131,7 +143,7 @@ open Polynomial
 
 /-- If the degree and the trailing degree of the auxiliary polynomial agree then `P` is weighted
 homogeneous, of that common weight. -/
-private theorem isWeightedHomogeneous_natDegree
+theorem isWeightedHomogeneous_natDegree
     (h : (toWeightPolynomial w P).natTrailingDegree = (toWeightPolynomial w P).natDegree) :
     IsWeightedHomogeneous w P (toWeightPolynomial w P).natDegree := by
   have hcard : (toWeightPolynomial w P).support.card ≤ 1 := Finset.card_le_one.2 fun a ha b hb ↦ by
@@ -141,6 +153,46 @@ private theorem isWeightedHomogeneous_natDegree
   convert (monomial_natDegree_leadingCoeff_eq_self hcard).symm
   simpa [eval_one_toWeightPolynomial] using (congrArg (Polynomial.eval 1)
     (monomial_natDegree_leadingCoeff_eq_self hcard)).symm
+
+/-! ### Weighted homogenization -/
+
+/-- The weighted homogenization of `P` in degree `N`, an auxiliary variable of weight one being
+used to fill up each monomial to weight `N`: the coefficient of `X ^ (N - n)` is the weighted
+homogeneous component of `P` of weight `n`. -/
+def weightedHomogenize (w : σ → ℕ) (P : MvPolynomial σ R) (N : ℕ) :
+    Polynomial (MvPolynomial σ R) :=
+  reflect N (toWeightPolynomial w P)
+
+@[simp]
+theorem coeff_weightedHomogenize (N i : ℕ) :
+    (weightedHomogenize w P N).coeff i = weightedHomogeneousComponent w (revAt N i) P := by
+  rw [weightedHomogenize, coeff_reflect, coeff_toWeightPolynomial]
+
+/-- Homogenization is multiplicative, provided the degrees add up: no weight may be lost, which is
+what the two bounds guarantee. -/
+theorem weightedHomogenize_mul {Q : MvPolynomial σ R} {N M : ℕ}
+    (hP : (toWeightPolynomial w P).natDegree ≤ N) (hQ : (toWeightPolynomial w Q).natDegree ≤ M) :
+    weightedHomogenize w (P * Q) (N + M) =
+      weightedHomogenize w P N * weightedHomogenize w Q M := by
+  simp only [weightedHomogenize, map_mul, reflect_mul _ _ hP hQ]
+
+/-- A weighted homogeneous polynomial homogenizes to a single term. -/
+theorem weightedHomogenize_of_isWeightedHomogeneous {N : ℕ} (hP : IsWeightedHomogeneous w P n)
+    (hn : n ≤ N) : weightedHomogenize w P N = Polynomial.C P * Polynomial.X ^ (N - n) := by
+  rw [weightedHomogenize, toWeightPolynomial_eq_monomial_iff.2 hP,
+    ← Polynomial.C_mul_X_pow_eq_monomial, reflect_C_mul, reflect_monomial, revAt_le hn]
+
+@[simp]
+theorem weightedHomogenize_one (N : ℕ) :
+    weightedHomogenize w (1 : MvPolynomial σ R) N = Polynomial.X ^ N := by
+  simpa using weightedHomogenize_of_isWeightedHomogeneous (isWeightedHomogeneous_one R w) N.zero_le
+
+/-- The top coefficient of the homogenization is the constant coefficient of `P`; in particular the
+homogenization has degree `N` as soon as `P` has a nonzero constant coefficient. -/
+theorem coeff_weightedHomogenize_self (hw : ∀ i, w i ≠ 0) (N : ℕ) :
+    (weightedHomogenize w P N).coeff N = C (coeff 0 P) := by
+  rw [coeff_weightedHomogenize, revAt_le le_rfl, Nat.sub_self,
+    weightedHomogeneousComponent_zero P hw]
 
 namespace IsWeightedHomogeneous
 
