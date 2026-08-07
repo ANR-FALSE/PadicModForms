@@ -8,6 +8,7 @@ module
 
 public import PadicModForms.ModP.Squarefree
 public import Mathlib.RingTheory.Polynomial.Eisenstein.Basic
+import PadicModForms.pLocalInt.Discriminant
 
 /-!
 # Towards the kernel of the evaluation at `E₄` and `E₆`
@@ -126,5 +127,19 @@ theorem irreducible_hasseInvPoly_sub_one (hp : 5 ≤ p) : Irreducible (hasseInvP
   rw [← weightedHomogenize_mul le_rfl le_rfl, hrs, ← hFG, map_sub,
     weightedHomogenize_of_isWeightedHomogeneous hAhom le_rfl, weightedHomogenize_one,
     Nat.sub_self, pow_zero, mul_one]
+
+/-! ### The coefficient of `q` in the evaluation of `X₀³ - X₁²` -/
+
+/-- The coefficient of `q` in `evalE₄E₆ModP (X₀³ - X₁²) = E₄³ - E₆² = 1728 Δ` is `1728`, which is
+nonzero modulo `p` because `p ≥ 5`. -/
+theorem coeff_one_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq (hp : 5 ≤ p) :
+    PowerSeries.coeff 1 (evalE₄E₆ModP
+      ((MvPolynomial.X 0) ^ 3 - MvPolynomial.X 1 ^ 2)) = (1728 : ZMod p) := by
+  suffices EisensteinSeries.E₄ModP ^ 3 - EisensteinSeries.E₆ModP ^ 2 =
+      PowerSeries.map (pLocalInt.toZMod (p := p))
+        (EisensteinSeries.E₄_int ^ 3 - EisensteinSeries.E₆_int ^ 2) by
+    simp [evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq, this, ← smul_discriminant_int hp,
+    coeff_discriminant_int_one hp, smul_eq_mul, map_ofNat]
+  simp [EisensteinSeries.E₄ModP, EisensteinSeries.E₆ModP]
 
 end ModularForm
