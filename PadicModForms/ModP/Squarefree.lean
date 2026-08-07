@@ -64,6 +64,13 @@ variable {p : ℕ} [Fact p.Prime] {F G : MvPolynomial (Fin 2) (ZMod p)} {r k : �
 theorem hasseInvPoly_ne_zero (hp : 5 ≤ p) : hasseInvPoly hp ≠ 0 := fun h ↦ by
   simpa [h] using evalE₄E₆ModP_hasseInvPoly hp
 
+/-- The Hasse invariant is not a unit: a unit divides `1`, which is weighted homogeneous of weight
+`0`, whereas the Hasse invariant has weight `p - 1 > 0`. -/
+theorem not_isUnit_hasseInvPoly (hp : 5 ≤ p) : ¬IsUnit (hasseInvPoly hp) := fun h ↦ by
+  have := (hasseInvPoly_isWeightedHomogeneous hp).weight_le_of_dvd
+    (isWeightedHomogeneous_one _ _) one_ne_zero h.dvd
+  lia
+
 /-- An irreducible factor of the Hasse invariant is weighted homogeneous of positive weight. -/
 theorem exists_isWeightedHomogeneous_of_irreducible_dvd (hp : 5 ≤ p) (hF : Irreducible F)
     (hFA : F ∣ hasseInvPoly hp) : ∃ c, 1 ≤ c ∧ IsWeightedHomogeneous E₄E₆Weights F c := by
