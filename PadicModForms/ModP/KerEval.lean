@@ -104,7 +104,7 @@ theorem irreducible_hasseInvPoly_sub_one (hp : 5 ≤ p) : Irreducible (hasseInvP
     grind [natDegree_sub_eq_left_of_natDegree_lt, natDegree_monomial_eq _ (hasseInvPoly_ne_zero hp),
       natDegree_monomial_eq _ (hasseInvPoly_ne_zero hp), natDegree_one]
   have hA1 : hasseInvPoly hp - 1 ≠ 0 := by grind
-  refine ⟨fun hunit ↦ ?_, fun {F G} hFG ↦ ?_⟩
+  refine ⟨fun hunit ↦ ?_, fun F G hFG ↦ ?_⟩
   · grind [natDegree_eq_zero_of_isUnit (hunit.map (toWeightPolynomial E₄E₆Weights))]
   by_contra! hcon
   set r := (toWeightPolynomial E₄E₆Weights F).natDegree with hr
