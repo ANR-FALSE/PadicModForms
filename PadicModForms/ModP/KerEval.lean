@@ -150,4 +150,17 @@ theorem evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq_ne_zero (hp : 5 ≤ p) :
   rw [h, map_zero] at h1728
   exact not_dvd_1728 hp ((ZMod.natCast_eq_zero_iff 1728 p).1 (by exact_mod_cast h1728.symm))
 
+/-! ### The kernel of the evaluation is not maximal -/
+
+/-- The kernel of `evalE₄E₆ModP` is not maximal: were it, the image of `X₀³ - X₁²`, being nonzero,
+would be invertible, whereas its constant coefficient vanishes. -/
+theorem not_isMaximal_ker_evalE₄E₆ModP (hp : 5 ≤ p) :
+    ¬(RingHom.ker (evalE₄E₆ModP (p := p))).IsMaximal := fun hmax ↦ by
+  obtain ⟨y, i, hi, hyi⟩ := hmax.exists_inv fun h ↦
+    evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq_ne_zero hp (RingHom.mem_ker.1 h)
+  have hunit := congrArg evalE₄E₆ModP hyi
+  rw [map_add, map_mul, map_one, RingHom.mem_ker.1 hi, add_zero] at hunit
+  grind [constantCoeff_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq,
+    congrArg PowerSeries.constantCoeff hunit]
+
 end ModularForm
