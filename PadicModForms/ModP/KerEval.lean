@@ -142,4 +142,12 @@ theorem coeff_one_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq (hp : 5 ≤ p) 
     coeff_discriminant_int_one hp, smul_eq_mul, map_ofNat]
   simp [EisensteinSeries.E₄ModP, EisensteinSeries.E₆ModP]
 
+/-- The evaluation of `X₀³ - X₁²` is nonzero: its coefficient of `q` is `1728`, which is invertible
+modulo `p` because `p ≥ 5`. -/
+theorem evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq_ne_zero (hp : 5 ≤ p) :
+    evalE₄E₆ModP (p := p) ((MvPolynomial.X 0) ^ 3 - MvPolynomial.X 1 ^ 2) ≠ 0 := fun h ↦ by
+  have h1728 := coeff_one_evalE₄E₆ModP_X_zero_pow_three_sub_X_one_sq hp
+  rw [h, map_zero] at h1728
+  exact not_dvd_1728 hp ((ZMod.natCast_eq_zero_iff 1728 p).1 (by exact_mod_cast h1728.symm))
+
 end ModularForm
