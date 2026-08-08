@@ -29,8 +29,6 @@ noncomputable section
 
 open UpperHalfPlane SetLike DirectSum PowerSeries EisensteinSeries Module Free MatrixGroups
 
-variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
-
 namespace PowerSeries
 
 /-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
@@ -43,6 +41,8 @@ public theorem zero_isModularForm (k : ℤ) : isModularForm k 0 :=
 
 theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 :=
   ⟨1, by simpa using qExpansion_one 1⟩
+
+variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
 
 include hf
 
