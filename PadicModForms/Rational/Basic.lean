@@ -29,6 +29,8 @@ noncomputable section
 
 open UpperHalfPlane SetLike DirectSum PowerSeries EisensteinSeries Module Free MatrixGroups
 
+variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
+
 namespace PowerSeries
 
 /-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
@@ -38,8 +40,6 @@ classical modular form of level one and weight `k`. -/
 
 public theorem zero_isModularForm (k : ℤ) : isModularForm k 0 :=
   ⟨0, by simpa using qExpansion_zero 1⟩
-
-variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
 
 theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 :=
   ⟨1, by simpa using qExpansion_one 1⟩
@@ -186,6 +186,21 @@ public theorem rationalModularForms_finrank_le (k : ℤ) :
     finrank ℚ (rationalModularForms k) ≤ finrank ℂ (ModularForm 𝒮ℒ k) := by
   rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
   exact rationalModularForms_rank_le k
+
+/-- There are no nonzero rational modular forms of negative weight. In particular the weight of a
+nonzero rational modular form is a natural number. -/
+public theorem rationalModularForms_eq_bot_of_neg (hk : k < 0) : rationalModularForms k = ⊥ := by
+  refine (Submodule.eq_bot_iff _).mpr fun f hf ↦ ?_
+  suffices rationalModularFormToComplex (⟨f, hf⟩ : rationalModularForms k) = 0 by
+    suffices (⟨f, hf⟩ : rationalModularForms k) = 0 from congrArg Subtype.val this
+    exact rationalModularFormToComplex_injective (by simp_all)
+  exact rank_zero_iff_forall_zero.mp (ModularForm.levelOne_neg_weight_rank_zero hk) _
+
+/-- The weight of a nonzero rational modular form is nonnegative, so it is a natural number. -/
+public theorem nonneg_of_mem_rationalModularForms {f : ℚ⟦X⟧} (hf : f ∈ rationalModularForms k)
+    (hf0 : f ≠ 0) : 0 ≤ k := by
+  by_contra hk
+  exact hf0 (by simpa [rationalModularForms_eq_bot_of_neg (not_le.1 hk)] using hf)
 
 /-! ### The graded structure -/
 
