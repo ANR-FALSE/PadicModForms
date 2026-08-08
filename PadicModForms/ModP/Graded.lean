@@ -106,6 +106,18 @@ theorem evalE₄E₆ModPAtWeight_inj (hp : 5 ≤ p) {P Q : E₄E₆WeightedHomog
     evalE₄E₆ModPAtWeight n P = evalE₄E₆ModPAtWeight n Q ↔ P = Q :=
   (evalE₄E₆ModPAtWeight_injective hp).eq_iff
 
+/-- For `p ≥ 5`, every mod-`p` modular form of weight `k` is the evaluation of a polynomial that is
+weighted homogeneous of weight `k`. This is the mod-`p` analogue of
+`evalE₄E₆IntAtWeight_surjective`. -/
+theorem exists_isWeightedHomogeneous_of_mem_modPModularForms (hp : 5 ≤ p) {f : (ZMod p)⟦X⟧}
+    (hf : f ∈ modPModularForms p n) : ∃ F : MvPolynomial (Fin 2) (ZMod p),
+      IsWeightedHomogeneous E₄E₆Weights F n ∧ evalE₄E₆ModP F = f := by
+  obtain ⟨g, F, hgF, hgf⟩ := hf
+  obtain ⟨G, hG⟩ := evalE₄E₆IntAtWeight_surjective hp (k := n) ⟨g, F, hgF⟩
+  refine ⟨(G : MvPolynomial (Fin 2) (pLocalInt p)).map pLocalInt.toZMod,
+    fun d hd ↦ G.2 fun h ↦ hd (by simp [MvPolynomial.coeff_map, h]), ?_⟩
+  rw [evalE₄E₆ModP_map, ← hgf, ← coe_evalE₄E₆IntAtWeight, hG]
+
 /-! ### The grading modulo `p - 1` -/
 
 /-- The weights `(4, 6)` of `E₄` and `E₆`, read modulo `p - 1`. Multiplication by the Hasse
