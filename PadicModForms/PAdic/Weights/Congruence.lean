@@ -57,4 +57,14 @@ theorem natCast_eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) (hF : IsWeightedHomogen
   refine h0 ?_
   rw [hcomp, map_mul, RingHom.mem_ker.1 (hasseInvPoly_sub_one_mem_ker hp), zero_mul]
 
+/-- **The case `m = 1` of Serre's theorem on congruences, for modular forms.** A nonzero mod-`p`
+modular form has a well-defined weight modulo `p - 1`: if the same power series is a mod-`p`
+modular form of weight `k` and of weight `k'`, then `k ≡ k' mod (p - 1)`. -/
+theorem natCast_eq_of_mem_modPModularForms (hp : 5 ≤ p) {f : PowerSeries (ZMod p)} (hf : f ≠ 0)
+    (hk : f ∈ modPModularForms p n) (hk' : f ∈ modPModularForms p n') :
+    (n : ZMod (p - 1)) = (n' : ZMod (p - 1)) := by
+  obtain ⟨F, hFhom, hF⟩ := exists_isWeightedHomogeneous_of_mem_modPModularForms hp hk
+  obtain ⟨G, hGhom, hG⟩ := exists_isWeightedHomogeneous_of_mem_modPModularForms hp hk'
+  exact natCast_eq_of_evalE₄E₆ModP_eq hp hFhom hGhom (hF.trans hG.symm) (by rw [hF]; exact hf)
+
 end ModularForm
