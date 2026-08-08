@@ -9,6 +9,8 @@ module
 public import PadicModForms.ModP.Squarefree
 public import Mathlib.RingTheory.Polynomial.Eisenstein.Basic
 import PadicModForms.pLocalInt.Discriminant
+import Mathlib.RingTheory.KrullDimension.Field
+import Mathlib.RingTheory.KrullDimension.Polynomial
 
 /-!
 # Towards the kernel of the evaluation at `E₄` and `E₆`
@@ -183,5 +185,18 @@ theorem isPrime_span_hasseInvPoly_sub_one (hp : 5 ≤ p) : (span {hasseInvPoly h
 theorem span_hasseInvPoly_sub_one_le_ker (hp : 5 ≤ p) :
     span {hasseInvPoly hp - 1} ≤ RingHom.ker evalE₄E₆ModP :=
   (span_singleton_le_iff_mem _).2 (hasseInvPoly_sub_one_mem_ker hp)
+
+/-! ### The Krull dimension bound -/
+
+/-- A strict chain `⊥ < J < I` of prime ideals of `(ZMod p)[X₀, X₁]` cannot be continued: no prime
+strictly contains `I`. Such a chain would be an `LTSeries` of length `3` in the prime spectrum,
+whereas the Krull dimension is `2`. -/
+theorem not_lt_of_bot_lt_of_lt {J I M : Ideal (MvPolynomial (Fin 2) (ZMod p))} (hJ : J.IsPrime)
+    (hI : I.IsPrime) (hM : M.IsPrime) (hbot : ⊥ < J) (hJI : J < I) : ¬I < M := fun hIM ↦ by
+  suffices 3 ≤ ringKrullDim (MvPolynomial (Fin 2) (ZMod p)) by norm_num at this
+  refine Order.le_krullDim_iff.2
+    ⟨⟨3, ![⟨⊥, Ideal.isPrime_bot⟩, ⟨J, hJ⟩, ⟨I, hI⟩, ⟨M, hM⟩], fun i ↦ ?_⟩, rfl⟩
+  fin_cases i <;> assumption
+
 
 end ModularForm
