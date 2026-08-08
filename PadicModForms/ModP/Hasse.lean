@@ -58,4 +58,11 @@ theorem hasseInvPoly_sub_one_mem_ker (hp : 5 ≤ p) :
     hasseInvPoly hp - 1 ∈ RingHom.ker evalE₄E₆ModP := by
   simp [RingHom.mem_ker, evalE₄E₆ModP_hasseInvPoly hp]
 
+/-- Its two terms having weights `p - 1` and `0`, the polynomial `hasseInvPoly hp - 1` is
+homogeneous of degree `0` for the grading modulo `p - 1`. -/
+theorem isWeightedHomogeneous_hasseInvPoly_sub_one_modPSubOne (hp : 5 ≤ p) :
+    IsWeightedHomogeneous (E₄E₆WeightsModPSubOne p) (hasseInvPoly hp - 1) 0 := by
+  refine IsWeightedHomogeneous.sub ?_ (isWeightedHomogeneous_one _ _)
+  simpa using isWeightedHomogeneous_modPSubOne (hasseInvPoly_isWeightedHomogeneous hp)
+
 end ModularForm
