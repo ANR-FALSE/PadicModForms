@@ -68,6 +68,28 @@ theorem IsWeightedHomogeneous.exists_eq_monomial_of_unique_weight [CommSemiring 
     exact ⟨d, coeff d φ, hφ.eq_monomial_of_unique_weight fun e he ↦ hunique e d he hd⟩
   · exact ⟨0, 0, by simpa using hφ.eq_zero_of_no_monomials fun d hd ↦ hex ⟨d, hd⟩⟩
 
+/-- Multiplying by a weighted homogeneous polynomial of weight `b` shifts the weighted homogeneous
+components by `b`. -/
+theorem IsWeightedHomogeneous.weightedHomogeneousComponent_mul [CommSemiring R] {M : Type*}
+    [AddCancelCommMonoid M] {w : σ → M} {φ ψ : MvPolynomial σ R} {b : M}
+    (hφ : IsWeightedHomogeneous w φ b) (a : M) :
+    weightedHomogeneousComponent w (a + b) (φ * ψ) = φ * weightedHomogeneousComponent w a ψ := by
+  classical
+  ext d
+  rw [coeff_weightedHomogeneousComponent, coeff_mul, coeff_mul]
+  split_ifs with hd
+  · refine Finset.sum_congr rfl fun x hx ↦ ?_
+    rcases eq_or_ne (coeff x.1 φ) 0 with h | h
+    · grind
+    · suffices weight w x.1 + weight w x.2 = a + b by
+        grind [hφ h, coeff_weightedHomogeneousComponent]
+      rw [← map_add, Finset.mem_antidiagonal.1 hx, hd]
+  · refine (Finset.sum_eq_zero fun x hx ↦ ?_).symm
+    rcases eq_or_ne (coeff x.1 φ) 0 with h | h
+    · grind
+    · rw [coeff_weightedHomogeneousComponent, if_neg, mul_zero]
+      exact (fun hx2 ↦ hd (by rw [← Finset.mem_antidiagonal.1 hx, map_add, hφ h, hx2, add_comm]))
+
 /-- A polynomial which is weighted homogeneous of weighted degree `0`, for a weight function taking
 no zero value, is a constant. -/
 theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddCommMonoid M]
