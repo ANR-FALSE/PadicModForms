@@ -24,7 +24,7 @@ mod-`p` theory is that its kernel is nontrivial. Injectivity still holds in one 
 
 @[expose] public noncomputable section
 
-open DirectSum EisensteinSeries MvPolynomial PowerSeries
+open DirectSum EisensteinSeries MvPolynomial PowerSeries Finsupp
 
 namespace ModularForm
 
@@ -105,5 +105,23 @@ theorem evalE₄E₆ModPAtWeight_injective (hp : 5 ≤ p) :
 theorem evalE₄E₆ModPAtWeight_inj (hp : 5 ≤ p) {P Q : E₄E₆WeightedHomogeneous n (ZMod p)} :
     evalE₄E₆ModPAtWeight n P = evalE₄E₆ModPAtWeight n Q ↔ P = Q :=
   (evalE₄E₆ModPAtWeight_injective hp).eq_iff
+
+/-! ### The grading modulo `p - 1` -/
+
+/-- The weights `(4, 6)` of `E₄` and `E₆`, read modulo `p - 1`. Multiplication by the Hasse
+invariant preserves this coarser grading, since `hasseInvPoly` has weight `p - 1`. -/
+def E₄E₆WeightsModPSubOne (p : ℕ) : Fin 2 → ZMod (p - 1) := fun i ↦ (E₄E₆Weights i : ZMod (p - 1))
+
+omit [Fact p.Prime] in
+theorem weight_E₄E₆WeightsModPSubOne (d : Fin 2 →₀ ℕ) : weight (E₄E₆WeightsModPSubOne p) d =
+    ((weight E₄E₆Weights d : ℕ) : ZMod (p - 1)) := by
+  grind [weight_apply, sum, E₄E₆WeightsModPSubOne, Nat.cast_sum]
+
+/-- A weighted homogeneous polynomial of weight `n` is homogeneous of degree `n mod (p - 1)` for
+the coarser grading. -/
+theorem isWeightedHomogeneous_modPSubOne {F : MvPolynomial (Fin 2) (ZMod p)}
+    (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
+    IsWeightedHomogeneous (E₄E₆WeightsModPSubOne p) F (n : ZMod (p - 1)) := fun d hd ↦ by
+  rw [weight_E₄E₆WeightsModPSubOne, hF hd]
 
 end ModularForm
