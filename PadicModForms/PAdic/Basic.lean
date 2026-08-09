@@ -125,6 +125,16 @@ theorem v_ne_bot_mul_of_nonneg {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : 0
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hppos.le (fun ⟨i, j⟩ _  ↦ ?_)
   simpa using mul_le_mul (hm i) (hg' j) (norm_nonneg _) hppos.le
 
+/-! ### Scaling by a constant -/
+
+/-- Multiplying a power series by a nonzero constant shifts its valuation by the valuation of the
+constant. -/
+theorem v_C_mul {c : ℚ_[p]} (hc : c ≠ 0) : v (C c * f) = (addValuation c) + v f := by
+  obtain ⟨m, hm⟩ : ∃ m : ℤ, addValuation c = m := ⟨_, addValuation.apply hc⟩
+  have hcoe : addValuation c = (m : EInt) := by rw [hm]; simp [WithBotTop.coe]
+  rw [v_def, v_def, hcoe, intCast_add_iInf]
+  exact iInf_congr fun n ↦ by simp [coeff_C_mul, AddValuation.map_mul, ← hcoe, hm]
+
 /-! ### Integrality criteria -/
 
 /-- A rational power series has nonnegative `p`-adic valuation iff its coefficients come from the
