@@ -195,6 +195,32 @@ theorem v_E₆Rat_nonneg : 0 ≤ v (((E₆Rat : ℚ⟦X⟧)).map (algebraMap ℚ
   · rw [show -(504 : ℚ) * (σ 5 n : ℚ) = ((-504 * (σ 5 n : ℤ) : ℤ) : ℚ) by push_cast; ring]
     exact intCast_mem_pLocalInt _
 
+/-! ### Normalizing the valuation -/
+
+/-- A power series with a nonzero coefficient has valuation `≠ ⊤`. -/
+theorem v_ne_top_of_coeff_ne_zero {n : ℕ} (h : coeff n f ≠ 0) : v f ≠ ⊤ := fun htop ↦ by
+  have h1 : (⊤ : EInt) ≤ coeffPadicValuation n f := htop ▸ v_le_coeffPadicValuation n f
+  simp [coeffPadicValuation, addValuation.apply h] at h1
+
+/-- A nonzero rational power series whose valuation is finite becomes of valuation exactly `0`
+after scaling by a suitable power of `p`. -/
+theorem exists_zpow_smul_v_eq_zero {f : ℚ⟦X⟧} (hf : f ≠ 0)
+    (hbot : v (f.map (algebraMap ℚ ℚ_[p])) ≠ ⊥) :
+    ∃ m : ℤ, v (((p : ℚ) ^ m • f).map (algebraMap ℚ ℚ_[p])) = 0 := by
+  obtain ⟨n, hn⟩ : ∃ n, coeff n f ≠ 0 := by
+    by_contra! hc
+    exact hf (ext fun n ↦ by simpa using (hc n))
+  obtain ⟨m, hm⟩ := exists_intCast_eq hbot
+    (v_ne_top_of_coeff_ne_zero (n := n) (by simpa using hn))
+  have hc : ((p : ℚ_[p]) ^ (-m)) ≠ 0 := zpow_ne_zero _ (Nat.cast_ne_zero.2 hp.1.ne_zero)
+  refine ⟨-m, ?_⟩
+  rw [show ((p : ℚ) ^ (-m) • f).map (algebraMap ℚ ℚ_[p])
+      = C ((p : ℚ_[p]) ^ (-m)) * f.map (algebraMap ℚ ℚ_[p]) by simp [smul_eq_C_mul]]
+  rw [v_C_mul hc, addValuation.apply hc, valuation_zpow, valuation_p, mul_one, hm,
+    show (WithBotTop.coe m) = ((m : WithTop ℤ) : EInt) from rfl, ← WithBot.coe_add,
+    ← WithTop.coe_add]
+  simp
+
 end PowerSeries.Padic
 
 namespace PowerSeries
@@ -215,5 +241,12 @@ theorem rationalQExpansion_v_ne_bot {k : ℤ} (F : rationalModularForms k) :
       fin_cases i
       · simpa using Padic.v_E₄Rat_nonneg
       · simpa using Padic.v_E₆Rat_nonneg
+
+/-- A nonzero rational modular form becomes of valuation exactly `0` after scaling by a suitable
+power of `p`. This is the normalization used in Serre's theorem on congruences. -/
+theorem rationalQExpansion_exists_zpow_smul_v_eq_zero {k : ℤ} (F : rationalModularForms k)
+    (hF : (F : ℚ⟦X⟧) ≠ 0) :
+    ∃ m : ℤ, Padic.v (((p : ℚ) ^ m • (F : ℚ⟦X⟧)).map (algebraMap ℚ ℚ_[p])) = 0 :=
+  Padic.exists_zpow_smul_v_eq_zero hF (by simpa using rationalQExpansion_v_ne_bot F)
 
 end PowerSeries
