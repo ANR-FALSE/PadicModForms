@@ -29,6 +29,13 @@ theorem eint_ne_bot_iff : x ≠ ⊥ ↔ ∃ m : ℤ, m ≤ x := by
 
 theorem eint_ne_bot_of_nonneg (hx : 0 ≤ x) : x ≠ ⊥ := fun h ↦ by simp_all
 
+/-- An element of `EInt` that is neither infinite is an integer. -/
+theorem exists_intCast_eq (h₁ : x ≠ ⊥) (h₂ : x ≠ ⊤) : ∃ m : ℤ, x = m := by
+  induction x using WithBotTop.rec with
+  | bot => simp_all
+  | coe k => exact ⟨k, rfl⟩
+  | top => simp_all
+
 -- should go to Mathlib.Order.WithBotTop, where `WithBotTop.coe` should also be tagged `@[coe]`,
 -- allowing this lemma to be `@[norm_cast]` like `WithTop.coe_add` and `WithBot.coe_add`
 /-- The inclusion of `ι` into `WithBotTop ι` is additive. -/
