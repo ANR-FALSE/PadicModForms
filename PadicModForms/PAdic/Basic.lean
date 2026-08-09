@@ -156,13 +156,21 @@ theorem intCast_mem_pLocalInt (m : ℤ) : (m : ℚ) ∈ pLocalInt p := by
 /-! ### Reduction modulo `p` -/
 
 /-- A `p`-integral rational power series reduces to zero modulo `p` exactly when its valuation is
-at least `1`. Applied to a difference, this says that two `p`-integral series are congruent modulo
-`p` iff their difference has valuation at least `1`. -/
+at least `1`. See `map_toZMod_eq_iff` for the version comparing two series. -/
 theorem map_toZMod_eq_zero_iff {f : ℚ⟦X⟧} {g : (pLocalInt p)⟦X⟧} (hg : g.map (algebraMap _ ℚ) = f) :
     g.map pLocalInt.toZMod = 0 ↔ 1 ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
   rw [le_v_iff, PowerSeries.ext_iff]
   refine forall_congr' fun n ↦ ?_
   simpa [← hg] using (pLocalInt.one_le_addValuation_iff (coeff n g)).symm
+
+/-- Two `p`-integral rational power series are congruent modulo `p` exactly when the valuation of
+their difference is at least `1`. -/
+theorem map_toZMod_eq_iff {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)⟦X⟧}
+    (hg : g.map (algebraMap _ ℚ) = f) (hg' : g'.map (algebraMap _ ℚ) = f') :
+    g.map pLocalInt.toZMod = g'.map pLocalInt.toZMod ↔
+      1 ≤ v (f.map (algebraMap ℚ ℚ_[p]) - f'.map (algebraMap ℚ ℚ_[p])) := by
+  rw [← sub_eq_zero, ← map_sub, ← map_sub]
+  exact map_toZMod_eq_zero_iff (by rw [map_sub, hg, hg'])
 
 /-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
 theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
