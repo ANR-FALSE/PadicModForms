@@ -153,6 +153,17 @@ theorem v_nonneg_iff_rat {f : ℚ⟦X⟧} :
 theorem intCast_mem_pLocalInt (m : ℤ) : (m : ℚ) ∈ pLocalInt p := by
   simp
 
+/-! ### Reduction modulo `p` -/
+
+/-- A `p`-integral rational power series reduces to zero modulo `p` exactly when its valuation is
+at least `1`. Applied to a difference, this says that two `p`-integral series are congruent modulo
+`p` iff their difference has valuation at least `1`. -/
+theorem map_toZMod_eq_zero_iff {f : ℚ⟦X⟧} {g : (pLocalInt p)⟦X⟧} (hg : g.map (algebraMap _ ℚ) = f) :
+    g.map pLocalInt.toZMod = 0 ↔ 1 ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
+  rw [le_v_iff, PowerSeries.ext_iff]
+  refine forall_congr' fun n ↦ ?_
+  simpa [← hg] using (pLocalInt.one_le_addValuation_iff (coeff n g)).symm
+
 /-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
 theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
     0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) :=
