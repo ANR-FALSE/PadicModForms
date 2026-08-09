@@ -29,6 +29,27 @@ theorem eint_ne_bot_iff : x ≠ ⊥ ↔ ∃ m : ℤ, m ≤ x := by
 
 theorem eint_ne_bot_of_nonneg (hx : 0 ≤ x) : x ≠ ⊥ := fun h ↦ by simp_all
 
+-- should go to Mathlib.Order.WithBotTop, where `WithBotTop.coe` should also be tagged `@[coe]`,
+-- allowing this lemma to be `@[norm_cast]` like `WithTop.coe_add` and `WithBot.coe_add`
+/-- The inclusion of `ι` into `WithBotTop ι` is additive. -/
+theorem WithBotTop.coe_add {ι : Type*} [AddMonoid ι] (a b : ι) :
+    ((a + b : ι) : WithBotTop ι) = (a : WithBotTop ι) + b :=
+  rfl
+
+/-- Adding a finite element of `EInt` commutes with taking an infimum: translation by an integer
+is an order isomorphism of `EInt`. -/
+theorem intCast_add_iInf {α : Sort*} (m : ℤ) (g : α → EInt) :
+    (m : EInt) + ⨅ n, g n = ⨅ n, ((m : EInt) + g n) := by
+  refine le_antisymm (le_iInf fun n ↦ add_le_add le_rfl (iInf_le _ n)) ?_
+  suffices (-m : ℤ) + ⨅ n, m + g n ≤ ⨅ n, g n by
+    calc _ = m + ((-m : ℤ) + ⨅ n, (m + g n)) := by
+          rw [← add_assoc, ← WithBotTop.coe_add]; simp [WithBotTop.coe]
+         _ ≤ _ := add_le_add le_rfl this
+  refine le_iInf fun n ↦ ?_
+  calc _ ≤ (-m : ℤ) + (m + g n) := add_le_add le_rfl (iInf_le _ n)
+       _ = g n := by rw [← add_assoc, ← WithBotTop.coe_add]; simp [WithBotTop.coe]
+
+
 -- should go to Mathlib.Topology.Instances.EInt (new file, analogous to
 -- Mathlib.Topology.Instances.ENat)
 theorem tendsto_eint_nhds_top_iff {α : Type*} {l : Filter α} {u : α → EInt} :
