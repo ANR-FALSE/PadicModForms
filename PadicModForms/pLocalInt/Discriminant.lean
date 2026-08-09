@@ -185,12 +185,9 @@ theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : ℤ}
 
 /-! ### `E₄_int` and `E₆_int` generate -/
 
-private theorem pLocalIntModularForm_eq_zero_of_complex_eq_zero {k : ℤ}
-    (f : pLocalIntModularForms p k)
-    (hf : rationalModularFormToComplex (pLocalIntModularFormToRat f) = 0) : f = 0 := by
-  have : pLocalIntModularFormToRat f = 0 := rationalModularFormToComplex_injective (by simp_all)
-  refine Subtype.ext (map_injective (algebraMap (pLocalInt p) ℚ) (fun _ _ h ↦ Subtype.ext h) ?_)
-  simpa [pLocalIntModularFormToRat] using congrArg Subtype.val this
+private theorem eq_zero_of_rationalModularForms_eq_bot {k : ℤ} (f : pLocalIntModularForms p k)
+    (h : rationalModularForms k = ⊥) : f = 0 :=
+  Subtype.ext <| (Submodule.eq_bot_iff _).1 (pLocalIntModularForms_eq_bot h) _ f.2
 
 /-- Every even natural number other than `2` is of the form `4a + 6b`. -/
 private theorem exists_E₄E₆_monomial_weight {n : ℕ} (hnEven : Even n) (hnTwo : n ≠ 2) :
@@ -205,22 +202,22 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
       evalE₄E₆Int P = DirectSum.of (fun i ↦ pLocalIntModularForms p i) k f := by
   intro k f
   by_cases hkNeg : k < 0
-  · have hf : f = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero f <|
-      rank_zero_iff_forall_zero.mp (levelOne_neg_weight_rank_zero hkNeg) _
+  · have hf : f = 0 :=
+      eq_zero_of_rationalModularForms_eq_bot f (rationalModularForms_eq_bot_of_neg hkNeg)
     exact ⟨0, by simp [hf]⟩
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
   clear hkNeg
   induction n using Nat.strong_induction_on with | h n ih => ?_
   by_cases hnOdd : Odd (n : ℤ)
-  · have hf : f = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero f <|
-      levelOne_odd_weight_eq_zero hnOdd _
+  · have hf : f = 0 :=
+      eq_zero_of_rationalModularForms_eq_bot f (rationalModularForms_eq_bot_of_odd hnOdd)
     exact ⟨0, by simp [hf]⟩
   rw [Int.not_odd_iff_even] at hnOdd
   have hnEven : Even n := by exact_mod_cast hnOdd
   by_cases hnTwo : n = 2
   · subst n
-    have hf : f = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero f <|
-      rank_zero_iff_forall_zero.mp levelOne_weight_two_rank_zero _
+    have hf : f = 0 :=
+      eq_zero_of_rationalModularForms_eq_bot f (by simpa using rationalModularForms_two_eq_bot)
     exact ⟨0, by simp [hf]⟩
   obtain ⟨a, b, hab⟩ := exists_E₄E₆_monomial_weight hnEven hnTwo
   let mn : pLocalIntModularForms p n := ⟨_, E₄_int_pow_mul_E₆_int_pow_mem hab⟩
@@ -252,8 +249,8 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
     rw [map_add, map_mul, hprod, hmonomial, ← map_add, ← hfDecomp]
   · let g : pLocalIntModularForms p (n - 12) :=
       ⟨_, divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
-    have hg : g = 0 := pLocalIntModularForm_eq_zero_of_complex_eq_zero g <|
-      rank_zero_iff_forall_zero.mp (levelOne_neg_weight_rank_zero (by lia)) _
+    have hg : g = 0 :=
+      eq_zero_of_rationalModularForms_eq_bot g (rationalModularForms_eq_bot_of_neg (by lia))
     have hgVal : divDiscriminant_int hp f₀ = 0 := by simpa [g] using congrArg Subtype.val hg
     have hf₀Zero : f₀ = 0 := Subtype.ext <| by
       simpa [hgVal] using (discriminant_int_mul_divDiscriminant_int hp hf₀).symm

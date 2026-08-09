@@ -254,9 +254,7 @@ theorem evalE₄E₆Rat_surjective : Function.Surjective evalE₄E₆Rat := fun 
   | zero => exact ⟨0, map_zero _⟩
   | of k f =>
       by_cases hk : k < 0
-      · have hfC : rationalModularFormToComplex f = 0 :=
-          rank_zero_iff_forall_zero.mp (ModularForm.levelOne_neg_weight_rank_zero hk) _
-        have hf : f = 0 := rationalModularFormToComplex_injective (by simpa using hfC)
+      · have hf : f = 0 := Subtype.ext (by simpa [rationalModularForms_eq_bot_of_neg hk] using f.2)
         exact ⟨0, by simp [hf]⟩
       · obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
         obtain ⟨p, hp⟩ := evalE₄E₆RatAtWeight_surjective n f

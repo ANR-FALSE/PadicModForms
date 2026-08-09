@@ -189,10 +189,8 @@ theorem isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly (hp : 5 ≤ p) :
 /-- The Hasse polynomial satisfies the equation `δ² hasseInvPoly = -X₀ hasseInvPoly`. -/
 theorem δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
     δModP (δModP (hasseInvPoly hp)) = -X 0 * hasseInvPoly hp :=
-  (SetLike.coe_eq_coe (p := (E₄E₆WeightedHomogeneous (p + 3) (ZMod p)))
-    (x := ⟨_, isWeightedHomogeneous_δModP_sq_hasseInvPoly hp⟩)
-    (y := ⟨_, isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly hp⟩)).2 <|
-  (evalE₄E₆ModPAtWeight_inj hp).mp
+  eq_of_evalE₄E₆ModP_eq hp (isWeightedHomogeneous_δModP_sq_hasseInvPoly hp)
+    (isWeightedHomogeneous_neg_X_zero_mul_hasseInvPoly hp)
     (by simp [evalE₄E₆ModP_δModP_sq_hasseInvPoly hp, evalE₄E₆ModP_hasseInvPoly hp])
 
 end ModularForm

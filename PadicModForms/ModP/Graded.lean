@@ -106,6 +106,13 @@ theorem evalE₄E₆ModPAtWeight_inj (hp : 5 ≤ p) {P Q : E₄E₆WeightedHomog
     evalE₄E₆ModPAtWeight n P = evalE₄E₆ModPAtWeight n Q ↔ P = Q :=
   (evalE₄E₆ModPAtWeight_injective hp).eq_iff
 
+/-- Two weighted homogeneous polynomials of the same weight with the same evaluation modulo `p`
+are equal. This is the unbundled form of `evalE₄E₆ModPAtWeight_inj`. -/
+theorem eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) {P Q : MvPolynomial (Fin 2) (ZMod p)}
+    (hP : IsWeightedHomogeneous E₄E₆Weights P n) (hQ : IsWeightedHomogeneous E₄E₆Weights Q n)
+    (h : evalE₄E₆ModP P = evalE₄E₆ModP Q) : P = Q :=
+  congrArg Subtype.val (evalE₄E₆ModPAtWeight_injective hp h)
+
 /-- For `p ≥ 5`, every mod-`p` modular form of weight `k` is the evaluation of a polynomial that is
 weighted homogeneous of weight `k`. This is the mod-`p` analogue of
 `evalE₄E₆IntAtWeight_surjective`. -/

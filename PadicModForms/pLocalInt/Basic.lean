@@ -100,6 +100,16 @@ theorem mem_pLocalIntModularForms :
     f ∈ pLocalIntModularForms p k ↔ f.isPLocalIntModularForm k :=
   Iff.rfl
 
+omit hf hg in
+/-- If there are no nonzero rational modular forms of weight `k`, there are no nonzero `p`-integral
+ones either. -/
+public theorem _root_.pLocalIntModularForms_eq_bot (h : rationalModularForms k = ⊥) :
+    pLocalIntModularForms p k = ⊥ := by
+  refine (Submodule.eq_bot_iff _).2 fun f hf ↦ ?_
+  obtain ⟨F, hF⟩ := hf
+  refine map_injective _ pLocalInt.algebraMap_injective ?_
+  rw [hF, rationalQExpansion_apply, (Submodule.eq_bot_iff _).1 h F F.2, map_zero]
+
 end PowerSeries
 
 /-! ### The graded structure -/
