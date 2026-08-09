@@ -29,20 +29,22 @@ noncomputable section
 
 open UpperHalfPlane SetLike DirectSum PowerSeries EisensteinSeries Module Free MatrixGroups
 
+variable (k : ℤ)
+
 namespace PowerSeries
 
 /-- A rational power series is a modular form of weight `k` if it is the `q`-expansion of a
 classical modular form of level one and weight `k`. -/
-@[expose] public def isModularForm (k : ℤ) (f : ℚ⟦X⟧) : Prop :=
+@[expose] public def isModularForm (f : ℚ⟦X⟧) : Prop :=
   ∃ g : ModularForm 𝒮ℒ k, qExpansion 1 g = f.map (algebraMap ℚ ℂ)
 
-public theorem zero_isModularForm (k : ℤ) : isModularForm k 0 :=
+public theorem zero_isModularForm : isModularForm k 0 :=
   ⟨0, by simpa using qExpansion_zero 1⟩
 
 theorem one_isModularForm : (1 : ℚ⟦X⟧).isModularForm 0 :=
   ⟨1, by simpa using qExpansion_one 1⟩
 
-variable {k l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
+variable {k} {l : ℤ} {f g : ℚ⟦X⟧} (hf : f.isModularForm k) (hg : g.isModularForm k)
 
 include hf
 
@@ -125,7 +127,7 @@ public theorem qExpansion_rationalModularFormToComplex :
   qExpansion_rationalModularFormToComplexAux f
 
 /-- Scalar extension to complex modular forms is injective. -/
-public theorem rationalModularFormToComplex_injective :
+public theorem rationalModularFormToComplex_injective (n) :
     Function.Injective (rationalModularFormToComplex (n := n)) := fun f g h ↦ by
   refine Subtype.ext (PowerSeries.map_injective _ (algebraMap ℚ ℂ).injective ?_)
   rw [← qExpansion_rationalModularFormToComplex, ← qExpansion_rationalModularFormToComplex, h]
@@ -187,14 +189,27 @@ public theorem rationalModularForms_finrank_le (k : ℤ) :
   rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
   exact rationalModularForms_rank_le k
 
+variable {k}
+
+/-- If there are no nonzero complex modular forms of weight `k`, there are no nonzero rational
+ones either. -/
+public theorem rationalModularForms_eq_bot (h : Subsingleton (ModularForm 𝒮ℒ k)) :
+    rationalModularForms k = ⊥ :=
+  have := (rationalModularFormToComplex_injective k).subsingleton
+  Submodule.eq_bot_of_subsingleton
+
 /-- There are no nonzero rational modular forms of negative weight. In particular the weight of a
 nonzero rational modular form is a natural number. -/
-public theorem rationalModularForms_eq_bot_of_neg (hk : k < 0) : rationalModularForms k = ⊥ := by
-  refine (Submodule.eq_bot_iff _).mpr fun f hf ↦ ?_
-  suffices rationalModularFormToComplex (⟨f, hf⟩ : rationalModularForms k) = 0 by
-    suffices (⟨f, hf⟩ : rationalModularForms k) = 0 from congrArg Subtype.val this
-    exact rationalModularFormToComplex_injective (by simp_all)
-  exact rank_zero_iff_forall_zero.mp (ModularForm.levelOne_neg_weight_rank_zero hk) _
+public theorem rationalModularForms_eq_bot_of_neg (hk : k < 0) : rationalModularForms k = ⊥ :=
+  rationalModularForms_eq_bot (rank_zero_iff.1 (ModularForm.levelOne_neg_weight_rank_zero hk))
+
+/-- There are no nonzero rational modular forms of odd weight. -/
+public theorem rationalModularForms_eq_bot_of_odd (hk : Odd k) : rationalModularForms k = ⊥ :=
+  rationalModularForms_eq_bot (rank_zero_iff.1 (ModularForm.levelOne_odd_weight_rank_zero hk))
+
+/-- There are no nonzero rational modular forms of weight `2`. -/
+public theorem rationalModularForms_two_eq_bot : rationalModularForms 2 = ⊥ :=
+  rationalModularForms_eq_bot (rank_zero_iff.1 ModularForm.levelOne_weight_two_rank_zero)
 
 /-- The weight of a nonzero rational modular form is nonnegative, so it is a natural number. -/
 public theorem nonneg_of_mem_rationalModularForms {f : ℚ⟦X⟧} (hf : f ∈ rationalModularForms k)
