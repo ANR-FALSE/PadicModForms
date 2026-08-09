@@ -111,7 +111,8 @@ are equal. This is the unbundled form of `evalE₄E₆ModPAtWeight_inj`. -/
 theorem eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) {P Q : MvPolynomial (Fin 2) (ZMod p)}
     (hP : IsWeightedHomogeneous E₄E₆Weights P n) (hQ : IsWeightedHomogeneous E₄E₆Weights Q n)
     (h : evalE₄E₆ModP P = evalE₄E₆ModP Q) : P = Q :=
-  congrArg Subtype.val (evalE₄E₆ModPAtWeight_injective hp h)
+  congrArg Subtype.val <|
+    evalE₄E₆ModPAtWeight_injective hp (a₁ := ⟨P, hP⟩) (a₂ := ⟨Q, hQ⟩) h
 
 /-- For `p ≥ 5`, every mod-`p` modular form of weight `k` is the evaluation of a polynomial that is
 weighted homogeneous of weight `k`. This is the mod-`p` analogue of
