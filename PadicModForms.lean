@@ -29,6 +29,7 @@ import PadicModForms.ModP.Weights
 import PadicModForms.PAdic.Basic
 import PadicModForms.PAdic.Defs
 import PadicModForms.PAdic.Eisenstein
+import PadicModForms.PAdic.Weights.Congruence
 import PadicModForms.PAdic.Weights.Defs
 import PadicModForms.Rational.Basic
 import PadicModForms.Rational.E2
