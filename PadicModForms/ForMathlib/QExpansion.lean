@@ -186,7 +186,7 @@ private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k)
           rw [← zpow_natCast, Int.toNat_of_nonneg hk]
         rw [hp] at hf
         simpa [levelOneWeightPolynomial, hk, Polynomial.eval_monomial, mul_comm] using hf.symm
-      · have hf : f = 0 := (coe_eq_zero_iff f).mp
+      · have hf : f = 0 := (FunLike.coe_zero_iff f).mp
           (ModularFormClass.levelOne_neg_weight_eq_zero (lt_of_not_ge hk) f)
         simp [levelOneWeightPolynomial, hf]
   | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
@@ -226,7 +226,7 @@ private theorem levelOneCoeAddHom_injective : Function.Injective levelOneCoeAddH
           simpa [IsRoot, ← denom_levelOneShift n z, levelOneWeightPolynomial_eval] using
             congrFun hF (levelOneShift n • z)
     simpa [hpoly] using (levelOneWeightPolynomial_coeff F z hk).symm
-  · exact (coe_eq_zero_iff (F k)).mp
+  · exact (FunLike.coe_zero_iff (F k)).mp
       (ModularFormClass.levelOne_neg_weight_eq_zero (lt_of_not_ge hk) (F k))
 
 /-- The `q`-expansion homomorphism on the graded ring of level-one modular forms is injective. -/

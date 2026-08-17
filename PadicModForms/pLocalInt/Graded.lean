@@ -205,7 +205,7 @@ theorem evalE₄E₆Int_component_eq (P : MvPolynomial (Fin 2) (pLocalInt p)) (k
   refine Finset.sum_eq_zero fun d hd ↦
     evalE₄E₆Int_monomial_apply_eq_zero_of_ne _ _ fun heq ↦ mem_support_iff.mp hd ?_
   have hwd : Finsupp.weight E₄E₆Weights d = k := by rw [weight_E₄E₆_apply]; lia
-  rw [hQ, coeff_sub, coeff_weightedHomogeneousComponent, if_pos hwd, sub_self]
+  rw [hQ, coeff_sub, coeff_weightedHomogeneousComponent, ite_eq_left hwd, sub_self]
 
 end
 

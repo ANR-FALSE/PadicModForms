@@ -47,7 +47,7 @@ theorem zero_le_addValuation_ratCast_iff (q : ℚ) :
   · simp [hq]
   · rw [Padic.addValuation.apply (Rat.cast_ne_zero.mpr hq), Padic.valuation_ratCast]
     simp only [Rat.padicValuation, Valuation.coe_mk, MonoidWithZeroHom.coe_mk, ZeroHom.coe_mk,
-      if_neg hq]
+      ite_eq_right hq]
     rw [show WithZero.exp (-padicValRat p q) = (WithZero.exp (padicValRat p q))⁻¹ by simp]
     rw [inv_le_one₀ (WithZero.exp_pos (a := padicValRat p q)), ← WithZero.exp_zero,
       WithZero.exp_le_exp]

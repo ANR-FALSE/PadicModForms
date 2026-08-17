@@ -64,10 +64,10 @@ theorem isEisensteinAt_X_pow_sub_C_hasseInvPoly (hp : 5 ≤ p) (hP : Irreducible
     exact fun h ↦ hP.not_isUnit (isUnit_of_dvd_one h)
   mem {n} hn := by
     rw [natDegree_X_pow_sub_C] at hn
-    rw [coeff_sub, coeff_X_pow, if_neg (by lia), coeff_C, Ideal.mem_span_singleton]
+    rw [coeff_sub, coeff_X_pow, ite_eq_right (by lia), coeff_C, Ideal.mem_span_singleton]
     split_ifs <;> simp_all
   notMem := by
-    rw [coeff_sub, coeff_X_pow, if_neg (by lia), coeff_C_zero, zero_sub,
+    rw [coeff_sub, coeff_X_pow, ite_eq_right (by lia), coeff_C_zero, zero_sub,
       Ideal.span_singleton_pow, Ideal.mem_span_singleton]
     exact fun h ↦ hP2 (by rwa [← dvd_neg, ← pow_two])
 

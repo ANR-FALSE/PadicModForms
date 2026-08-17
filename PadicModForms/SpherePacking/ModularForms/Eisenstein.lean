@@ -50,7 +50,7 @@ lemma exists_smul_eq_of_rank_one {M : Type*} [AddCommGroup M] [Module ℂ M]
 
 lemma smul_modularForm_eq_pointwise {Γ : Subgroup SL(2, ℤ)} {k : ℤ} {f g : ModularForm Γ k}
     {c : ℂ} (h : f = c • g) (z : ℍ) : (f : ℍ → ℂ) z = c * (g : ℍ → ℂ) z := by
-  simpa [ModularForm.coe_smul, smul_eq_mul] using
+  simpa [coe_smul, smul_eq_mul] using
     congrFun (congrArg (↑· : ModularForm _ _ → ℍ → ℂ) h) z
 
 section Definitions

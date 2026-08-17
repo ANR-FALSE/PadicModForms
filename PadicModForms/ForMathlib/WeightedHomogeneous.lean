@@ -87,7 +87,7 @@ theorem IsWeightedHomogeneous.weightedHomogeneousComponent_mul [CommSemiring R] 
   · refine (Finset.sum_eq_zero fun x hx ↦ ?_).symm
     rcases eq_or_ne (coeff x.1 φ) 0 with h | h
     · grind
-    · rw [coeff_weightedHomogeneousComponent, if_neg, mul_zero]
+    · rw [coeff_weightedHomogeneousComponent, ite_eq_right, mul_zero]
       exact (fun hx2 ↦ hd (by rw [← Finset.mem_antidiagonal.1 hx, map_add, hφ h, hx2, add_comm]))
 
 /-- A polynomial which is weighted homogeneous of weighted degree `0`, for a weight function taking
@@ -276,7 +276,7 @@ theorem irreducible_of_unique_lower_weight {P : MvPolynomial σ K}
       (hunique a (Nat.pos_of_ne_zero ha0) (by omega))
     obtain ⟨d₂, r₂, hG⟩ := hb.exists_eq_monomial_of_unique_weight
       (hunique b (Nat.pos_of_ne_zero hb0) (by omega))
-    exact hP_not_monomial ⟨d₁ + d₂, r₁ * r₂, by rw [hFG, hF, hG, monomial_mul]⟩
+    exact hP_not_monomial ⟨d₁ + d₂, r₁ * r₂, by rw [hFG, hF, hG, monomial_mul_monomial]⟩
 
 /-- Every irreducible factor of a nonzero weighted homogeneous multivariate polynomial over a
 domain is weighted homogeneous. -/
