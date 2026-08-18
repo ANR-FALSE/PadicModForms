@@ -94,9 +94,7 @@ theorem natCast_eq_of_v_sub_le (hp : 5 ≤ p) (hf : (f : ℚ⟦X⟧) ≠ 0)
   have hc : ((p : ℚ_[p]) ^ m) ≠ 0 := zpow_ne_zero _ (Nat.cast_ne_zero.2 (by lia))
   have hmap (g : ℚ⟦X⟧) : ((p : ℚ) ^ m • g).map (algebraMap ℚ ℚ_[p]) =
       C ((p : ℚ_[p]) ^ m) * g.map (algebraMap ℚ ℚ_[p]) := by
-    rw [smul_eq_C_mul, map_mul, map_C]
-    push_cast
-    ring
+    rw [smul_eq_C_mul, map_mul, map_C, map_zpow₀, map_natCast]
   rw [hmap, v_C_mul hc] at hm
   have key := add_le_add (le_refl (Padic.addValuation ((p : ℚ_[p]) ^ m) : EInt)) h
   rw [← add_assoc, hm, zero_add] at key

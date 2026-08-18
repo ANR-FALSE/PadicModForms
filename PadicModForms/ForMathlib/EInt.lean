@@ -6,7 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Monoid.Unbundled.WithTop
+public import Mathlib.Order.WithBotTop
+public import Mathlib.Topology.Instances.Int
+public import Mathlib.Topology.Order.WithTop
 
 /-!
 # The extended integers

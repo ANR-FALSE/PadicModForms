@@ -6,15 +6,14 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
-
+public import PadicModForms.ForMathlib.EInt
 public import PadicModForms.ForMathlib.IntLocalization
+public import PadicModForms.ForMathlib.Padic
 public import PadicModForms.ForMathlib.PowerSeriesTopology
 public import PadicModForms.PAdic.Defs
 public import PadicModForms.Rational.Basic
 public import PadicModForms.Rational.Graded
-import PadicModForms.ForMathlib.EInt
-import PadicModForms.ForMathlib.Padic
+import Mathlib.Analysis.Normed.Group.Ultra
 import PadicModForms.ForMathlib.SpecificLimits
 
 /-!

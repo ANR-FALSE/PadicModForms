@@ -34,19 +34,23 @@ namespace EisensteinSeries
 
 open ModP
 
+/-- Every congruence `Eₖ ≡ 1` below comes from the same computation: the constant coefficient of
+`Eₖ` is `1`, and every other one carries the scalar `2 k Bₖ⁻¹` as a factor, so any ring map
+killing that scalar sends `Eₖ` to `1`. -/
+theorem E_int_map_eq_one {R : Type*} [CommRing R] (φ : pLocalInt p →+* R) (hk : 3 ≤ k)
+    (hk2 : Even k) (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) (hφ : φ (2 * k * ⟨_, hB⟩) = 0) :
+    (E_int hk hk2 hB).map φ = 1 := by
+  ext n
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp [coeff_E_int_zero hk hk2 hB]
+  · simp [hn, coeff_E_int_of_ne_zero hk hk2 hB hn, map_mul, map_neg, hφ]
+
 /-- If `p - 1 ∣ k`, then the normalized Eisenstein series of weight `k` is congruent to `1`
 modulo `p`. -/
 theorem E_int_mod_p (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 ∣ k) :
-    (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)).map pLocalInt.toZMod = 1 := by
-  let B_i : pLocalInt p := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩
-  have hB_inv : pLocalInt.toZMod B_i = 0 := toZMod_inv_bernoulli_eq_zero hk hk2 hpk
-  ext n
-  by_cases hn : n = 0
-  · simp [hn, coeff_E_int_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)]
-  have hcoeff : coeff n (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)) =
-      -(2 * k) * B_i * σ (k - 1) n := by
-    simpa [B_i] using coeff_E_int_of_ne_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) hn
-  simp [hn, hcoeff, map_mul, map_mul, map_neg, hB_inv]
+    (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)).map pLocalInt.toZMod = 1 :=
+  E_int_map_eq_one _ hk hk2 _ <| by
+    rw [map_mul, toZMod_inv_bernoulli_eq_zero hk hk2 hpk, mul_zero]
 
 /-- If `(p - 1) * p ^ (m - 1) ∣ k`, then `E_k` is congruent to `1` modulo `p ^ m`. -/
 theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
@@ -54,51 +58,28 @@ theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
     (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 ((dvd_mul_right _ _).trans hkm))).map
       (pLocalInt.toZModPow m) = 1 := by
   let hpk : p - 1 ∣ k := (dvd_mul_right _ _).trans hkm
-  let B_i : pLocalInt p := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩
-  have hB : (p : pLocalInt p) ∣ B_i := by simpa [B_i] using p_dvd_inv_bernoulli hk hk2 hpk
-  have hpnk : p ^ (m - 1) ∣ k := (dvd_mul_left _ _).trans hkm
-  have hkpow : (p : pLocalInt p) ^ (m - 1) ∣ k := by
-    obtain ⟨c, hc⟩ := hpnk
+  refine E_int_map_eq_one _ hk hk2 _ (pLocalInt.toZModPow_eq_zero_of_dvd ?_)
+  obtain ⟨a, ha⟩ : (p : pLocalInt p) ^ (m - 1) ∣ (k : pLocalInt p) := by
+    obtain ⟨c, hc⟩ := (dvd_mul_left _ _).trans hkm
     exact ⟨c, Subtype.ext (by norm_num [hc])⟩
-  have hscalar : (p : pLocalInt p) ^ m ∣ 2 * k * B_i := by
-    obtain ⟨a, ha⟩ := hkpow
-    obtain ⟨b, hb⟩ := hB
-    exact ⟨2 * a * b, by rw [ha, hb, ← pow_sub_one_mul (by lia : m ≠ 0) _]; ring⟩
-  have hscalar_map : pLocalInt.toZModPow m ((2 * k : pLocalInt p) * B_i) = 0 :=
-    pLocalInt.toZModPow_eq_zero_of_dvd hscalar
-  ext n
-  by_cases hn : n = 0
-  · simp [hn, coeff_E_int_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)]
-  have hcoeff : coeff n (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)) =
-      -(2 * k) * B_i * σ (k - 1) n := by
-    simpa [B_i] using coeff_E_int_of_ne_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) hn
-  simp [hn, hcoeff, map_mul, map_neg, hscalar_map]
+  obtain ⟨b, hb⟩ : (p : pLocalInt p) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ :=
+    p_dvd_inv_bernoulli hk hk2 hpk
+  exact ⟨2 * a * b, by rw [ha, hb, ← pow_sub_one_mul (by lia : m ≠ 0) _]; ring⟩
 
 /-- If `2 ^ (m - 2) ∣ k`, then `E_k` is congruent to `1` modulo `2 ^ m`. -/
 theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (hkm : 2 ^ (m - 2) ∣ k) :
     (E_int (p := 2) hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 (by simp))).map
       (pLocalInt.toZModPow m) = 1 := by
   let hpk : 2 - 1 ∣ k := by simp
-  let B_i : pLocalInt 2 := ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩
-  have hB : 2 ∣ B_i := by simpa [B_i] using p_dvd_inv_bernoulli hk hk2 hpk
-  have hkpow : 2 ^ (m - 2) ∣ (k : pLocalInt 2) := by
+  refine E_int_map_eq_one _ hk hk2 _ (pLocalInt.toZModPow_eq_zero_of_dvd ?_)
+  obtain ⟨a, ha⟩ : (2 : pLocalInt 2) ^ (m - 2) ∣ (k : pLocalInt 2) := by
     obtain ⟨c, hc⟩ := hkm
     exact ⟨c, Subtype.ext (by norm_num [hc])⟩
-  have hscalar : 2 ^ m ∣ 2 * k * B_i := by
-    obtain ⟨a, ha⟩ := hkpow
-    obtain ⟨b, hb⟩ := hB
-    refine ⟨a * b, ?_⟩
-    calc _ = 2 ^ (m - 2 + 2) * a * b := by rw [ha, hb]; ring
-      _ = _ := by rw [show m - 2 + 2 = m by lia]; ring
-  have hscalar_map : pLocalInt.toZModPow m ((2 * k : pLocalInt 2) * B_i) = 0 :=
-    pLocalInt.toZModPow_eq_zero_of_dvd hscalar
-  ext n
-  by_cases hn : n = 0
-  · simp [hn, coeff_E_int_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)]
-  have hcoeff : coeff n (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)) =
-      -(2 * k) * B_i * σ (k - 1) n := by
-    simpa [B_i] using coeff_E_int_of_ne_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) hn
-  simp [hn, hcoeff, map_mul, map_neg, hscalar_map]
+  obtain ⟨b, hb⟩ : (2 : pLocalInt 2) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ :=
+    p_dvd_inv_bernoulli hk hk2 hpk
+  refine ⟨a * b, ?_⟩
+  calc _ = 2 ^ (m - 2 + 2) * a * b := by rw [ha, hb]; ring
+    _ = _ := by rw [show m - 2 + 2 = m by lia]; ring
 
 /-- The normalized Eisenstein series of weight `p - 1` is congruent to `1` modulo `p`. -/
 theorem E_p_sub_one_mod_p (hp : 5 ≤ p) : (E hp).map pLocalInt.toZMod = 1 :=

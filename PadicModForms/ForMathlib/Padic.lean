@@ -6,8 +6,8 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
-
+public import Mathlib.NumberTheory.Padics.PadicNumbers
+public import PadicModForms.ForMathlib.EInt
 public import PadicModForms.ForMathlib.IntLocalization
 
 /-!

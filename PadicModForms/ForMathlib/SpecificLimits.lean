@@ -6,7 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Existence of arbitrarily small integer powers
