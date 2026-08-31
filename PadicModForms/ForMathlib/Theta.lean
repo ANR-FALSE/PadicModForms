@@ -67,4 +67,10 @@ theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) (f : R⟦X⟧) :
     (Θ f).map φ = Θ (f.map φ) :=
   ext fun n ↦ by simp [nsmul_eq_mul]
 
+/-- The iterates of `Θ` multiply the `n`-th coefficient by `n ^ k`. -/
+@[simp]
+theorem coeff_iterate_Θ (k n : ℕ) (f : R⟦X⟧) :
+    coeff n (((Θ (R := R)))^[k] f) = n ^ k • coeff n f := by
+  sorry
+
 end PowerSeries

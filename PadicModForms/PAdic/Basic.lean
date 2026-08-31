@@ -171,6 +171,23 @@ theorem map_toZMod_eq_iff {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)⟦X⟧}
   rw [← sub_eq_zero, ← map_sub, ← map_sub]
   exact map_toZMod_eq_zero_iff (by rw [map_sub, hg, hg'])
 
+/-- A `p`-integral rational power series reduces to zero modulo `p ^ m` exactly when its valuation
+is at least `m`. This is the modulus-`p ^ m` version of `map_toZMod_eq_zero_iff`. -/
+theorem map_toZModPow_eq_zero_iff (m : ℕ) {f : ℚ⟦X⟧} {g : (pLocalInt p)⟦X⟧}
+    (hg : g.map (algebraMap _ ℚ) = f) :
+    g.map (pLocalInt.toZModPow m) = 0 ↔
+      ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
+  sorry
+
+/-- Two `p`-integral rational power series are congruent modulo `p ^ m` exactly when the valuation
+of their difference is at least `m`. This is the bridge between the two phrasings of the
+hypothesis of Serre's theorem on congruences. -/
+theorem map_toZModPow_eq_iff (m : ℕ) {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)⟦X⟧}
+    (hg : g.map (algebraMap _ ℚ) = f) (hg' : g'.map (algebraMap _ ℚ) = f') :
+    g.map (pLocalInt.toZModPow m) = g'.map (pLocalInt.toZModPow m) ↔
+      ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p]) - f'.map (algebraMap ℚ ℚ_[p])) := by
+  sorry
+
 /-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
 theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
     0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) :=

@@ -172,3 +172,21 @@ theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
   (hx : (p : pLocalInt p) ^ m ∣ x) : pLocalInt.toZModPow m x = 0 := by
   obtain ⟨y, rfl⟩ := hx
   rw [map_mul, pLocalInt.toZModPow_pow, zero_mul]
+
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- The kernel of reduction modulo `p ^ m`: an element of `pLocalInt p` reduces to `0` exactly
+when it is divisible by `p ^ m`. -/
+theorem pLocalInt.toZModPow_eq_zero_iff {m : ℕ} {x : pLocalInt p} :
+    pLocalInt.toZModPow m x = 0 ↔ (p : pLocalInt p) ^ m ∣ x := by
+  sorry
+
+/-- An element of `pLocalInt p` killed by reduction modulo `p ^ m` is divisible by `p ^ m`. -/
+theorem pLocalInt.dvd_of_toZModPow_eq_zero {m : ℕ} {x : pLocalInt p}
+    (hx : pLocalInt.toZModPow m x = 0) : (p : pLocalInt p) ^ m ∣ x :=
+  pLocalInt.toZModPow_eq_zero_iff.1 hx
+
+/-- Reduction modulo `p ^ m` refines reduction modulo `p`. -/
+theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
+    ZMod.castHom (dvd_pow_self p (by lia : m ≠ 0)) (ZMod p) (pLocalInt.toZModPow m x) =
+      pLocalInt.toZMod x := by
+  sorry

@@ -6,7 +6,9 @@ Authors: Riccardo Brasca
 
 module
 
+public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.ModP.Eisenstein
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 /-!
 # Congruences for Eisenstein series
@@ -19,6 +21,8 @@ and Serre's congruence `E₂ ≡ E_{p+1}` modulo `p`.
 * `E_int_mod_p`, `E_int_mod_p_pow_of_dvd`, `E_int_mod_two_pow_of_dvd`: `Eₖ ≡ 1` modulo `pᵐ` when
   `(p - 1) pᵐ⁻¹ ∣ k`, and its variant at `p = 2`.
 * `E_p_sub_one_mod_p`: the case `k = p - 1`, which is what the Hasse invariant is built from.
+* `E_int_sub_one_eq_unit_smul_sigmaSeries`: the exact form of the Eisenstein congruence,
+  `Eₖ - 1 = p^r λ Φₖ` with `r = v_p(k) + 1` and `λ` a unit.
 * `E₂_int_map_toZMod`: **Serre's congruence** `E₂ ≡ E_{p+1}` modulo `p`.
 * `E₂_int_map_toZMod_mem_modPModularForms`: consequently the reduction of `E₂` is a mod-`p`
   modular form of weight `p + 1`, although `E₂` itself is not modular.
@@ -134,5 +138,18 @@ theorem E₂_int_map_toZMod_mem_modPModularForms : (E₂_int : (pLocalInt p)⟦X
   exact ⟨_, F, hF, rfl⟩
 
 end E₂
+
+/-! ### The exact form of the Eisenstein congruence -/
+
+/-- **The exact Eisenstein quotient**: for `p ≥ 5` and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
+there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. By von
+Staudt–Clausen `p Bₖ` is a unit, so the coefficient `-2k / Bₖ` is `p^r` times the unit
+`-2 (k / p^(r-1)) / (p Bₖ)`. In particular `Eₖ ≡ 1` modulo `p^r`, and modulo no higher power of
+`p` since the coefficient of `q` in `Φₖ` is `1`. -/
+theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
+    (hpk : p - 1 ∣ k) :
+    ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
+      ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by
+  sorry
 
 end EisensteinSeries

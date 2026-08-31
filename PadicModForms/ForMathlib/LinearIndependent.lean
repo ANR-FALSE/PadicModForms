@@ -74,7 +74,7 @@ theorem top_le_span_range_of_comp_semilinear (hb : LinearIndependent B (f ∘ b)
   refine eq_top_iff.2 fun m _ ↦ ?_
   by_contra hm
   have hmb : m ∉ range b := fun h ↦ hm (subset_span h)
-  have h : LinearIndepOn B ⇑f (insert m (range b)) :=
+  have h : LinearIndepOn B f (insert m (range b)) :=
     hf _ ((linearIndepOn_id_insert hmb).2
       ⟨(hb.of_comp_semilinear f σ.injective).linearIndepOn_id, hm⟩)
   apply h.linearIndependent.notMem_span_image (s := {x : ↥(insert m (range b)) | (x : M) ∈ range b})

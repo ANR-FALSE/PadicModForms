@@ -99,4 +99,11 @@ theorem one_le_addValuation_iff (x : pLocalInt p) :
   rw [show 1 = ((1 : ℤ) : EInt) by simp [WithBotTop.coe],
     intCast_le_addValuation_iff_norm_le_pow, zpow_neg, zpow_one, norm_coe_le_inv_iff]
 
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- A `p`-integral rational reduces to `0` modulo `p ^ m` exactly when its valuation is at least
+`m`. This generalizes `pLocalInt.one_le_addValuation_iff`. -/
+theorem natCast_le_addValuation_iff (m : ℕ) (x : pLocalInt p) :
+    ((m : ℤ) : EInt) ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZModPow m x = 0 := by
+  sorry
+
 end pLocalInt
