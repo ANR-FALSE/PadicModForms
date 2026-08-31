@@ -33,12 +33,9 @@ jobs:
         run: |
           # A file missing from the root import list is never built, so CI would silently ignore it.
           find PadicModForms -name '*.lean' | sed -e 's|/|.|g' -e 's|\.lean$||' | sort > on-disk.txt
-          # `SpherePacking/` need not be listed: it is reached through
-          # `PadicModForms.SpherePacking.Bridge`, which is itself listed.
-          grep -v '^PadicModForms\.SpherePacking\.' on-disk.txt > must-import.txt
           # Strip the `«…»` quoting of module names starting with a digit, e.g. `«38813»`.
           sed -n 's/^\(public \)\?import //p' PadicModForms.lean | tr -d '«»' | sort > imported.txt
-          missing=$(comm -23 must-import.txt imported.txt | tr '\n' ' ')
+          missing=$(comm -23 on-disk.txt imported.txt | tr '\n' ' ')
           stale=$(comm -13 on-disk.txt imported.txt | tr '\n' ' ')
           if [ -n "$missing" ]; then
             echo "::error file=PadicModForms.lean::Not imported by PadicModForms.lean, hence" \

@@ -142,10 +142,10 @@ public theorem linearIndependent_rationalModularFormToComplex {κ : Type*}
       (LinearMap.ker_eq_bot_of_injective Subtype.val_injective)
   have hvc : LinearIndependent ℂ (fun i ↦ (v i : ℚ⟦X⟧).map (algebraMap ℚ ℂ)) :=
     linearIndependent_map (fun i ↦ (v i : ℚ⟦X⟧)) hvq
-  let := (qExpansionLinearMap one_pos one_mem_strictPeriods_SL).comp (lof ℂ ℤ (ModularForm 𝒮ℒ ·) n)
+  let := (qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL).toLinearMap.comp
+    (lof ℂ ℤ (ModularForm 𝒮ℒ ·) n)
   apply LinearIndependent.of_comp this
-  simpa [this, Function.comp_def, lof_eq_of, qExpansionLinearMap_apply, qExpansionRingHom_apply,
-    qExpansion_rationalModularFormToComplex] using hvc
+  simpa [this, Function.comp_def, lof_eq_of, qExpansion_rationalModularFormToComplex] using hvc
 
 /-- Scalar extension to complex modular forms takes `ℚ`-linearly independent sets to `ℂ`-linearly
 independent ones. This is the hypothesis needed by `Module.Basis.ofCompSemilinear`. -/

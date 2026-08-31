@@ -36,7 +36,6 @@ import PadicModForms.Rational.E2
 import PadicModForms.Rational.Eisenstein
 import PadicModForms.Rational.Graded
 import PadicModForms.Rational.Ramanujan
-import PadicModForms.SpherePacking.Bridge
 import PadicModForms.pLocalInt.Basic
 import PadicModForms.pLocalInt.Discriminant
 import PadicModForms.pLocalInt.Eisenstein

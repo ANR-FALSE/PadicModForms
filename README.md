@@ -74,10 +74,11 @@ The directories mirror a tower of coefficient rings. Each layer defines its form
 
 The same pattern recurs at every layer, which makes each directory quick to read: a predicate together with its closure lemmas, a `Submodule` of weight-*k* forms, a `SetLike.GradedMonoid` instance turning `⨁ i, …ModularForms i` into a graded ring, a *q*-expansion algebra map out of that direct sum, and an evaluation map from `MvPolynomial (Fin 2)` sending `X 0 ↦ E₄` and `X 1 ↦ E₆`, whose injectivity transports the structure theorem for the graded ring down the tower.
 
-Two directories sit outside the tower:
+One directory sits outside the tower:
 
 - `ForMathlib/` — material destined for `mathlib`, written to its standards and independent of the rest of the project.
-- `SpherePacking/` — Ramanujan’s differential identities, vendored from [Sphere-Packing-Lean](https://github.com/thefundamentaltheor3m/Sphere-Packing-Lean) rather than reproved. Only `SpherePacking/Bridge.lean` may be imported from the rest of the project; see [its README](PadicModForms/SpherePacking/README.md) for the terms and for what re-vendoring involves.
+
+Ramanujan’s differential identities, which the mod-*p* theory needs, used to be vendored from [Sphere-Packing-Lean](https://github.com/thefundamentaltheor3m/Sphere-Packing-Lean); they now come from `mathlib`’s `NumberTheory.ModularForms.RamanujanFormula` and the vendored copy is gone.
 
 ## Building
 

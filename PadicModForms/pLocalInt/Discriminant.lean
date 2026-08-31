@@ -120,7 +120,7 @@ theorem discriminant_int_map_rat (hp : 5 ≤ p) :
 /-- The `q`-expansion of `Δ` is `(E₄³ - E₆²) / 1728`. -/
 theorem qExpansion_discriminant : qExpansion 1 discriminant =
       (1 / 1728 : ℂ) • (qExpansion 1 E₄ ^ 3 - qExpansion 1 E₆ ^ 2) := by
-  simpa using congrArg (qExpansionLinearMap one_pos one_mem_strictPeriods_SL)
+  simpa using congrArg (qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL)
     discriminant_eq_E₄_cube_sub_E₆_sq_graded
 
 /-- Extending `discriminant_int` to `ℂ` gives the `q`-expansion of the modular discriminant. -/

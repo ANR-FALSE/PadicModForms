@@ -9,17 +9,16 @@ module
 public import PadicModForms.ForMathlib.Theta
 public import PadicModForms.Rational.E2
 
+import Mathlib.NumberTheory.ModularForms.RamanujanFormula
 import PadicModForms.ForMathlib.QExpansionDeriv
-import PadicModForms.SpherePacking.Bridge
 
 /-!
 # Ramanujan's identities on rational `q`-expansions
 
-Ramanujan's identities are proved analytically in `PadicModForms/SpherePacking/Bridge.lean`, as
-identities between functions on the upper half plane involving the normalized derivative
-`D = (2πi)⁻¹ d/dz`. This file transports them to the algebraic setting the `p`-adic theory works
-in: identities in `ℚ⟦X⟧` between the rational `q`-expansions `E₂Rat`, `E₄Rat`, `E₆Rat` and the
-operator `Θ = q d/dq`.
+Mathlib proves Ramanujan's identities analytically, as identities between functions on the upper
+half plane involving the normalized derivative `D = (2πi)⁻¹ d/dz`. This file transports them to
+the algebraic setting the `p`-adic theory works in: identities in `ℚ⟦X⟧` between the rational
+`q`-expansions `E₂Rat`, `E₄Rat`, `E₆Rat` and the operator `Θ = q d/dq`.
 
 ## Main results
 
@@ -48,32 +47,31 @@ theorem analyticAt_E2 : AnalyticAt ℂ (cuspFunction 1 E2) 0 :=
 /-- Ramanujan's identity for `E₂` on `q`-expansions over `ℂ`. -/
 theorem Θ_qExpansion_E2 : Θ (qExpansion 1 E2) =
     (12⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E2 - qExpansion 1 E₄) := by
-  have hsmul : 12⁻¹ * (E2 * E2 - E₄) = (12⁻¹ : ℂ) • (E2 * E2 - E₄) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E2
   calc _ = qExpansion 1 (D E2) :=
-        (qExpansion_normalizedDeriv_one E2_periodic E2_mdifferentiable E2_isBoundedAtImInfty).symm
-    _ = qExpansion 1 ((12⁻¹ : ℂ) • (E2 * E2 - E₄)) := by rw [normalizedDeriv_E2, hsmul]
+        (qExpansion_normalizedDeriv_one E2_periodic E2_mdifferentiable isBoundedAtImInfty_E2).symm
+    _ = qExpansion 1 ((12⁻¹ : ℂ) • (E2 * E2 - E₄)) := by
+        rw [normalizedDerivOfComplex_E₂, pow_two]
     _ = 12⁻¹ • qExpansion 1 (E2 * E2 - E₄) := qExpansion_smul (h.cuspFunction_sub analyticAt_E₄) _
     _ = _ := by rw [qExpansion_sub h analyticAt_E₄, qExpansion_mul analyticAt_E2 analyticAt_E2]
 
 /-- Ramanujan's identity for `E₄` on `q`-expansions over `ℂ`. -/
 theorem Θ_qExpansion_E₄ : Θ (qExpansion 1 E₄) =
     (3⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E₄ - qExpansion 1 E₆) := by
-  have hsmul : 3⁻¹ * (E2 * E₄ - E₆) = (3⁻¹ : ℂ) • (E2 * E₄ - E₆) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E₄
   calc _ = qExpansion 1 (D E₄) := (qExpansion_normalizedDeriv_levelOne E₄).symm
-    _ = qExpansion 1 ((3⁻¹ : ℂ) • (E2 * E₄ - E₆)) := by rw [normalizedDeriv_E₄, hsmul]
+    _ = qExpansion 1 ((3⁻¹ : ℂ) • (E2 * E₄ - E₆)) := by rw [normalizedDerivOfComplex_E₄]
     _ = 3⁻¹ • qExpansion 1 (E2 * E₄ - E₆) := qExpansion_smul (h.cuspFunction_sub analyticAt_E₆) _
     _ = _ := by rw [qExpansion_sub h analyticAt_E₆, qExpansion_mul analyticAt_E2 analyticAt_E₄]
 
 /-- Ramanujan's identity for `E₆` on `q`-expansions over `ℂ`. -/
 theorem Θ_qExpansion_E₆ : Θ (qExpansion 1 E₆) =
     (2⁻¹ : ℂ) • (qExpansion 1 E2 * qExpansion 1 E₆ - qExpansion 1 E₄ * qExpansion 1 E₄) := by
-  have hsmul : 2⁻¹ * (E2 * E₆ - E₄ * E₄) = (2⁻¹ : ℂ) • (E2 * E₆ - E₄ * E₄) := by ext; simp
   have h := analyticAt_E2.cuspFunction_mul analyticAt_E₆
   have hsq := analyticAt_E₄.cuspFunction_mul analyticAt_E₄
   calc _ = qExpansion 1 (D E₆) := (qExpansion_normalizedDeriv_levelOne E₆).symm
-    _ = qExpansion 1 ((2⁻¹ : ℂ) • (E2 * E₆ - E₄ * E₄)) := by rw [normalizedDeriv_E₆, hsmul]
+    _ = qExpansion 1 ((2⁻¹ : ℂ) • (E2 * E₆ - E₄ * E₄)) := by
+        rw [normalizedDerivOfComplex_E₆, pow_two]
     _ = 2⁻¹ • qExpansion 1 (E2 * E₆ - E₄ * E₄) := qExpansion_smul (h.cuspFunction_sub hsq) _
     _ = _ := by rw [qExpansion_sub h hsq, qExpansion_mul analyticAt_E2 analyticAt_E₆,
       qExpansion_mul analyticAt_E₄ analyticAt_E₄]

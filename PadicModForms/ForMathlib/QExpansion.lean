@@ -22,7 +22,7 @@ open UpperHalfPlane MatrixGroups CongruenceSubgroup DirectSum Polynomial Set
 
 open scoped Manifold MatrixGroups Polynomial PowerSeries
 
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ} (k : ℤ) {f g : ℍ → ℂ}
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {h : ℝ} {k : ℤ} {f g : ℍ → ℂ}
 
 /-! ### Analyticity of cusp functions
 
@@ -52,48 +52,6 @@ theorem ModularFormClass.analyticAt_cuspFunction_zero_levelOne {F : Type*} [FunL
   ModularFormClass.analyticAt_cuspFunction_zero f one_pos one_mem_strictPeriods_SL
 
 namespace ModularForm
-
-@[simp]
-theorem qExpansionAddHom_apply (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    (f : ModularForm Γ k) : qExpansionAddHom hh hΓ k f = qExpansion h f := rfl
-
-variable {k}
-
-/-- The `q`-expansion map is injective on modular forms of a fixed weight. -/
-theorem qExpansion_injective (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
-    Function.Injective (fun (f : ModularForm Γ k) ↦ qExpansion h f) := by
-  simp only [← qExpansionAddHom_apply _ hh hΓ]
-  refine (AddMonoidHom.ker_eq_bot_iff _).1 (AddSubgroup.ext fun F ↦ ?_)
-  exact ModularForm.qExpansion_eq_zero_iff hh hΓ F
-
-@[simp]
-theorem qExpansion_inj (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    {f g : ModularForm Γ k} : qExpansion h f = qExpansion h g ↔ f = g :=
-  (qExpansion_injective hh hΓ).eq_iff
-
-/-! ### The `q`-expansion on the graded ring -/
-
-/-- The `q`-expansion map on the graded ring of modular forms, as a linear map. -/
-def qExpansionLinearMap [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
-    (⨁ k, ModularForm Γ k) →ₗ[ℂ] ℂ⟦X⟧ :=
-  toModule ℂ ℤ ℂ⟦X⟧ fun k ↦
-    { toFun := fun (f : ModularForm Γ k) ↦ qExpansion h f
-      map_add' := fun f g ↦ by simpa using ModularForm.qExpansion_add hh hΓ f g
-      map_smul' := fun c f ↦ by simpa using ModularForm.qExpansion_smul hh hΓ c f }
-
-@[simp]
-theorem qExpansionLinearMap_of [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ)
-    (f : ModularForm Γ k) : qExpansionLinearMap hh hΓ (of _ k f) = qExpansion h f :=
-  toModule_lof ..
-
-@[simp]
-theorem qExpansionLinearMap_apply [Γ.HasDetOne] (hh : 0 < h)
-    (hΓ : h ∈ Γ.strictPeriods) (F : ⨁ k, ModularForm Γ k) :
-    qExpansionLinearMap hh hΓ F = qExpansionRingHom h hh hΓ F := by
-  induction F using DirectSum.induction_on with
-  | zero => simp
-  | of k f => rw [qExpansionLinearMap_of, qExpansionRingHom_apply]
-  | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
 
 /-!
 ### Injectivity of the `q`-expansion on the graded ring of level one modular forms
