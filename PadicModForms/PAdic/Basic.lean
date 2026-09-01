@@ -177,7 +177,9 @@ theorem map_toZModPow_eq_zero_iff (m : ℕ) {f : ℚ⟦X⟧} {g : (pLocalInt p)�
     (hg : g.map (algebraMap _ ℚ) = f) :
     g.map (pLocalInt.toZModPow m) = 0 ↔
       ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
-  sorry
+  rw [le_v_iff, PowerSeries.ext_iff]
+  refine forall_congr' fun n ↦ ?_
+  simpa [← hg] using! (pLocalInt.natCast_le_addValuation_iff m (coeff n g)).symm
 
 /-- Two `p`-integral rational power series are congruent modulo `p ^ m` exactly when the valuation
 of their difference is at least `m`. This is the bridge between the two phrasings of the
@@ -186,7 +188,8 @@ theorem map_toZModPow_eq_iff (m : ℕ) {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)
     (hg : g.map (algebraMap _ ℚ) = f) (hg' : g'.map (algebraMap _ ℚ) = f') :
     g.map (pLocalInt.toZModPow m) = g'.map (pLocalInt.toZModPow m) ↔
       ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p]) - f'.map (algebraMap ℚ ℚ_[p])) := by
-  sorry
+  rw [← sub_eq_zero, ← map_sub, ← map_sub]
+  exact map_toZModPow_eq_zero_iff m (by rw [map_sub, hg, hg'])
 
 /-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
 theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
