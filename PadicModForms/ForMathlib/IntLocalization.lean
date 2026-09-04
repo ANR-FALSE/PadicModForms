@@ -122,6 +122,10 @@ noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m)
       exact Nat.Coprime.pow_left _ <| hp.out.coprime_iff_not_dvd.mpr fun hpy ↦
         y.2 <| mem_span_singleton.2 (by rwa [Int.natCast_dvd])
 
+theorem pLocalInt.toZModPow_zero (x : pLocalInt p) : (pLocalInt.toZModPow 0) x = 0 := by
+  have : Subsingleton (ZMod (p ^ 0)) := by rw [pow_zero]; infer_instance
+  exact Subsingleton.elim _ _
+
 @[simp]
 theorem pLocalInt.toZModPow_pow (m : ℕ) : pLocalInt.toZModPow m ((p : pLocalInt p) ^ m) = 0 := by
   simp [map_natCast, ← Nat.cast_pow]
@@ -160,30 +164,23 @@ theorem pLocalInt.ker_toZModPow (n : ℕ) :
   obtain ⟨a, y, rfl⟩ := IsLocalization.exists_mk'_eq ((span {(p : ℤ)}).primeCompl) y
   rw [IsLocalization.mk'_eq_mul_mk'_one]
   simp only [algebraMap_int_eq, eq_intCast, map_mul, map_intCast]
-  have h := isUnit_of_invertible (IsLocalization.mk' (↥(pLocalInt p)) 1 y)
+  have h := isUnit_of_invertible (IsLocalization.mk' (pLocalInt p) 1 y)
   simp only [h.dvd_mul_right, ((toZModPow n).isUnit_map h).mul_left_eq_zero,
     ZMod.intCast_zmod_eq_zero_iff_dvd _ _, Nat.cast_pow]
   refine ⟨fun ⟨b, hb⟩ ↦ ⟨b, by rw [hb]; push_cast; ring⟩, fun ⟨b, hb⟩ ↦ ?_⟩
   obtain ⟨c, z, rfl⟩ := IsLocalization.exists_mk'_eq ((span {(p : ℤ)}).primeCompl) b
-  have : (algebraMap ℤ (pLocalInt p)) a = (algebraMap ℤ ↥(pLocalInt p)) (p ^ n : ℤ) *
-    IsLocalization.mk' (↥(pLocalInt p)) c z := by simp [hb]
-  -- rw [← (IsLocalization.mk'_one (R := ℤ) (M := (span {(p : ℤ)}).primeCompl) (pLocalInt p)) a] at this
-  rw [IsLocalization.mul_mk'_eq_mk'_of_mul (S := pLocalInt p) (p ^ n : ℤ) c z] at this
-  rw [IsLocalization.eq_mk'_iff_mul_eq] at this
-  rw [← map_mul] at this
-  have hinj : Function.Injective ⇑(algebraMap ℤ ↥(pLocalInt p)) := by
-    apply IsLocalization.injective (R := ℤ) (M := (span {(p : ℤ)}).primeCompl) (pLocalInt p)
-    sorry
-  have := hinj this
-  have : ((p ^ n : ℕ) : ℤ) ∣ a * ↑z := by simp [this]
-  rw [Int.natCast_dvd] at this
-  rw [Int.natAbs_mul] at this
-  have : ((p ^ n : ℕ) : ℤ) ∣ a := by
-    rw [Int.natCast_dvd]
-    refine Prime.pow_dvd_of_dvd_mul_right hp.out.prime n ?_ this
-    sorry
-  push_cast at this
-  exact this
+  have heq : (algebraMap ℤ (pLocalInt p)) a = IsLocalization.mk' _ ((p ^ n : ℤ) * c) z := by
+    simp [hb, ← IsLocalization.mul_mk'_eq_mk'_of_mul (p ^ n : ℤ) c z]
+  rw [IsLocalization.eq_mk'_iff_mul_eq, ← map_mul] at heq
+  have hinj : Function.Injective (algebraMap ℤ ↥(pLocalInt p)) := by
+    apply IsLocalization.injective (M := (span {(p : ℤ)}).primeCompl) (pLocalInt p)
+    apply le_nonZeroDivisors_of_noZeroDivisors
+    simp
+  have hdvdprod : p ^ n ∣ a.natAbs * (z.val.natAbs) :=
+    (Int.natAbs_mul _ _) ▸ (Int.natCast_dvd.mp ⟨c, hinj heq⟩)
+  have hz : ¬p ∣ z.val.natAbs :=
+    Int.natCast_dvd.not.mp (mem_span_singleton.not.mp (mem_primeCompl_iff.mp z.property))
+  simpa using Int.natCast_dvd.mpr (Prime.pow_dvd_of_dvd_mul_right hp.out.prime n hz hdvdprod)
 
 /-- An element of `pLocalInt p` killed by reduction modulo `p` is divisible by `p`. -/
 theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod x = 0) :
@@ -222,4 +219,5 @@ theorem pLocalInt.toZModPow_eq_zero_iff {m : ℕ} {x : pLocalInt p} :
 theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
     ZMod.castHom (dvd_pow_self p (by lia : m ≠ 0)) (ZMod p) (pLocalInt.toZModPow m x) =
       pLocalInt.toZMod x := by
-  sorry
+  rw [← RingHom.comp_apply]
+  exact RingHom.congr_fun (IsLocalization.lift_unique _ (by simp)).symm x
