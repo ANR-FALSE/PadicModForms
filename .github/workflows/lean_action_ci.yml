@@ -68,5 +68,3 @@ jobs:
       # relies on `lean-action` having run before it in the same job.
       - uses: leanprover/lean-action@v1
       - uses: leanprover-community/docgen-action@v1
-        with:
-          blueprint: false
