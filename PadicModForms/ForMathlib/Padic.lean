@@ -81,7 +81,7 @@ theorem norm_coe_eq_one (hx : pLocalInt.toZMod x ≠ 0) : ‖(x : ℚ_[p])‖ = 
     rw [← norm_mul, mul_inv_cancel₀ hx0, norm_one]
   nlinarith [norm_nonneg (x : ℚ_[p]), norm_coe_le_one x]
 
-theorem pow_le_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
+theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
     ((p : ℝ) ^ m)⁻¹ < ‖(x : ℚ_[p])‖ := by
   by_cases hxzero : x = 0
   · simp [hxzero] at hx
@@ -123,7 +123,7 @@ theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
   by_cases hm : m = 0
   · simp only [hm, pow_zero, inv_one, norm_coe_le_one, true_iff]
     exact hm ▸ pLocalInt.toZModPow_zero x
-  refine ⟨by simpa using mt (pow_le_norm_coe (p := p)), fun hx ↦ ?_⟩
+  refine ⟨by simpa using mt (pow_lt_norm_coe (p := p)), fun hx ↦ ?_⟩
   obtain ⟨y, hy⟩ := pLocalInt.dvd_of_toZModPow_eq_zero hx
   have hcast : (x : ℚ_[p]) = p ^ m * y := by simp_all
   simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
