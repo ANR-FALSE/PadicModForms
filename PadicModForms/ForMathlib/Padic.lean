@@ -81,6 +81,32 @@ theorem norm_coe_eq_one (hx : pLocalInt.toZMod x ≠ 0) : ‖(x : ℚ_[p])‖ = 
     rw [← norm_mul, mul_inv_cancel₀ hx0, norm_one]
   nlinarith [norm_nonneg (x : ℚ_[p]), norm_coe_le_one x]
 
+theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
+    ((p : ℝ) ^ m)⁻¹ < ‖(x : ℚ_[p])‖ := by
+  by_cases hxzero : x = 0
+  · simp [hxzero] at hx
+  contrapose! hx
+  rw [← zpow_natCast, ← zpow_neg, ← intCast_le_addValuation_iff_norm_le_pow,
+    Padic.addValuation.apply (mod_cast hxzero), WithBotTop.coe, Function.comp_apply,
+    WithBot.coe_le_coe, WithTop.coe_le_coe, valuation_ratCast] at hx
+  obtain ⟨y, z, hy⟩ := IsLocalization.exists_mk'_eq (Ideal.span {(p : ℤ)}).primeCompl x
+  have heq : x * z = y := by simpa using IsLocalization.eq_mk'_iff_mul_eq.mp hy.symm
+  have hvaleq : padicValRat p x + padicValRat p z = padicValRat p y := by
+    rw [← padicValRat.mul (by simp [hxzero])]
+    · congr; norm_cast
+    simp only [ne_eq, Int.cast_eq_zero]
+    exact fun h => (h ▸ (Ideal.mem_primeCompl_iff.mp z.property)) (Ideal.span {(p : ℤ)}).zero_mem
+  simp only [padicValRat.of_int] at hvaleq
+  have hvaly : m ≤ padicValInt p y := by
+    rw [← Nat.cast_le (α := ℤ), ← hvaleq]
+    linarith
+  have hdvdy : (p : (pLocalInt p)) ^ m ∣ y := by
+    obtain ⟨b, hb⟩ := (padicValInt_dvd_iff m y).mpr (Or.inr hvaly)
+    exact ⟨b, by rw [hb]; push_cast; ring⟩
+  rw [← heq] at hdvdy
+  rw [pLocalInt.toZModPow_eq_zero_iff]
+  exact (IsLocalization.map_units (pLocalInt p) z).dvd_mul_right.mp hdvdy
+
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p` exactly when its `p`-adic norm is `≤ 1`. -/
 theorem norm_coe_le_inv_iff (x : pLocalInt p) :
@@ -91,6 +117,16 @@ theorem norm_coe_le_inv_iff (x : pLocalInt p) :
   · obtain ⟨y, hy⟩ := pLocalInt.dvd_of_toZMod_eq_zero hx
     have hcast : (x : ℚ_[p]) = p * y := by simp_all
     simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
+
+theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
+    ‖(x : ℚ_[p])‖ ≤ ((p : ℝ) ^ m)⁻¹ ↔ pLocalInt.toZModPow m x = 0 := by
+  by_cases hm : m = 0
+  · simp only [hm, pow_zero, inv_one, norm_coe_le_one, true_iff]
+    exact hm ▸ pLocalInt.toZModPow_zero x
+  refine ⟨by simpa using mt (pow_lt_norm_coe (p := p)), fun hx ↦ ?_⟩
+  obtain ⟨y, hy⟩ := pLocalInt.dvd_of_toZModPow_eq_zero hx
+  have hcast : (x : ℚ_[p]) = p ^ m * y := by simp_all
+  simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p` exactly when its valuation is at least `1`. -/
@@ -104,6 +140,6 @@ theorem one_le_addValuation_iff (x : pLocalInt p) :
 `m`. This generalizes `pLocalInt.one_le_addValuation_iff`. -/
 theorem natCast_le_addValuation_iff (m : ℕ) (x : pLocalInt p) :
     ((m : ℤ) : EInt) ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZModPow m x = 0 := by
-  sorry
+  rw [intCast_le_addValuation_iff_norm_le_pow, zpow_neg, zpow_natCast, norm_coe_le_inv_pow_iff]
 
 end pLocalInt

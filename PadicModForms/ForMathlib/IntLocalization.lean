@@ -114,12 +114,17 @@ noncomputable def pLocalInt.toZMod : pLocalInt p →+* ZMod p :=
       y.2 (mem_span_singleton.2 ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 hy))
 
 /-- The reduction map from the localization of `ℤ` at `p` to `ℤ/p^mℤ`. -/
+@[simps!]
 noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m) :=
   IsLocalization.lift (M := (span {(p : ℤ)}).primeCompl)
     (g := Int.castRingHom (ZMod (p ^ m))) fun y ↦ by
       refine (ZMod.coe_int_isUnit_iff_isCoprime _ _).2 (Int.isCoprime_iff_nat_coprime.2 ?_)
       exact Nat.Coprime.pow_left _ <| hp.out.coprime_iff_not_dvd.mpr fun hpy ↦
         y.2 <| mem_span_singleton.2 (by rwa [Int.natCast_dvd])
+
+theorem pLocalInt.toZModPow_zero (x : pLocalInt p) : (pLocalInt.toZModPow 0) x = 0 := by
+  have : Subsingleton (ZMod (p ^ 0)) := by rw [pow_zero]; infer_instance
+  exact Subsingleton.elim _ _
 
 @[simp]
 theorem pLocalInt.toZModPow_pow (m : ℕ) : pLocalInt.toZModPow m ((p : pLocalInt p) ^ m) = 0 := by
@@ -152,6 +157,31 @@ theorem pLocalInt.ker_toZMod :
     RingHom.ker pLocalInt.toZMod = IsLocalRing.maximalIdeal (pLocalInt p) :=
   IsLocalRing.eq_maximalIdeal (RingHom.ker_isMaximal_of_surjective _ pLocalInt.toZMod_surjective)
 
+theorem pLocalInt.ker_toZModPow (n : ℕ) :
+    RingHom.ker (pLocalInt.toZModPow n) = span {(p : pLocalInt p) ^ n} := by
+  ext y
+  rw [RingHom.mem_ker, mem_span_singleton]
+  obtain ⟨a, y, rfl⟩ := IsLocalization.exists_mk'_eq ((span {(p : ℤ)}).primeCompl) y
+  rw [IsLocalization.mk'_eq_mul_mk'_one]
+  simp only [algebraMap_int_eq, eq_intCast, map_mul, map_intCast]
+  have h := isUnit_of_invertible (IsLocalization.mk' (pLocalInt p) 1 y)
+  simp only [h.dvd_mul_right, ((toZModPow n).isUnit_map h).mul_left_eq_zero,
+    ZMod.intCast_zmod_eq_zero_iff_dvd _ _, Nat.cast_pow]
+  refine ⟨fun ⟨b, hb⟩ ↦ ⟨b, by rw [hb]; push_cast; ring⟩, fun ⟨b, hb⟩ ↦ ?_⟩
+  obtain ⟨c, z, rfl⟩ := IsLocalization.exists_mk'_eq ((span {(p : ℤ)}).primeCompl) b
+  have heq : (algebraMap ℤ (pLocalInt p)) a = IsLocalization.mk' _ ((p ^ n : ℤ) * c) z := by
+    simp [hb, ← IsLocalization.mul_mk'_eq_mk'_of_mul (p ^ n : ℤ) c z]
+  rw [IsLocalization.eq_mk'_iff_mul_eq, ← map_mul] at heq
+  have hinj : Function.Injective (algebraMap ℤ ↥(pLocalInt p)) := by
+    apply IsLocalization.injective (M := (span {(p : ℤ)}).primeCompl) (pLocalInt p)
+    apply le_nonZeroDivisors_of_noZeroDivisors
+    simp
+  have hdvdprod : p ^ n ∣ a.natAbs * (z.val.natAbs) :=
+    (Int.natAbs_mul _ _) ▸ (Int.natCast_dvd.mp ⟨c, hinj heq⟩)
+  have hz : ¬p ∣ z.val.natAbs :=
+    Int.natCast_dvd.not.mp (mem_span_singleton.not.mp (mem_primeCompl_iff.mp z.property))
+  simpa using Int.natCast_dvd.mpr (Prime.pow_dvd_of_dvd_mul_right hp.out.prime n hz hdvdprod)
+
 /-- An element of `pLocalInt p` killed by reduction modulo `p` is divisible by `p`. -/
 theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod x = 0) :
     (p : pLocalInt p) ∣ x := by
@@ -173,20 +203,21 @@ theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
   obtain ⟨y, rfl⟩ := hx
   rw [map_mul, pLocalInt.toZModPow_pow, zero_mul]
 
+/-- An element of `pLocalInt p` killed by reduction modulo `p ^ m` is divisible by `p ^ m`. -/
+theorem pLocalInt.dvd_of_toZModPow_eq_zero {m : ℕ} {x : pLocalInt p}
+    (hx : pLocalInt.toZModPow m x = 0) : (p : pLocalInt p) ^ m ∣ x := by
+  rwa [← mem_span_singleton, ← pLocalInt.ker_toZModPow m]
+
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- The kernel of reduction modulo `p ^ m`: an element of `pLocalInt p` reduces to `0` exactly
 when it is divisible by `p ^ m`. -/
 theorem pLocalInt.toZModPow_eq_zero_iff {m : ℕ} {x : pLocalInt p} :
-    pLocalInt.toZModPow m x = 0 ↔ (p : pLocalInt p) ^ m ∣ x := by
-  sorry
-
-/-- An element of `pLocalInt p` killed by reduction modulo `p ^ m` is divisible by `p ^ m`. -/
-theorem pLocalInt.dvd_of_toZModPow_eq_zero {m : ℕ} {x : pLocalInt p}
-    (hx : pLocalInt.toZModPow m x = 0) : (p : pLocalInt p) ^ m ∣ x :=
-  pLocalInt.toZModPow_eq_zero_iff.1 hx
+    pLocalInt.toZModPow m x = 0 ↔ (p : pLocalInt p) ^ m ∣ x :=
+  ⟨fun h ↦ pLocalInt.dvd_of_toZModPow_eq_zero h, fun h ↦ pLocalInt.toZModPow_eq_zero_of_dvd h⟩
 
 /-- Reduction modulo `p ^ m` refines reduction modulo `p`. -/
 theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
     ZMod.castHom (dvd_pow_self p (by lia : m ≠ 0)) (ZMod p) (pLocalInt.toZModPow m x) =
       pLocalInt.toZMod x := by
-  sorry
+  rw [← RingHom.comp_apply]
+  exact RingHom.congr_fun (IsLocalization.lift_unique _ (by simp)).symm x
