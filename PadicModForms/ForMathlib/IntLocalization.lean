@@ -114,7 +114,6 @@ noncomputable def pLocalInt.toZMod : pLocalInt p →+* ZMod p :=
       y.2 (mem_span_singleton.2 ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).1 hy))
 
 /-- The reduction map from the localization of `ℤ` at `p` to `ℤ/p^mℤ`. -/
-@[simps!]
 noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m) :=
   IsLocalization.lift (M := (span {(p : ℤ)}).primeCompl)
     (g := Int.castRingHom (ZMod (p ^ m))) fun y ↦ by
@@ -122,6 +121,7 @@ noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m)
       exact Nat.Coprime.pow_left _ <| hp.out.coprime_iff_not_dvd.mpr fun hpy ↦
         y.2 <| mem_span_singleton.2 (by rwa [Int.natCast_dvd])
 
+@[simp]
 theorem pLocalInt.toZModPow_zero (x : pLocalInt p) : (pLocalInt.toZModPow 0) x = 0 := by
   have : Subsingleton (ZMod (p ^ 0)) := by rw [pow_zero]; infer_instance
   exact Subsingleton.elim _ _

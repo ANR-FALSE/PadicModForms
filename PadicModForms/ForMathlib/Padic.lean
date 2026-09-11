@@ -95,7 +95,7 @@ theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
     rw [← padicValRat.mul (by simp [hxzero])]
     · congr; norm_cast
     simp only [ne_eq, Int.cast_eq_zero]
-    exact fun h => (h ▸ (Ideal.mem_primeCompl_iff.mp z.property)) (Ideal.span {(p : ℤ)}).zero_mem
+    exact fun h ↦ (h ▸ (Ideal.mem_primeCompl_iff.mp z.property)) (Ideal.span {(p : ℤ)}).zero_mem
   simp only [padicValRat.of_int] at hvaleq
   have hvaly : m ≤ padicValInt p y := by
     rw [← Nat.cast_le (α := ℤ), ← hvaleq]
