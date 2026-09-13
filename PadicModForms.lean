@@ -1,4 +1,4 @@
-module
+module  -- shake: keep-all --deprecated_module: ignore
 
 public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.ForMathlib.Choose
