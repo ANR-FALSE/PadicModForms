@@ -33,6 +33,5 @@ serre.pdf
 ## Notes
 /notes/
 
-## Codex instructions
-/AGENTS.md
-/CLAUDE.md
+## Personal, per-machine agent instructions (AGENTS.md and CLAUDE.md are tracked)
+/CLAUDE.local.md
