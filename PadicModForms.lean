@@ -1,51 +1,53 @@
-import PadicModForms.ForMathlib.Bernoulli
-import PadicModForms.ForMathlib.Choose
-import PadicModForms.ForMathlib.DirectSum
-import PadicModForms.ForMathlib.E2
-import PadicModForms.ForMathlib.EInt
-import PadicModForms.ForMathlib.Finsupp
-import PadicModForms.ForMathlib.HomogeneousLocalization
-import PadicModForms.ForMathlib.IntLocalization
-import PadicModForms.ForMathlib.LinearIndependent
-import PadicModForms.ForMathlib.MvPolynomial
-import PadicModForms.ForMathlib.Padic
-import PadicModForms.ForMathlib.PowerSeries
-import PadicModForms.ForMathlib.PowerSeriesTopology
-import PadicModForms.ForMathlib.QExpansion
-import PadicModForms.ForMathlib.QExpansionDeriv
-import PadicModForms.ForMathlib.RationalRoot
-import PadicModForms.ForMathlib.SigmaSeries
-import PadicModForms.ForMathlib.SpecificLimits
-import PadicModForms.ForMathlib.Theta
-import PadicModForms.ForMathlib.WeightedHomogeneous
-import PadicModForms.ForMathlib.«38813»
-import PadicModForms.ModP.ArtinSchreier
-import PadicModForms.ModP.Basic
-import PadicModForms.ModP.Congruences
-import PadicModForms.ModP.Differential
-import PadicModForms.ModP.Eisenstein
-import PadicModForms.ModP.Filtration
-import PadicModForms.ModP.Graded
-import PadicModForms.ModP.Hasse
-import PadicModForms.ModP.KerEval
-import PadicModForms.ModP.Ramanujan
-import PadicModForms.ModP.Squarefree
-import PadicModForms.ModP.ThetaFiltration
-import PadicModForms.ModP.WeightZero
-import PadicModForms.ModP.Weights
-import PadicModForms.PAdic.Basic
-import PadicModForms.PAdic.Defs
-import PadicModForms.PAdic.Eisenstein
-import PadicModForms.PAdic.Weights.Congruence
-import PadicModForms.PAdic.Weights.CongruencePow
-import PadicModForms.PAdic.Weights.Defs
-import PadicModForms.Rational.Basic
-import PadicModForms.Rational.E2
-import PadicModForms.Rational.Eisenstein
-import PadicModForms.Rational.Graded
-import PadicModForms.Rational.Ramanujan
-import PadicModForms.pLocalInt.Basic
-import PadicModForms.pLocalInt.Discriminant
-import PadicModForms.pLocalInt.Eisenstein
-import PadicModForms.pLocalInt.Graded
-import PadicModForms.pLocalInt.Ramanujan
+module
+
+public import PadicModForms.ForMathlib.Bernoulli
+public import PadicModForms.ForMathlib.Choose
+public import PadicModForms.ForMathlib.DirectSum
+public import PadicModForms.ForMathlib.E2
+public import PadicModForms.ForMathlib.EInt
+public import PadicModForms.ForMathlib.Finsupp
+public import PadicModForms.ForMathlib.HomogeneousLocalization
+public import PadicModForms.ForMathlib.IntLocalization
+public import PadicModForms.ForMathlib.LinearIndependent
+public import PadicModForms.ForMathlib.MvPolynomial
+public import PadicModForms.ForMathlib.Padic
+public import PadicModForms.ForMathlib.PowerSeries
+public import PadicModForms.ForMathlib.PowerSeriesTopology
+public import PadicModForms.ForMathlib.QExpansion
+public import PadicModForms.ForMathlib.QExpansionDeriv
+public import PadicModForms.ForMathlib.RationalRoot
+public import PadicModForms.ForMathlib.SigmaSeries
+public import PadicModForms.ForMathlib.SpecificLimits
+public import PadicModForms.ForMathlib.Theta
+public import PadicModForms.ForMathlib.WeightedHomogeneous
+public import PadicModForms.ForMathlib.«38813»
+public import PadicModForms.ModP.ArtinSchreier
+public import PadicModForms.ModP.Basic
+public import PadicModForms.ModP.Congruences
+public import PadicModForms.ModP.Differential
+public import PadicModForms.ModP.Eisenstein
+public import PadicModForms.ModP.Filtration
+public import PadicModForms.ModP.Graded
+public import PadicModForms.ModP.Hasse
+public import PadicModForms.ModP.KerEval
+public import PadicModForms.ModP.Ramanujan
+public import PadicModForms.ModP.Squarefree
+public import PadicModForms.ModP.ThetaFiltration
+public import PadicModForms.ModP.WeightZero
+public import PadicModForms.ModP.Weights
+public import PadicModForms.PAdic.Basic
+public import PadicModForms.PAdic.Defs
+public import PadicModForms.PAdic.Eisenstein
+public import PadicModForms.PAdic.Weights.Congruence
+public import PadicModForms.PAdic.Weights.CongruencePow
+public import PadicModForms.PAdic.Weights.Defs
+public import PadicModForms.Rational.Basic
+public import PadicModForms.Rational.E2
+public import PadicModForms.Rational.Eisenstein
+public import PadicModForms.Rational.Graded
+public import PadicModForms.Rational.Ramanujan
+public import PadicModForms.pLocalInt.Basic
+public import PadicModForms.pLocalInt.Discriminant
+public import PadicModForms.pLocalInt.Eisenstein
+public import PadicModForms.pLocalInt.Graded
+public import PadicModForms.pLocalInt.Ramanujan
