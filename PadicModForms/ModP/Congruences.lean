@@ -8,7 +8,11 @@ module
 
 public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.ModP.Eisenstein
-public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import PadicModForms.ForMathlib.Bernoulli
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Congruences for Eisenstein series

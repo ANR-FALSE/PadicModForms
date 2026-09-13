@@ -6,7 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Weights
+public import PadicModForms.ModP.Hasse
+import PadicModForms.ForMathlib.WeightedHomogeneous
+import PadicModForms.ModP.Squarefree
+import PadicModForms.ModP.Weights
 
 /-!
 # The filtration of mod-`p` modular forms

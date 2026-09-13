@@ -6,9 +6,11 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.MDifferentiable
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
 public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Defs
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.MDifferentiable
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
 
 /-!
 # The q-expansion of the weight-two Eisenstein series

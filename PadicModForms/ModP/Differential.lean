@@ -6,10 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Graded
 public import PadicModForms.ModP.Hasse
 public import PadicModForms.ModP.Ramanujan
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+import PadicModForms.ForMathlib.MvPolynomial
 
 /-!
 # Ramanujan's derivation and the differential identity

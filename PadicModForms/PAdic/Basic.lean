@@ -6,15 +6,21 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.EInt
 public import PadicModForms.ForMathlib.IntLocalization
-public import PadicModForms.ForMathlib.Padic
 public import PadicModForms.ForMathlib.PowerSeriesTopology
 public import PadicModForms.PAdic.Defs
-public import PadicModForms.Rational.Basic
-public import PadicModForms.Rational.Graded
 import Mathlib.Analysis.Normed.Group.Ultra
 import PadicModForms.ForMathlib.SpecificLimits
+public import Mathlib.Order.WithBotTop
+public import Mathlib.Topology.Order.WithTop
+public import PadicModForms.Rational.Eisenstein
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
+import PadicModForms.ForMathlib.EInt
+import PadicModForms.ForMathlib.Padic
+import PadicModForms.Rational.Graded
 
 /-!
 # Basic results about p-adic modular forms and power series

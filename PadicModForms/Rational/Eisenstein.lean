@@ -7,6 +7,11 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.Rational.Basic
+public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import Mathlib.NumberTheory.Bernoulli
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+import PadicModForms.ForMathlib.Bernoulli
 
 /-!
 # Rational Eisenstein series

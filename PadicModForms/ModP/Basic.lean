@@ -8,6 +8,11 @@ module
 
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.Rational.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Choose.Multinomial
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Modular forms modulo `p`

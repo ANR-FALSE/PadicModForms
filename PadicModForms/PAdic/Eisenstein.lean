@@ -6,9 +6,14 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.Bernoulli
-public import PadicModForms.PAdic.Basic
 public import PadicModForms.Rational.Eisenstein
+public import PadicModForms.PAdic.Defs
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
+import PadicModForms.PAdic.Basic
 
 /-!
 # p-adic Eisenstein series

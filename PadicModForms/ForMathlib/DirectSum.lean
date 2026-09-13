@@ -6,7 +6,8 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.Algebra.DirectSum.Ring
+public import Mathlib.Algebra.DirectSum.Basic
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # Additional lemmas about direct sums

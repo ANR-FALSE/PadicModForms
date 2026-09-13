@@ -8,8 +8,11 @@ module
 
 public import Mathlib.Algebra.Order.Monoid.Unbundled.WithTop
 public import Mathlib.Order.WithBotTop
-public import Mathlib.Topology.Instances.Int
 public import Mathlib.Topology.Order.WithTop
+public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Data.Int.Interval
+public import Mathlib.Topology.Instances.Discrete
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # The extended integers

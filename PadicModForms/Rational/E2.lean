@@ -6,8 +6,11 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.E2
 public import PadicModForms.Rational.Eisenstein
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Defs
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
+import PadicModForms.ForMathlib.E2
 
 /-!
 # The rational q-expansion of `E2`

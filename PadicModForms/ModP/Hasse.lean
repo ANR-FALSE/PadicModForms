@@ -6,8 +6,9 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Congruences
 public import PadicModForms.ModP.Graded
+public import PadicModForms.pLocalInt.Discriminant
+import PadicModForms.ModP.Congruences
 
 /-!
 # The Hasse invariant as a polynomial in `E₄` and `E₆`

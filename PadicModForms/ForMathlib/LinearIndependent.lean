@@ -6,9 +6,9 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.LinearAlgebra.Basis.VectorSpace
-public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.LinearAlgebra.Basis.Basic
+import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
 # Linear independence: scalar extension and descent of bases

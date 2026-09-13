@@ -8,7 +8,6 @@ module
 
 public import Mathlib.RingTheory.GradedAlgebra.HomogeneousLocalization
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-import Mathlib.RingTheory.Localization.Away.Basic
 
 /-!
 # Normality of the degree-zero part of a homogeneous localization

@@ -7,8 +7,9 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.SigmaSeries
-public import PadicModForms.ModP.ThetaFiltration
 public import PadicModForms.ModP.WeightZero
+public import PadicModForms.ModP.Filtration
+public import PadicModForms.ModP.Ramanujan
 
 /-!
 # The Artin–Schreier identity and the forbidden divisor-sum series

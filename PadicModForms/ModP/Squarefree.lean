@@ -6,9 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.MvPolynomial
 public import PadicModForms.ModP.Differential
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+import PadicModForms.ForMathlib.MvPolynomial
+import PadicModForms.ForMathlib.WeightedHomogeneous
 
 /-!
 # Squarefreeness of the Hasse invariant

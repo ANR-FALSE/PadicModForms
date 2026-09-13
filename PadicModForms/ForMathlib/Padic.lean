@@ -7,8 +7,8 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-public import PadicModForms.ForMathlib.EInt
 public import PadicModForms.ForMathlib.IntLocalization
+public import Mathlib.Order.WithBotTop
 
 /-!
 # Auxiliary results on the additive valuation on `ℚ_[p]`

@@ -6,7 +6,8 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.RingTheory.Polynomial.RationalRoot
+public import Mathlib.RingTheory.Polynomial.ScaleRoots
+import Mathlib.RingTheory.Polynomial.RationalRoot
 
 /-!
 # The integral root theorem in divisibility form

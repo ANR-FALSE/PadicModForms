@@ -6,11 +6,12 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Squarefree
 public import Mathlib.RingTheory.Polynomial.Eisenstein.Basic
-import PadicModForms.pLocalInt.Discriminant
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.RingTheory.KrullDimension.Polynomial
+public import PadicModForms.ModP.Hasse
+import PadicModForms.ForMathlib.WeightedHomogeneous
+import PadicModForms.ModP.Squarefree
 
 /-!
 # The kernel of the evaluation at `E₄` and `E₆`

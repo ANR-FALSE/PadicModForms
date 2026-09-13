@@ -6,8 +6,12 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Weights
 public import PadicModForms.PAdic.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
+import PadicModForms.ModP.Weights
 
 /-!
 # Congruent rational modular forms have congruent weights

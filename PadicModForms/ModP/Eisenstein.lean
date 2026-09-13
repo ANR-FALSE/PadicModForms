@@ -6,8 +6,13 @@ Authors: Riccardo Brasca
 
 module
 
+public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.ModP.Basic
 public import PadicModForms.pLocalInt.Eisenstein
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Eisenstein series modulo `p`

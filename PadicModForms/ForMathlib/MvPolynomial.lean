@@ -7,9 +7,9 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.MvPolynomial.PDeriv
-public import Mathlib.RingTheory.MvPolynomial.Basic
-public import PadicModForms.ForMathlib.WeightedHomogeneous
 import PadicModForms.ForMathlib.Finsupp
+public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+import PadicModForms.ForMathlib.WeightedHomogeneous
 
 /-!
 # Additional lemmas about multivariable polynomials

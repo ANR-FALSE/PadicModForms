@@ -7,6 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ModP.Filtration
+public import PadicModForms.ModP.Differential
 
 /-!
 # `Θ` and the filtration

@@ -6,8 +6,14 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Congruences
-public import PadicModForms.pLocalInt.Ramanujan
+public import PadicModForms.ForMathlib.Theta
+public import PadicModForms.ModP.Eisenstein
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
+import PadicModForms.ModP.Congruences
+import PadicModForms.pLocalInt.Ramanujan
 
 /-!
 # Ramanujan's identities modulo `p`

@@ -6,8 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.Weights
 import PadicModForms.ForMathlib.RationalRoot
+public import PadicModForms.ModP.Graded
+import PadicModForms.ForMathlib.WeightedHomogeneous
+import PadicModForms.ModP.Hasse
 
 /-!
 # The degree-zero mod-`p` modular forms and their normality

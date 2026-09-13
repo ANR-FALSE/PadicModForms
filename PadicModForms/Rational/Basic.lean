@@ -7,16 +7,12 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.DirectSum.Internal
-public import Mathlib.Algebra.Algebra.RestrictScalars
-public import Mathlib.Algebra.Module.LinearMap.Rat
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import PadicModForms.ForMathlib.Bernoulli
-public import PadicModForms.ForMathlib.QExpansion
 
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import PadicModForms.ForMathlib.LinearIndependent
+import Mathlib.Algebra.Module.LinearMap.Rat
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Rational modular forms

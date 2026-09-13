@@ -5,13 +5,11 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
-public import Mathlib.Algebra.MvPolynomial.Coeff
-public import Mathlib.Algebra.MvPolynomial.CommRing
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.RingTheory.MvPowerSeries.NoZeroDivisors
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 
 /-!
 This file backports mathlib4 PR #38813 in one place.  The following declaration is the only

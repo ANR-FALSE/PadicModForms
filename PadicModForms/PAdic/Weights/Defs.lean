@@ -6,7 +6,14 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.PAdic.Basic
+public import Mathlib.Topology.Algebra.Group.CompactOpen
+public import PadicModForms.PAdic.Defs
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Nat.Choose.Multinomial
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Weights of p-adic modular forms

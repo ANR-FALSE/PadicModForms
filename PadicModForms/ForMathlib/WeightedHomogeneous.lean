@@ -6,10 +6,6 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.Algebra.Polynomial.Degree.Domain
-public import Mathlib.Algebra.Polynomial.Degree.Monomial
-public import Mathlib.Algebra.Polynomial.Degree.TrailingDegree
-public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Algebra.Polynomial.Reverse
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 

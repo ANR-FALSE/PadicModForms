@@ -7,9 +7,9 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.RingTheory.PowerSeries.Basic
-public import Mathlib.Topology.Algebra.IsUniformGroup.Constructions
 public import Mathlib.Topology.Algebra.LinearTopology
 public import Mathlib.Topology.Algebra.UniformConvergence
+import Mathlib.Topology.Algebra.IsUniformGroup.Constructions
 
 /-!
 # The topology of uniform convergence on power series

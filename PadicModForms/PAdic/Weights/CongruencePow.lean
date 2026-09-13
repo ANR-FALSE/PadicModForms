@@ -6,10 +6,13 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.ArtinSchreier
-public import PadicModForms.ModP.Congruences
-public import PadicModForms.PAdic.Weights.Congruence
-public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import PadicModForms.ForMathlib.SigmaSeries
+public import PadicModForms.PAdic.Basic
+public import PadicModForms.pLocalInt.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Serre's theorem on congruences of weights modulo `p ^ m`

@@ -6,9 +6,12 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.Rational.Eisenstein
 public import PadicModForms.pLocalInt.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Eisenstein series over the localization of `ℤ` at `p`

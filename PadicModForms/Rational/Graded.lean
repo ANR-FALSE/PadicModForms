@@ -6,15 +6,20 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.Algebra.DirectSum.Internal
-public import Mathlib.Algebra.Algebra.Hom.Rat
-public import Mathlib.RingTheory.MvPolynomial.Tower
 public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 import PadicModForms.ForMathlib.DirectSum
 import PadicModForms.ForMathlib.MvPolynomial
 import PadicModForms.ForMathlib.«38813»
 public import PadicModForms.Rational.Eisenstein
+import Mathlib.Algebra.Algebra.Hom.Rat
+import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # The graded ring of rational modular forms

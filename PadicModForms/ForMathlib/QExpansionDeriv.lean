@@ -7,7 +7,6 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.NumberTheory.ModularForms.Derivative
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import PadicModForms.ForMathlib.Theta
 
 /-!

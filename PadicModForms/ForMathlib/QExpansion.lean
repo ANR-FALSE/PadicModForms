@@ -6,9 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
 # Additional results about `q`-expansions of modular forms

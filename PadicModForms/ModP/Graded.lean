@@ -6,9 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.MvPolynomial
 public import PadicModForms.ModP.Eisenstein
-public import PadicModForms.pLocalInt.Discriminant
+public import PadicModForms.pLocalInt.Graded
+import PadicModForms.ForMathlib.MvPolynomial
+import PadicModForms.pLocalInt.Discriminant
 
 /-!
 # Evaluation at `E₄` and `E₆` modulo `p`

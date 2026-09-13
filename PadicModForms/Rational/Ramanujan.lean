@@ -7,10 +7,14 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.Theta
-public import PadicModForms.Rational.E2
 
 import Mathlib.NumberTheory.ModularForms.RamanujanFormula
 import PadicModForms.ForMathlib.QExpansionDeriv
+public import PadicModForms.Rational.Eisenstein
+import Mathlib.CategoryTheory.Category.Init
+import PadicModForms.ForMathlib.E2
+import PadicModForms.ForMathlib.QExpansion
+import PadicModForms.Rational.E2
 
 /-!
 # Ramanujan's identities on rational `q`-expansions

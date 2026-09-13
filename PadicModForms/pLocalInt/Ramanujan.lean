@@ -7,8 +7,12 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.Theta
-public import PadicModForms.Rational.Ramanujan
 public import PadicModForms.pLocalInt.Eisenstein
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
+import PadicModForms.Rational.Ramanujan
 
 /-!
 # Ramanujan's identities over the localization of `ℤ` at `p`

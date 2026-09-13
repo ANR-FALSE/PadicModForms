@@ -6,7 +6,9 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ModP.KerEval
+public import PadicModForms.ModP.Graded
+import PadicModForms.ForMathlib.WeightedHomogeneous
+import PadicModForms.ModP.KerEval
 
 /-!
 # Weights of mod-`p` modular forms are well defined modulo `p - 1`

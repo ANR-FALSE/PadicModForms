@@ -6,10 +6,10 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import PadicModForms.ForMathlib.PowerSeries
 public import PadicModForms.pLocalInt.Graded
+public import Mathlib.NumberTheory.ModularForms.Discriminant
+import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
+import PadicModForms.ForMathlib.PowerSeries
 
 /-!
 # The modular discriminant over `pLocalInt`

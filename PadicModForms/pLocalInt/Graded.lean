@@ -6,9 +6,12 @@ Authors: Riccardo Brasca
 
 module
 
-public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 public import PadicModForms.Rational.Graded
 public import PadicModForms.pLocalInt.Eisenstein
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # The graded ring of `p`-integral modular forms
