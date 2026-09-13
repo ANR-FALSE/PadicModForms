@@ -38,9 +38,9 @@ variable {R : Type*} [CommSemiring R]
 -- should go to Mathlib.RingTheory.PowerSeries.Derivative
 /-- The operator `Θ = q d/dq` on power series, sending `∑ aₙ qⁿ` to `∑ n aₙ qⁿ`. It is `X` times
 the formal derivative, hence a derivation. -/
-def Θ : Derivation R R⟦X⟧ R⟦X⟧ := (X : R⟦X⟧) • derivative R
+def Θ : Derivation R R⟦X⟧ R⟦X⟧ := (X : R⟦X⟧) • derivative
 
-theorem Θ_apply (f : R⟦X⟧) : Θ f = X * derivative R f := by
+theorem Θ_apply (f : R⟦X⟧) : Θ f = X * derivative f := by
   rw [Θ, Derivation.smul_apply, smul_eq_mul]
 
 @[simp]
@@ -69,8 +69,9 @@ theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) (f : R⟦X⟧) :
 
 /-- The iterates of `Θ` multiply the `n`-th coefficient by `n ^ k`. -/
 @[simp]
-theorem coeff_iterate_Θ (k n : ℕ) (f : R⟦X⟧) :
-    coeff n (((Θ (R := R)))^[k] f) = n ^ k • coeff n f := by
-  sorry
+theorem coeff_iterate_Θ (k n : ℕ) (f : R⟦X⟧) : coeff n (Θ^[k] f) = n ^ k • coeff n f := by
+  induction k with
+  | zero => simp
+  | succ k ih => simp [Function.iterate_succ_apply', ih, pow_succ', mul_smul]
 
 end PowerSeries

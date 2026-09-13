@@ -39,7 +39,7 @@ variable {σ R : Type*} [CommSemiring R] (s : Set (σ →₀ ℕ)) (d : s)
 /-- The coordinates of `basisRestrictSupport R s` are the coefficients. -/
 @[simp]
 theorem basisRestrictSupport_repr_apply (x : restrictSupport R s) (i : s) :
-    (basisRestrictSupport R s).repr x i = coeff (i : σ →₀ ℕ) (x : MvPolynomial σ R) :=
+    (basisRestrictSupport R s).repr x i = (x : MvPolynomial σ R).coeff i :=
   rfl
 
 /-- The member of `basisRestrictSupport R s` indexed by `d : s` is the monomial `X ^ d`. -/
@@ -94,8 +94,8 @@ theorem not_exists_eq_monomial_add_monomial {m n : ℕ} {a b : R}
       monomial d r := fun h ↦ by
   set P := monomial (Finsupp.single (0 : Fin 2) m) a + monomial (Finsupp.single 1 n) b
   obtain ⟨d, r, h⟩ := h
-  have h0 : coeff (Finsupp.single 0 m) P = a := by simp [P, coeff_monomial, hmn.symm]
-  have h1 : coeff (Finsupp.single 1 n) P = b := by simp [P, coeff_monomial, hmn]
+  have h0 : P.coeff (Finsupp.single 0 m) = a := by simp [P, coeff_monomial, hmn.symm]
+  have h1 : P.coeff (Finsupp.single 1 n) = b := by simp [P, coeff_monomial, hmn]
   rcases eq_or_ne d (Finsupp.single 0 m) with rfl | H
   · exact hmn (by simp_all)
   · simp_all

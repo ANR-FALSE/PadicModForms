@@ -52,6 +52,21 @@ theorem evalE₄E₆ModP_hasseInvPoly (hp : 5 ≤ p) : evalE₄E₆ModP (hasseIn
   rw [hasseInvPoly, evalE₄E₆ModP_map, ← pLocalIntQExpansionAlgHom_evalE₄E₆Int,
     evalE₄E₆Int_symm_apply, pLocalIntQExpansionAlgHom_of, E_p_sub_one_mod_p hp]
 
+/-- Multiplying by a power of the Hasse invariant does not change the evaluation. -/
+@[simp]
+theorem evalE₄E₆ModP_hasseInvPoly_pow_mul (hp : 5 ≤ p) (t : ℕ) (F : MvPolynomial (Fin 2) (ZMod p)) :
+    evalE₄E₆ModP (hasseInvPoly hp ^ t * F) = evalE₄E₆ModP F := by
+  rw [map_mul, map_pow, evalE₄E₆ModP_hasseInvPoly, one_pow, one_mul]
+
+/-- Multiplying a weighted homogeneous polynomial by a power of the Hasse invariant raises its
+weight by a multiple of `p - 1` without changing its evaluation
+(`evalE₄E₆ModP_hasseInvPoly_pow_mul`). -/
+theorem isWeightedHomogeneous_hasseInvPoly_pow_mul (hp : 5 ≤ p) {F : MvPolynomial (Fin 2) (ZMod p)}
+    {n : ℕ} (hF : IsWeightedHomogeneous E₄E₆Weights F n) (t : ℕ) :
+    IsWeightedHomogeneous E₄E₆Weights (hasseInvPoly hp ^ t * F) (n + t * (p - 1)) := by
+  have := ((hasseInvPoly_isWeightedHomogeneous hp).pow t).mul hF
+  rwa [smul_eq_mul, add_comm] at this
+
 /-- The Hasse invariant minus one lies in the kernel of `evalE₄E₆ModP`. Swinnerton-Dyer's theorem
 states that it generates that kernel. -/
 theorem hasseInvPoly_sub_one_mem_ker (hp : 5 ≤ p) :

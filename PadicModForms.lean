@@ -13,6 +13,7 @@ import PadicModForms.ForMathlib.PowerSeries
 import PadicModForms.ForMathlib.PowerSeriesTopology
 import PadicModForms.ForMathlib.QExpansion
 import PadicModForms.ForMathlib.QExpansionDeriv
+import PadicModForms.ForMathlib.RationalRoot
 import PadicModForms.ForMathlib.SigmaSeries
 import PadicModForms.ForMathlib.SpecificLimits
 import PadicModForms.ForMathlib.Theta

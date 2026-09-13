@@ -65,7 +65,7 @@ theorem IsWeightedHomogeneous.exists_eq_monomial_of_unique_weight [CommSemiring 
     ∃ d r, φ = monomial d r := by
   by_cases hex : ∃ d : σ →₀ ℕ, weight w d = n
   · obtain ⟨d, hd⟩ := hex
-    exact ⟨d, coeff d φ, hφ.eq_monomial_of_unique_weight fun e he ↦ hunique e d he hd⟩
+    exact ⟨d, φ.coeff d, hφ.eq_monomial_of_unique_weight fun e he ↦ hunique e d he hd⟩
   · exact ⟨0, 0, by simpa using hφ.eq_zero_of_no_monomials fun d hd ↦ hex ⟨d, hd⟩⟩
 
 /-- Multiplying by a weighted homogeneous polynomial of weight `b` shifts the weighted homogeneous
@@ -79,13 +79,13 @@ theorem IsWeightedHomogeneous.weightedHomogeneousComponent_mul [CommSemiring R] 
   rw [coeff_weightedHomogeneousComponent, coeff_mul, coeff_mul]
   split_ifs with hd
   · refine Finset.sum_congr rfl fun x hx ↦ ?_
-    rcases eq_or_ne (coeff x.1 φ) 0 with h | h
+    rcases eq_or_ne (φ.coeff x.1) 0 with h | h
     · grind
     · suffices weight w x.1 + weight w x.2 = a + b by
         grind [hφ h, coeff_weightedHomogeneousComponent]
       rw [← map_add, Finset.mem_antidiagonal.1 hx, hd]
   · refine (Finset.sum_eq_zero fun x hx ↦ ?_).symm
-    rcases eq_or_ne (coeff x.1 φ) 0 with h | h
+    rcases eq_or_ne (φ.coeff x.1) 0 with h | h
     · grind
     · rw [coeff_weightedHomogeneousComponent, ite_eq_right, mul_zero]
       exact (fun hx2 ↦ hd (by rw [← Finset.mem_antidiagonal.1 hx, map_add, hφ h, hx2, add_comm]))
@@ -95,7 +95,7 @@ no zero value, is a constant. -/
 theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddCommMonoid M]
     [PartialOrder M] [CanonicallyOrderedAdd M] [IsAddTorsionFree M] {w : σ → M}
     {φ : MvPolynomial σ R} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) :
-    φ = C (coeff 0 φ) :=
+    φ = C (φ.coeff 0) :=
   hφ.weightedHomogeneousComponent_same.symm.trans (weightedHomogeneousComponent_zero φ hw)
 
 /-- Over a field, a nonzero polynomial which is weighted homogeneous of weighted degree `0`, for a
@@ -220,7 +220,7 @@ theorem weightedHomogenize_one (N : ℕ) :
 /-- The top coefficient of the homogenization is the constant coefficient of `P`; in particular the
 homogenization has degree `N` as soon as `P` has a nonzero constant coefficient. -/
 theorem coeff_weightedHomogenize_self (hw : ∀ i, w i ≠ 0) (N : ℕ) :
-    (weightedHomogenize w N P).coeff N = C (coeff 0 P) := by
+    (weightedHomogenize w N P).coeff N = C (P.coeff 0) := by
   rw [coeff_weightedHomogenize, revAt_le le_rfl, Nat.sub_self,
     weightedHomogeneousComponent_zero P hw]
 
@@ -260,9 +260,9 @@ theorem irreducible_of_unique_lower_weight {P : MvPolynomial σ K}
   (hunique : ∀ m, 0 < m → m < n → ∀ d e : σ →₀ ℕ, weight w d = m → weight w e = m → d = e)
     (hP_not_monomial : ¬ ∃ d r, P = monomial d r) : Irreducible P := by
   have hP0 : P ≠ 0 := fun h ↦ hP_not_monomial ⟨0, 0, by simpa using h⟩
-  have hn0 : n ≠ 0 := fun h ↦ hP_not_monomial ⟨0, coeff 0 P, by
+  have hn0 : n ≠ 0 := fun h ↦ hP_not_monomial ⟨0, P.coeff 0, by
     simpa only [C_apply] using (h ▸ hP).eq_C_coeff_zero hw⟩
-  refine ⟨fun hunit ↦ (hunit.map constantCoeff).ne_zero ?_, fun {F G} hFG ↦ ?_⟩
+  refine ⟨fun hunit ↦ (hunit.map constantCoeff).ne_zero ?_, fun ⦃F G⦄ hFG ↦ ?_⟩
   · by_contra h
     have hn := hP (d := 0) (by simpa only [constantCoeff_eq] using h)
     exact hn0 (by simpa using hn.symm)

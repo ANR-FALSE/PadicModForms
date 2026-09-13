@@ -82,7 +82,7 @@ theorem irreducible_X_pow_sub_C_hasseInvPoly (hp : 5 ≤ p) (hP : Irreducible P)
 
 /-! ### Irreducibility of `A - 1` -/
 
-open MvPolynomial hiding C X coeff monomial
+open MvPolynomial hiding C X monomial
 
 /-- A weighted homogenization of positive degree, of a polynomial with nonzero constant
 coefficient, is not a unit: its coefficient in that degree is the constant coefficient. -/
