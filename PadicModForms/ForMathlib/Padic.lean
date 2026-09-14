@@ -108,16 +108,8 @@ theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
   exact (IsLocalization.map_units (pLocalInt p) z).dvd_mul_right.mp hdvdy
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
-/-- A `p`-integral rational reduces to `0` modulo `p` exactly when its `p`-adic norm is `≤ 1`. -/
-theorem norm_coe_le_inv_iff (x : pLocalInt p) :
-    ‖(x : ℚ_[p])‖ ≤ (p : ℝ)⁻¹ ↔ pLocalInt.toZMod x = 0 := by
-  refine ⟨fun h ↦ by_contra fun hx ↦ ?_, fun hx ↦ ?_⟩
-  · rw [norm_coe_eq_one hx] at h
-    exact absurd h (not_le.2 (inv_lt_one_of_one_lt₀ (mod_cast hp.1.one_lt)))
-  · obtain ⟨y, hy⟩ := pLocalInt.dvd_of_toZMod_eq_zero hx
-    have hcast : (x : ℚ_[p]) = p * y := by simp_all
-    simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
-
+/-- A `p`-integral rational reduces to `0` modulo `p ^ m`
+exactly when its `p`-adic norm is `≤ (p ^ m)⁻¹`. -/
 theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
     ‖(x : ℚ_[p])‖ ≤ ((p : ℝ) ^ m)⁻¹ ↔ pLocalInt.toZModPow m x = 0 := by
   by_cases hm : m = 0
@@ -128,12 +120,11 @@ theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
   have hcast : (x : ℚ_[p]) = p ^ m * y := by simp_all
   simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
 
--- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
-/-- A `p`-integral rational reduces to `0` modulo `p` exactly when its valuation is at least `1`. -/
-theorem one_le_addValuation_iff (x : pLocalInt p) :
-    1 ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZMod x = 0 := by
-  rw [show 1 = ((1 : ℤ) : EInt) by simp [WithBotTop.coe],
-    intCast_le_addValuation_iff_norm_le_pow, zpow_neg, zpow_one, norm_coe_le_inv_iff]
+/-- A `p`-integral rational reduces to `0` modulo `p` exactly when its `p`-adic norm is `≤ p⁻¹`. -/
+theorem norm_coe_le_inv_iff (x : pLocalInt p) :
+    ‖(x : ℚ_[p])‖ ≤ (p : ℝ)⁻¹ ↔ pLocalInt.toZMod x = 0 := by
+  rw [← pow_one (p : ℝ), norm_coe_le_inv_pow_iff (m := 1) x]
+  exact toZModPow_eq_zero x
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p ^ m` exactly when its valuation is at least
@@ -141,5 +132,10 @@ theorem one_le_addValuation_iff (x : pLocalInt p) :
 theorem natCast_le_addValuation_iff (m : ℕ) (x : pLocalInt p) :
     ((m : ℤ) : EInt) ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZModPow m x = 0 := by
   rw [intCast_le_addValuation_iff_norm_le_pow, zpow_neg, zpow_natCast, norm_coe_le_inv_pow_iff]
+
+theorem one_le_addValuation_iff (x : pLocalInt p) :
+    1 ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZMod x = 0 := by
+  rw [← toZModPow_eq_zero, ← natCast_le_addValuation_iff 1 x]
+  rfl
 
 end pLocalInt

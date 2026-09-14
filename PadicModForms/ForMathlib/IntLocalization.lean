@@ -221,3 +221,8 @@ theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
       pLocalInt.toZMod x := by
   rw [← RingHom.comp_apply]
   exact RingHom.congr_fun (IsLocalization.lift_unique _ (by simp)).symm x
+
+theorem pLocalInt.toZModPow_eq_zero (x : pLocalInt p) :
+    (pLocalInt.toZModPow 1) x = 0 ↔ pLocalInt.toZMod x = 0 := by
+  rw [← pLocalInt.castHom_toZModPow (le_refl 1)]
+  exact (ZMod.cast_zmod_eq_zero_iff_of_le (pow_one p).le _).symm
