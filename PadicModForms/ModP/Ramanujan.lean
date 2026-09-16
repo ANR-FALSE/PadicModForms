@@ -42,6 +42,8 @@ namespace EisensteinSeries
 /-- The reduction of `E₂_int` modulo `p`. This is Serre's `P`. -/
 def E₂ModP : (ZMod p)⟦X⟧ := E₂_int.map pLocalInt.toZMod
 
+theorem E₂ModP_def : E₂ModP (p := p) = E₂_int.map pLocalInt.toZMod := rfl
+
 /-- `E₂ModP` is a mod-`p` modular form of weight `p + 1`, by Serre's congruence. -/
 theorem E₂ModP_mem_modPModularForms (hp5 : 5 ≤ p) : E₂ModP ∈ modPModularForms p ((p + 1 : ℕ) : ℤ) :=
   E₂_int_map_toZMod_mem_modPModularForms hp5
