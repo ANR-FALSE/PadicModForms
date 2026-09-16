@@ -124,7 +124,7 @@ theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
 theorem norm_coe_le_inv_iff (x : pLocalInt p) :
     ‖(x : ℚ_[p])‖ ≤ (p : ℝ)⁻¹ ↔ pLocalInt.toZMod x = 0 := by
   rw [← pow_one (p : ℝ), norm_coe_le_inv_pow_iff (m := 1) x]
-  exact toZModPow_eq_zero x
+  exact toZModPow_one_eq_zero_iff x
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p ^ m` exactly when its valuation is at least
@@ -135,7 +135,7 @@ theorem natCast_le_addValuation_iff (m : ℕ) (x : pLocalInt p) :
 
 theorem one_le_addValuation_iff (x : pLocalInt p) :
     1 ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZMod x = 0 := by
-  rw [← toZModPow_eq_zero, ← natCast_le_addValuation_iff 1 x]
-  rfl
+  rw [← toZModPow_one_eq_zero_iff, ← natCast_le_addValuation_iff 1 x]
+  simp [WithBotTop.coe]
 
 end pLocalInt

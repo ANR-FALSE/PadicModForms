@@ -203,7 +203,6 @@ theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
   obtain ⟨y, rfl⟩ := hx
   rw [map_mul, pLocalInt.toZModPow_pow, zero_mul]
 
-/-- An element of `pLocalInt p` killed by reduction modulo `p ^ m` is divisible by `p ^ m`. -/
 theorem pLocalInt.dvd_of_toZModPow_eq_zero {m : ℕ} {x : pLocalInt p}
     (hx : pLocalInt.toZModPow m x = 0) : (p : pLocalInt p) ^ m ∣ x := by
   rwa [← mem_span_singleton, ← pLocalInt.ker_toZModPow m]
@@ -222,7 +221,8 @@ theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
   rw [← RingHom.comp_apply]
   exact RingHom.congr_fun (IsLocalization.lift_unique _ (by simp)).symm x
 
-theorem pLocalInt.toZModPow_eq_zero (x : pLocalInt p) :
+/-- Reduction modulo `p` is the special case of reduction modulo `p ^ m` when `m = 1`. -/
+theorem pLocalInt.toZModPow_one_eq_zero_iff (x : pLocalInt p) :
     (pLocalInt.toZModPow 1) x = 0 ↔ pLocalInt.toZMod x = 0 := by
   rw [← pLocalInt.castHom_toZModPow (le_refl 1)]
   exact (ZMod.cast_zmod_eq_zero_iff_of_le (pow_one p).le _).symm
