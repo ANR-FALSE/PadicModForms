@@ -125,7 +125,8 @@ public theorem qExpansion_rationalModularFormToComplex :
 /-- Scalar extension to complex modular forms is injective. -/
 public theorem rationalModularFormToComplex_injective (n) :
     Function.Injective (rationalModularFormToComplex (n := n)) := fun f g h ↦ by
-  refine Subtype.ext (PowerSeries.map_injective _ (algebraMap ℚ ℂ).injective ?_)
+  ext : 1
+  apply PowerSeries.map_injective _ (algebraMap ℚ ℂ).injective
   rw [← qExpansion_rationalModularFormToComplex, ← qExpansion_rationalModularFormToComplex, h]
 
 /-- Scalar extension to complex modular forms takes `ℚ`-linearly independent families to

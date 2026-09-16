@@ -164,6 +164,9 @@ term the reader has to decode.
 
 Proof style specific to this project:
 
+- In proofs already written in tactic mode, use `ext` instead of applying `Subtype.ext` directly.
+  Keep existing term-mode proofs in term mode. Prefer plain `ext` to `ext : n` whenever it works;
+  specify a depth only when needed.
 - Avoid `change`, and avoid proving goals by a bare `rfl`. A *named* lemma proved by `rfl` is fine
   when the definitional equality is a mathematically meaningful part of the API (as in the
   `mem_…ModularForms` simp lemmas).

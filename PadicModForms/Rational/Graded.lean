@@ -158,7 +158,8 @@ theorem evalE₄E₆AtWeight_apply (p : E₄E₆WeightedHomogeneous k ℂ) :
     evalE₄E₆AtWeight k p = (evalE₄E₆ p) k := rfl
 
 theorem evalE₄E₆AtWeight_injective : Function.Injective (evalE₄E₆AtWeight k) := fun p q hpq ↦ by
-  refine Subtype.ext (evalE₄E₆_injective ?_)
+  ext : 1
+  apply evalE₄E₆_injective
   rw [evalE₄E₆_eq_of_apply k p p.property, evalE₄E₆_eq_of_apply k q q.property,
     show (evalE₄E₆ p) k = (evalE₄E₆ q) k by exact hpq]
 
