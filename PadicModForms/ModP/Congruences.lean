@@ -107,7 +107,7 @@ theorem even_p_add_one : Even (p + 1) :=
 
 /-- The normalized Eisenstein series of weight `p + 1` over the localization of `ℤ` at `p`. -/
 noncomputable def E_p_add_one : (pLocalInt p)⟦X⟧ :=
-  E_int (k := p + 1) (by lia) (even_p_add_one hp5) (inv_bernoulli_p_add_one_mem_pLocalInt hp5)
+  E_int (by lia) (even_p_add_one hp5) (inv_bernoulli_p_add_one_mem_pLocalInt hp5)
 
 /-- `E_{p+1}` is a `p`-integral modular form of weight `p + 1`. -/
 theorem E_p_add_one_mem_pLocalIntModularForms : E_p_add_one hp5 ∈ pLocalIntModularForms p (p + 1) :=
@@ -117,7 +117,7 @@ omit hp5
 
 /-- The nonconstant coefficients of `E₂_int`. -/
 theorem coeff_E₂_int_of_ne_zero {n : ℕ} (hn : n ≠ 0) :
-    coeff n (E₂_int (p := p)) = -24 * (σ 1 n : pLocalInt p) :=
+    coeff n E₂_int = -24 * (σ 1 n : pLocalInt p) :=
   Subtype.ext <| by simp [coeff_E₂_int, hn]
 
 include hp5
