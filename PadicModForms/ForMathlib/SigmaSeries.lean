@@ -95,7 +95,7 @@ theorem coeff_sigmaSeries (n : ℕ) : coeff n (sigmaSeries R k) = ((σ k n : ℕ
 
 @[simp]
 theorem constantCoeff_sigmaSeries : constantCoeff (sigmaSeries R k) = 0 := by
-  simp [← coeff_zero_eq_constantCoeff_apply, coeff_sigmaSeries]
+  simp [← coeff_zero_eq_constantCoeff_apply]
 
 theorem map_sigmaSeries {S : Type*} [Semiring S] (φ : R →+* S) :
     (sigmaSeries R k).map φ = sigmaSeries S k := by
