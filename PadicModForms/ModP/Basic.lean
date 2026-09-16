@@ -31,15 +31,18 @@ namespace PowerSeries
 
 /-! ### Casts into power series modulo `p` -/
 
+/-- The modulus is zero as a constant power series over `ZMod n`. -/
 @[simp]
-theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
-  have hp : 1 ≤ p := Nat.Prime.one_le (Fact.out : p.Prime)
-  rw [Nat.cast_sub hp, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
+theorem natCast_zmod_self (n : ℕ) : (n : (ZMod n)⟦X⟧) = 0 := by
+  rw [← map_natCast (algebraMap (ZMod n) (ZMod n)⟦X⟧)]
   simp
 
 @[simp]
+theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
+  simp [Nat.cast_sub (Nat.Prime.one_le (Fact.out : p.Prime))]
+
 theorem natCast_p_add_one : ((p + 1 : ℕ) : (ZMod p)⟦X⟧) = 1 := by
-  simp [Nat.cast_add, ← map_natCast (algebraMap (ZMod p) (ZMod p)⟦X⟧)]
+  simp
 
 /-! ### Modular forms -/
 

@@ -64,6 +64,12 @@ theorem coeff_E_int_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : coeff 0 (E_
   ext
   simp
 
+/-- The constant coefficient of `E_int` is `1`. -/
+@[simp]
+theorem constantCoeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+    constantCoeff (E_int hk hk2 hB) = 1 := by
+  rw [← coeff_zero_eq_constantCoeff_apply, coeff_E_int_zero]
+
 /-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
 theorem coeff_E_int_of_ne_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) {m : ℕ} (hm : m ≠ 0) :
     coeff m (E_int hk hk2 hB) =

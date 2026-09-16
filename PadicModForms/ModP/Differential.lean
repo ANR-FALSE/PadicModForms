@@ -85,7 +85,7 @@ theorem Θ_evalE₄E₆ModP : Θ (evalE₄E₆ModP F) = evalE₄E₆ModP (pderiv
     evalE₄E₆ModP (pderiv 1 F) * Θ E₆ModP := by
   induction F using MvPolynomial.induction_on with
   | C a => simp
-  | add F G hF hG => simp only [map_add, hF, hG]; ring
+  | add F G hF hG => simp [hF, hG]; ring
   | mul_X F i hF =>
       rw [map_mul, Derivation.leibniz]
       fin_cases i <;> simp [hF] <;> ring
@@ -165,7 +165,7 @@ theorem evalE₄E₆ModP_δModP_hasseInvPoly (hp : 5 ≤ p) :
 theorem twelve_Θ_E₂ModP_eq_eval_δModP_sq_hasseInvPoly (hp : 5 ≤ p) :
     12 * Θ E₂ModP = E₂ModP * E₂ModP +
       evalE₄E₆ModP (δModP (δModP (hasseInvPoly hp))) := by
-  simpa only [evalE₄E₆ModP_δModP_hasseInvPoly hp, natCast_p_add_one, one_mul] using
+  simpa [evalE₄E₆ModP_δModP_hasseInvPoly hp] using
     twelve_Θ_evalE₄E₆ModP (isWeightedHomogeneous_δModP_hasseInvPoly hp)
 
 /-- The second Ramanujan derivative of `hasseInvPoly` evaluates to `-E₄ModP`. -/

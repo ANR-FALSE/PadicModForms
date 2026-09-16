@@ -88,7 +88,8 @@ theorem Away.exists_val_eq_of_mul_val_eq [IsDomain A] {d : ι} (hd : f ∈ 𝒜 
     refine DirectSum.mem_of_mul_mem_of_right_mem 𝒜 (j := (m + n) • d)
       (add_smul m n d ▸ SetLike.mul_mem_graded hb (SetLike.pow_mem_graded n hd))
       (mul_ne_zero hb0 (pow_ne_zero _ hf)) ?_
-    rw [key, show N • d + (m + n) • d = n • d + (N + m) • d by simp only [add_smul]; abel]
+    rw [key, show N • d + (m + n) • d = n • d + (N + m) • d by
+      simp [add_smul, add_comm, add_left_comm]]
     exact SetLike.mul_mem_graded ha (SetLike.pow_mem_graded _ hd)
   exact ⟨Away.mk 𝒜 hd N F hF, by simp [Localization.mk_eq_mk']⟩
 

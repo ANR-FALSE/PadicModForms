@@ -35,7 +35,7 @@ lemma E2_analyticAt_cuspFunction_zero : AnalyticAt ℂ (cuspFunction 1 E2) 0 :=
 
 private lemma hasSum_E2_coeff (z : ℍ) : HasSum (fun m : ℕ ↦
     (if m = 0 then 1 else -24 * (σ 1 m : ℂ)) • Periodic.qParam 1 z ^ m) (E2 z) := by
-  simpa only [Periodic.qParam, Complex.ofReal_one, div_one] using hasSum_qExpansion_E2 z
+  simpa [Periodic.qParam] using hasSum_qExpansion_E2 z
 
 -- should go to Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.QExpansion
 /-- The coefficients of the ordinary level-one `q`-expansion of `E2`. -/

@@ -200,7 +200,7 @@ theorem weightedHomogenize_mul {Q : MvPolynomial σ R} {N M : ℕ}
     (hP : (toWeightPolynomial w P).natDegree ≤ N) (hQ : (toWeightPolynomial w Q).natDegree ≤ M) :
     weightedHomogenize w (N + M) (P * Q) =
       weightedHomogenize w N P * weightedHomogenize w M Q := by
-  simp only [weightedHomogenize_apply, map_mul, reflect_mul _ _ hP hQ]
+  simp [weightedHomogenize_apply, reflect_mul _ _ hP hQ]
 
 /-- A weighted homogeneous polynomial homogenizes to a single term. -/
 theorem weightedHomogenize_of_isWeightedHomogeneous {N : ℕ} (hP : IsWeightedHomogeneous w P n)
@@ -257,10 +257,10 @@ theorem irreducible_of_unique_lower_weight {P : MvPolynomial σ K}
     (hP_not_monomial : ¬ ∃ d r, P = monomial d r) : Irreducible P := by
   have hP0 : P ≠ 0 := fun h ↦ hP_not_monomial ⟨0, 0, by simpa using h⟩
   have hn0 : n ≠ 0 := fun h ↦ hP_not_monomial ⟨0, P.coeff 0, by
-    simpa only [C_apply] using (h ▸ hP).eq_C_coeff_zero hw⟩
+    simpa using (h ▸ hP).eq_C_coeff_zero hw⟩
   refine ⟨fun hunit ↦ (hunit.map constantCoeff).ne_zero ?_, fun ⦃F G⦄ hFG ↦ ?_⟩
   · by_contra h
-    have hn := hP (d := 0) (by simpa only [constantCoeff_eq] using h)
+    have hn := hP (by simpa [constantCoeff_eq] using h)
     exact hn0 (by simpa using hn.symm)
   · by_contra! hcon
     have hF0 : F ≠ 0 := fun h ↦ hP0 (by rw [hFG, h, zero_mul])

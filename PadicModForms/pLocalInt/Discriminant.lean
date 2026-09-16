@@ -222,9 +222,8 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
   obtain ⟨a, b, hab⟩ := exists_E₄E₆_monomial_weight hnEven hnTwo
   let mn : pLocalIntModularForms p n := ⟨_, E₄_int_pow_mul_E₆_int_pow_mem hab⟩
   let c := coeff 0 (f : (pLocalInt p)⟦X⟧); let f₀ := f - c • mn
-  have hmn₀ : coeff 0 (mn : (pLocalInt p)⟦X⟧) = 1 := by simp [mn]
   have hf₀ : coeff 0 (f₀ : (pLocalInt p)⟦X⟧) = 0 := by
-    simp [f₀, c, hmn₀, -coeff_zero_eq_constantCoeff]
+    simp [f₀, c, mn]
   have hfDecomp : f = f₀ + c • mn := by simp [f₀]
   have hmonomial : evalE₄E₆Int (MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b)) =
       of (fun i ↦ pLocalIntModularForms p i) n (c • mn) := by

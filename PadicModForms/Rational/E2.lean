@@ -29,11 +29,8 @@ namespace EisensteinSeries
 theorem E2_eq_tsum_E₂Rat (z : ℍ) :
     E2 z = ((coeff 0 E₂Rat : ℚ) : ℂ) + ∑' n : ℕ+, ((coeff n E₂Rat : ℚ) : ℂ) *
         Function.Periodic.qParam 1 z ^ (n : ℕ) := by
-  simp only [E2_eq_tsum_cexp, coeff_E₂Rat, reduceIte, Rat.cast_one, PNat.ne_zero,
-    Rat.cast_neg, Rat.cast_mul, Rat.cast_ofNat, Rat.cast_natCast, Function.Periodic.qParam,
-    Complex.ofReal_one, div_one, ← tsum_mul_left, sub_eq_add_neg, ← tsum_neg]
-  congr 1
-  exact tsum_congr (fun n ↦ by ring)
+  simp [E2_eq_tsum_cexp, Function.Periodic.qParam, ← tsum_mul_left, sub_eq_add_neg,
+    ← tsum_neg, mul_assoc]
 
 /-- The ordinary level-one `q`-expansion of `E2` is the scalar extension of `E₂Rat` to `ℂ`. -/
 theorem qExpansion_E2_eq_E₂Rat_map : qExpansion 1 EisensteinSeries.E2 =

@@ -129,10 +129,10 @@ theorem E₂_int_map_toZMod :
     (E₂_int : (pLocalInt p)⟦X⟧).map pLocalInt.toZMod = (E_p_add_one hp5).map pLocalInt.toZMod := by
   ext n
   rcases eq_or_ne n 0 with rfl | hn
-  · rw [coeff_map, coeff_map, E_p_add_one, coeff_E_int_zero, coeff_zero_E₂_int]
-  · simp only [coeff_map, coeff_E₂_int_of_ne_zero hn, E_p_add_one, coeff_E_int_of_ne_zero _ _ _ hn,
-    map_mul, map_neg, map_natCast, map_ofNat, toZMod_inv_bernoulli_p_add_one hp5]
-    simp [sigma_apply, show (24 : ZMod p) = 2 * 12 by norm_num]
+  · simp [E_p_add_one]
+  · simp [hn, E_p_add_one, coeff_E_int_of_ne_zero _ _ _ hn, map_ofNat,
+      toZMod_inv_bernoulli_p_add_one hp5, sigma_apply,
+      show (24 : ZMod p) = 2 * 12 by norm_num]
 
 /-- The reduction of `E₂` modulo `p` is a mod-`p` modular form of weight `p + 1`. -/
 theorem E₂_int_map_toZMod_mem_modPModularForms : (E₂_int : (pLocalInt p)⟦X⟧).map pLocalInt.toZMod ∈

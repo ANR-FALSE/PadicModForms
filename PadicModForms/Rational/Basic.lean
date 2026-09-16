@@ -57,7 +57,7 @@ theorem IsModularForm.mul (hg : g.isModularForm l) : (f * g).isModularForm (k + 
   obtain ⟨F, hF⟩ := hf
   obtain ⟨G, hG⟩ := hg
   exact ⟨F.mul G, by
-    simp only [ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL, hF, hG, map_mul]⟩
+    rw [ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL, hF, hG, map_mul]⟩
 
 include hg
 

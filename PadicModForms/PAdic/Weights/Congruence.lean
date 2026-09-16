@@ -104,7 +104,7 @@ theorem natCast_eq_of_v_sub_le (hp : 5 ≤ p) (hf : (f : ℚ⟦X⟧) ≠ 0)
   rw [← add_assoc, hm, zero_add] at key
   refine natCast_eq_of_v_eq_zero  ⟨_, (rationalModularForms k).smul_mem ((p : ℚ) ^ m) f.2⟩
     ⟨_, (rationalModularForms k').smul_mem ((p : ℚ) ^ m) f'.2⟩ hp ?_ ?_
-  · simpa only [hmap, v_C_mul hc] using hm
+  · simpa [hmap, v_C_mul hc] using hm
   · simp_all [← mul_sub, v_C_mul hc]
 
 end ModularForm

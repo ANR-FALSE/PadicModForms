@@ -170,8 +170,7 @@ private lemma evalE₄E₆_discriminantPoly :
 private lemma discriminantPoly_smul_eq :
     (1728 : ℂ) • discriminantPoly =
       MvPolynomial.X (0 : Fin 2) ^ 3 - MvPolynomial.X (1 : Fin 2) ^ 2 := by
-  simp only [discriminantPoly, smul_smul]
-  norm_num
+  simp [discriminantPoly, smul_smul]
 
 private lemma surj_at_weight_inductive {n : ℕ} (hn12 : 12 ≤ n) (hk_even : Even (n : ℤ))
     (ih : ∀ m < n, ∀ (f : ModularForm 𝒮ℒ ↑m),
@@ -355,8 +354,7 @@ private lemma X0_pow_mul_X1_pow_isWeightedHomogeneous (a b n : ℕ) (hab : a * 4
     ((MvPolynomial.isWeightedHomogeneous_X ℂ (![4, 6] : Fin 2 → ℕ) (0 : Fin 2)).pow a).mul
       ((MvPolynomial.isWeightedHomogeneous_X ℂ (![4, 6] : Fin 2 → ℕ) (1 : Fin 2)).pow b)
     using 1
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, smul_eq_mul]
-  lia
+  simpa [smul_eq_mul] using hab.symm
 
 private lemma discriminantPoly_isWeightedHomogeneous :
     MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) discriminantPoly 12 := by
@@ -486,8 +484,7 @@ private lemma support_degreeSum_lt_of_sub_discriminantPoly_piece (p : MvPolynomi
   set d' := Finsupp.single (0 : Fin 2) (d 0 - 3) + Finsupp.single (1 : Fin 2) (d 1 + 2)
   have hdd' : d ≠ d' := fun heq ↦ by
     have h0 := Finsupp.ext_iff.mp heq (0 : Fin 2)
-    simp only [Fin.isValue, d', Finsupp.add_apply, Finsupp.single_eq_same,
-      ne_eq, zero_ne_one, not_false_eq_true, Finsupp.single_eq_of_ne, add_zero] at h0
+    simp [d'] at h0
     lia
   have hsupp := (discriminantPoly_piece_eq_monomial_sub d hd_ge _ : _ = _) ▸
     MvPolynomial.support_sub_monomial_sub_monomial_subset p d d' _ hdd' rfl
@@ -515,8 +512,7 @@ private lemma weightedHomogeneous_poly_Delta_decomp_step {n : ℕ} (hn12 : 12 �
   set q₁ := MvPolynomial.C (c * 1728) *
     (MvPolynomial.X (0 : Fin 2) ^ (d 0 - 3) * MvPolynomial.X (1 : Fin 2) ^ d 1)
   have hδ_eq : δ_piece = discriminantPoly * q₁ := by
-    simp only [δ_piece, q₁, MvPolynomial.smul_eq_C_mul, map_mul]
-    ring
+    simp [δ_piece, q₁, MvPolynomial.smul_eq_C_mul, mul_assoc, mul_left_comm, mul_comm]
   refine ⟨p - δ_piece, q₁, hp.sub
       (discriminantPoly_piece_isWeightedHomogeneous hn12 d hd_ge hwd c),
     .C_mul (X0_pow_mul_X1_pow_isWeightedHomogeneous (d 0 - 3) (d 1) (n - 12) (by lia)) _, ?_,
@@ -536,7 +532,7 @@ private lemma weightedHomogeneous_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
   induction M using Nat.strong_induction_on generalizing p with | _ M ih => ?_
   by_cases hall : ∀ d ∈ p.support, d 0 < 3
   · exact ⟨p, 0, hp, MvPolynomial.isWeightedHomogeneous_zero ℂ _ _,
-      by simp only [mul_zero, add_zero], hall⟩
+      by simp, hall⟩
   obtain ⟨p', q₁, hp'_wh, hq₁_wh, hp_eq, hlt⟩ :=
     weightedHomogeneous_poly_Delta_decomp_step hn12 p hp hall
   obtain ⟨r, s', hr_wh, hs'_wh, hp'_eq, hr_red⟩ :=
