@@ -96,10 +96,20 @@ theorem coeff_E₂Rat_mem_pLocalInt (n : ℕ) : coeff n E₂Rat ∈ pLocalInt p 
 noncomputable def E₂_int : (pLocalInt p)⟦X⟧ :=
   E₂Rat.toSubring (pLocalInt p).toSubring coeff_E₂Rat_mem_pLocalInt
 
-@[simp]
+-- Apply before `coeff_zero_eq_constantCoeff` rewrites the expression inside the coercion.
+@[simp↓]
 theorem coeff_E₂_int (n : ℕ) : ((coeff n E₂_int : pLocalInt p) : ℚ) =
     if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
   rw [E₂_int, coeff_toSubring, coeff_E₂Rat]
+
+/-- The constant coefficient of `E₂_int` is `1`. -/
+@[simp]
+theorem constantCoeff_E₂_int : constantCoeff (E₂_int (p := p)) = 1 := by
+  rw [← coeff_zero_eq_constantCoeff_apply]
+  exact Subtype.ext <| by simp
+
+@[simp]
+theorem coeff_zero_E₂_int : coeff 0 (E₂_int (p := p)) = 1 := by simp
 
 /-- Extending scalars to `ℚ` sends `E₂_int` to `E₂Rat`. -/
 theorem E₂_int_map : E₂_int.map (algebraMap (pLocalInt p) ℚ) = E₂Rat := by
