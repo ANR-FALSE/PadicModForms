@@ -10,6 +10,7 @@ public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.ModP.WeightZero
 public import PadicModForms.ModP.Filtration
 public import PadicModForms.ModP.Ramanujan
+import PadicModForms.ModP.Congruences
 
 /-!
 # The Artin–Schreier identity and the forbidden divisor-sum series
@@ -45,14 +46,17 @@ namespace ModularForm
 variable {p h : ℕ} [Fact p.Prime]
 
 /-- Serre's `P` in terms of the divisor-sum series: `E₂ = 1 - 24 ∑ σ₁(n) qⁿ` modulo `p`. -/
-theorem E₂ModP_eq_one_sub_sigmaSeries :
-    E₂ModP (p := p) = 1 - 24 * sigmaSeries (ZMod p) 1 := by
-  sorry
+theorem E₂ModP_eq_one_sub_sigmaSeries : E₂ModP = 1 - 24 * sigmaSeries (ZMod p) 1 := by
+  ext n
+  rw [E₂ModP_def, PowerSeries.coeff_map]
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp
+  · simp [hn, map_mul, map_neg, map_ofNat]
 
 /-- Serre's `ψ` as an iterate of `Θ` on `E₂`: `Θ^[p - 2] E₂ = -24 ψ`, the constant term of `E₂`
 being killed by the first application of `Θ`. -/
 theorem iterate_Θ_E₂ModP (hp : 5 ≤ p) :
-    ((Θ (R := ZMod p)))^[p - 2] E₂ModP = -24 * sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
+    (Θ)^[p - 2] E₂ModP = -24 * sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
   sorry
 
 /-- `ψ` is a degree-zero mod-`p` modular form: `Θ^[p - 2] E₂` has a homogeneous representative of
