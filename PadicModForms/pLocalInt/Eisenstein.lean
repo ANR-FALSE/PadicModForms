@@ -51,7 +51,8 @@ noncomputable def E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : (pLocalInt p
 
 variable (n : ℕ)
 
-@[simp]
+-- Apply before `coeff_zero_eq_constantCoeff` rewrites the expression inside the coercion.
+@[simp↓]
 theorem coeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     (coeff n (E_int hk hk2 hB) : pLocalInt p) =
       if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
@@ -60,20 +61,21 @@ theorem coeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
 /-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
 theorem coeff_E_int_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : coeff 0 (E_int hk hk2 hB) = 1 := by
-  exact Subtype.ext <| by simp only [coeff_E_int, reduceIte, OneMemClass.coe_one]
+  ext
+  simp
 
 /-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
 theorem coeff_E_int_of_ne_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) {m : ℕ} (hm : m ≠ 0) :
     coeff m (E_int hk hk2 hB) =
       -(2 * k) * ⟨_, hB⟩ * σ (k - 1) m := Subtype.ext <| by
-  simp [coeff_E_int, hm, div_eq_mul_inv]
+  simp [hm, div_eq_mul_inv]
 
 /-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
 `ERat`. -/
 theorem E_int_map (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     (E_int hk hk2 hB).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
   ext
-  simp [coeff_E_int, coeff_ERat]
+  simp
 
 /-- `E_int` is a `p`-integral modular form of weight `k`. -/
 theorem E_int_mem_pLocalIntModularForms (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
@@ -130,7 +132,7 @@ theorem coeff_E₄Rat_mem_pLocalInt (n : ℕ) : coeff n (E₄Rat : ℚ⟦X⟧) �
 noncomputable def E₄_int : (pLocalInt p)⟦X⟧ :=
   (E₄Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₄Rat_mem_pLocalInt
 
-@[simp]
+@[simp↓]
 theorem coeff_E₄_int (n : ℕ) : ((coeff n E₄_int : pLocalInt p) : ℚ) =
     if n = 0 then 1 else (240 : ℚ) * σ 3 n := by
   rw [E₄_int, coeff_toSubring, coeff_E₄Rat]
@@ -139,7 +141,8 @@ theorem coeff_E₄_int (n : ℕ) : ((coeff n E₄_int : pLocalInt p) : ℚ) =
 @[simp]
 theorem constantCoeff_E₄_int : constantCoeff (E₄_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
-  exact Subtype.ext <| by rw [coeff_E₄_int]; norm_num
+  ext
+  simp
 
 @[simp]
 theorem coeff_zero_E₄_int : coeff 0 (E₄_int (p := p)) = 1 :=
@@ -148,8 +151,7 @@ theorem coeff_zero_E₄_int : coeff 0 (E₄_int (p := p)) = 1 :=
 /-- The `q`-coefficient of `E₄_int` is `240`. -/
 @[simp]
 theorem coeff_one_E₄_int : coeff 1 (E₄_int (p := p)) = 240 := Subtype.ext <| by
-  rw [coeff_E₄_int]
-  norm_num
+  simp
 
 /-- Extending scalars to `ℚ` sends `E₄_int` to the rational `q`-expansion of `E₄Rat`. -/
 theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rationalQExpansion E₄Rat := by
@@ -177,7 +179,7 @@ theorem coeff_E₆Rat_mem_pLocalInt (n : ℕ) : coeff n (E₆Rat : ℚ⟦X⟧) �
 noncomputable def E₆_int : (pLocalInt p)⟦X⟧ :=
   (E₆Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₆Rat_mem_pLocalInt
 
-@[simp]
+@[simp↓]
 theorem coeff_E₆_int (n : ℕ) : ((coeff n E₆_int : pLocalInt p) : ℚ) =
     if n = 0 then 1 else -(504 : ℚ) * σ 5 n := by
   rw [E₆_int, coeff_toSubring, coeff_E₆Rat]
@@ -186,7 +188,8 @@ theorem coeff_E₆_int (n : ℕ) : ((coeff n E₆_int : pLocalInt p) : ℚ) =
 @[simp]
 theorem constantCoeff_E₆_int : constantCoeff (E₆_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
-  exact Subtype.ext <| by rw [coeff_E₆_int]; norm_num
+  ext
+  simp
 
 @[simp]
 theorem coeff_zero_E₆_int : coeff 0 (E₆_int (p := p)) = 1 :=
@@ -195,8 +198,7 @@ theorem coeff_zero_E₆_int : coeff 0 (E₆_int (p := p)) = 1 :=
 /-- The `q`-coefficient of `E₆_int` is `-504`. -/
 @[simp]
 theorem coeff_one_E₆_int : coeff 1 (E₆_int (p := p)) = -504 := Subtype.ext <| by
-  rw [coeff_E₆_int]
-  norm_num
+  simp
 
 /-- Extending scalars to `ℚ` sends `E₆_int` to the rational `q`-expansion of `E₆Rat`. -/
 theorem E₆_int_map :
