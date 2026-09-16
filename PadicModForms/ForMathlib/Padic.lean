@@ -108,8 +108,8 @@ exactly when its `p`-adic norm is `≤ (p ^ m)⁻¹`. -/
 theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
     ‖(x : ℚ_[p])‖ ≤ ((p : ℝ) ^ m)⁻¹ ↔ pLocalInt.toZModPow m x = 0 := by
   by_cases hm : m = 0
-  · simp only [hm, pow_zero, inv_one, norm_coe_le_one, true_iff]
-    exact hm ▸ pLocalInt.toZModPow_zero x
+  · rw [hm, pow_zero, inv_one]
+    simpa [↓norm_coe_le_one] using pLocalInt.toZModPow_zero x
   refine ⟨by simpa using mt (pow_lt_norm_coe (p := p)), fun hx ↦ ?_⟩
   obtain ⟨y, hy⟩ := pLocalInt.dvd_of_toZModPow_eq_zero hx
   have hcast : (x : ℚ_[p]) = p ^ m * y := by simp_all

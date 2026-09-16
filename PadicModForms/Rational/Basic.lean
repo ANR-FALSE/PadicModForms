@@ -57,7 +57,7 @@ theorem IsModularForm.mul (hg : g.isModularForm l) : (f * g).isModularForm (k + 
   obtain ⟨F, hF⟩ := hf
   obtain ⟨G, hG⟩ := hg
   exact ⟨F.mul G, by
-    rw [ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL, hF, hG, map_mul]⟩
+    simp [↓ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL, hF, hG]⟩
 
 include hg
 
@@ -117,7 +117,8 @@ public def rationalModularFormToComplex :
 
 /-- The `q`-expansion of the complex modular form attached to `f` is obtained from `f` by
 extending the coefficients to `ℂ`. -/
-@[simp]
+-- Apply before `map_add` or `map_smul` expands the scalar extension.
+@[simp↓]
 public theorem qExpansion_rationalModularFormToComplex :
     qExpansion 1 (rationalModularFormToComplex f) = (f : ℚ⟦X⟧).map (algebraMap ℚ ℂ) :=
   qExpansion_rationalModularFormToComplexAux f

@@ -112,6 +112,8 @@ the coefficient of `X ^ n` is the weighted homogeneous component of weight `n`
 def toWeightPolynomial : MvPolynomial σ R →+* Polynomial (MvPolynomial σ R) :=
   eval₂Hom (Polynomial.C.comp C) fun i ↦ Polynomial.C (X i) * Polynomial.X ^ w i
 
+-- Apply before `monomial_zero'` rewrites a constant monomial to `C`.
+@[simp↓]
 theorem toWeightPolynomial_monomial : toWeightPolynomial w (monomial d r) =
     Polynomial.monomial (weight w d) (monomial d r) := by
   rw [toWeightPolynomial, eval₂Hom_monomial, monomial_eq, ← Polynomial.C_mul_X_pow_eq_monomial,
@@ -122,7 +124,7 @@ theorem toWeightPolynomial_monomial : toWeightPolynomial w (monomial d r) =
 
 theorem eval_one_toWeightPolynomial : Polynomial.eval 1 (toWeightPolynomial w P) = P := by
   induction P using induction_on' with
-  | monomial d r => simp [toWeightPolynomial_monomial]
+  | monomial d r => simp
   | add p q hp hq => simp [hp, hq]
 
 /-- The coefficients of the auxiliary polynomial are the weighted homogeneous components. -/

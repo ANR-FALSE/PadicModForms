@@ -46,12 +46,13 @@ theorem coeff_E₂PAdic (n : ℕ) :
     coeff n E₂PAdic = if n = 0 then 1 else (-24 : ℚ_[p]) * σ 1 n := by
   by_cases hn : n = 0 <;> simp [hn]
 
-@[simp]
+-- Apply before simplification expands the scalar extension inside `E₄PAdic`.
+@[simp↓]
 theorem coeff_E₄PAdic (n : ℕ) :
     coeff n E₄PAdic = if n = 0 then 1 else (240 : ℚ_[p]) * σ 3 n := by
   by_cases hn : n = 0 <;> simp [hn, coeff_E₄Rat]
 
-@[simp]
+@[simp↓]
 theorem coeff_E₆PAdic (n : ℕ) :
     coeff n E₆PAdic = if n = 0 then 1 else -(504 : ℚ_[p]) * σ 5 n := by
   by_cases hn : n = 0 <;> simp [hn, coeff_E₆Rat]
