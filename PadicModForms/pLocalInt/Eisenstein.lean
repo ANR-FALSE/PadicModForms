@@ -106,7 +106,8 @@ theorem coeff_E₂_int (n : ℕ) : ((coeff n E₂_int : pLocalInt p) : ℚ) =
 @[simp]
 theorem constantCoeff_E₂_int : constantCoeff (E₂_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
-  exact Subtype.ext <| by simp
+  ext
+  simp
 
 @[simp]
 theorem coeff_zero_E₂_int : coeff 0 (E₂_int (p := p)) = 1 := by simp
