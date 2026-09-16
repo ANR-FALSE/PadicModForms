@@ -116,9 +116,10 @@ theorem E_p_add_one_mem_pLocalIntModularForms : E_p_add_one hp5 ∈ pLocalIntMod
 omit hp5
 
 /-- The nonconstant coefficients of `E₂_int`. -/
+@[simp]
 theorem coeff_E₂_int_of_ne_zero {n : ℕ} (hn : n ≠ 0) :
     coeff n E₂_int = -24 * (σ 1 n : pLocalInt p) :=
-  Subtype.ext <| by simp [coeff_E₂_int, hn]
+  Subtype.ext <| by simp [hn]
 
 include hp5
 
@@ -128,8 +129,7 @@ theorem E₂_int_map_toZMod :
     (E₂_int : (pLocalInt p)⟦X⟧).map pLocalInt.toZMod = (E_p_add_one hp5).map pLocalInt.toZMod := by
   ext n
   rcases eq_or_ne n 0 with rfl | hn
-  · have h0 : coeff 0 (E₂_int (p := p)) = 1 := Subtype.ext <| by rw [coeff_E₂_int]; norm_num
-    rw [coeff_map, coeff_map, E_p_add_one, coeff_E_int_zero, h0]
+  · rw [coeff_map, coeff_map, E_p_add_one, coeff_E_int_zero, coeff_zero_E₂_int]
   · simp only [coeff_map, coeff_E₂_int_of_ne_zero hn, E_p_add_one, coeff_E_int_of_ne_zero _ _ _ hn,
     map_mul, map_neg, map_natCast, map_ofNat, toZMod_inv_bernoulli_p_add_one hp5]
     simp [sigma_apply, show (24 : ZMod p) = 2 * 12 by norm_num]
