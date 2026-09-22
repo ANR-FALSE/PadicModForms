@@ -10,6 +10,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import PadicModForms.ForMathlib.Theta
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Data.Nat.Totient
+import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Tactic.NormNum.GCD
 import Mathlib.Tactic.Positivity.Finset
@@ -67,7 +68,15 @@ theorem natCast_sigma_mul_prime_left (hk : k ≠ 0) (n : ℕ) :
 modulo `p - 1`, every divisor of `n` being a unit modulo `p`. -/
 theorem natCast_sigma_eq_of_natCast_eq (hab : (a : ZMod (p - 1)) = b) {n : ℕ} (hn : ¬p ∣ n) :
     ((σ a n : ℕ) : ZMod p) = ((σ b n : ℕ) : ZMod p) := by
-  sorry
+  simp only [sigma_apply, Nat.cast_sum, Nat.cast_pow]
+  refine sum_congr rfl fun d hd ↦ ?_
+  have hd0 : (d : ZMod p) ≠ 0 := fun h ↦ hn (((ZMod.natCast_eq_zero_iff _ _).mp h).trans
+    (Nat.mem_divisors.mp hd).1)
+  have hfin : IsOfFinOrder (d : ZMod p) :=
+    isOfFinOrder_iff_pow_eq_one.mpr ⟨p - 1, by grind [(Fact.out : p.Prime).two_le],
+    ZMod.pow_card_sub_one_eq_one hd0⟩
+  exact hfin.pow_eq_pow_iff_modEq.mpr (((ZMod.natCast_eq_natCast_iff _ _ _).mp hab).of_dvd
+    (ZMod.orderOf_dvd_card_sub_one hd0))
 
 -- should go to Mathlib.NumberTheory.ArithmeticFunction.Misc
 /-- For `n` prime to `p` and `p - 1 ∣ a + 1`, one has `n ^ a σ₁(n) = σ_a(n)` in `ZMod p`: pair
@@ -99,7 +108,8 @@ theorem constantCoeff_sigmaSeries : constantCoeff (sigmaSeries R k) = 0 := by
 
 theorem map_sigmaSeries {S : Type*} [Semiring S] (φ : R →+* S) :
     (sigmaSeries R k).map φ = sigmaSeries S k := by
-  sorry
+  ext
+  simp
 
 /-- The prime-to-`p` part `∑_{p ∤ n} σ_k(n) qⁿ` of the divisor-sum power series. -/
 def sigmaSeriesPrimeTo : R⟦X⟧ := mk fun n ↦ if p ∣ n then 0 else (σ k n : R)
@@ -124,7 +134,9 @@ theorem sigmaSeries_sub_pow_prime (hk : k ≠ 0) :
 /-- The prime-to-`p` divisor-sum series only depends on its exponent modulo `p - 1`. -/
 theorem sigmaSeriesPrimeTo_eq_of_natCast_eq {a b : ℕ} (hab : (a : ZMod (p - 1)) = b) :
     sigmaSeriesPrimeTo (ZMod p) p a = sigmaSeriesPrimeTo (ZMod p) p b := by
-  sorry
+  ext n
+  by_cases hn : p ∣ n <;>
+  simp [hn, ArithmeticFunction.natCast_sigma_eq_of_natCast_eq hab]
 
 /-- Serre's series `ψ` as an iterate of `Θ`: for `p ≥ 3`,
 `Θ^[p - 2] (∑ σ₁(n) qⁿ) = ∑_{p ∤ n} σ_{p-2}(n) qⁿ`. The coefficients with `p ∣ n` are killed by a
