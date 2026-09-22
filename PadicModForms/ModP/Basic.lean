@@ -75,7 +75,7 @@ public theorem IsModPModularForm.smul (a : ZMod p) : (a • f).isModPModularForm
   · calc _ = a.val • f'.map (algebraMap _ ℚ) := by
           ext n
           exact map_nsmul (algebraMap (pLocalInt p) ℚ) a.val (coeff n f')
-      _ = (a.val : ℚ) • rationalQExpansion F := congrArg ((a.val : ℚ) • ·) hf'Q
+      _ = (a.val : ℚ) • rationalQExpansion F := congr((a.val : ℚ) • $hf'Q)
       _ = rationalQExpansion ((a.val : ℚ) • F) := by rw [map_smul]
   · ext n
     have hn := congrArg (coeff n) hf'p

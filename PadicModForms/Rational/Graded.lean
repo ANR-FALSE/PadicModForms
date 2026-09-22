@@ -167,7 +167,7 @@ theorem evalE₄E₆AtWeight_surjective : Function.Surjective (evalE₄E₆AtWei
   intro f
   obtain ⟨p, hp⟩ := evalE₄E₆_surjective (.of _ (k : ℤ) f)
   refine ⟨⟨_, weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
-  simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congrArg (fun F ↦ F k) hp
+  simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congr($hp k)
 
 /-- The complex modular forms of weight `k` are exactly the weighted homogeneous polynomials of
 weight `k` in `E₄` and `E₆`. -/
@@ -215,8 +215,8 @@ one. -/
 theorem complexMonomialBasis_eq :
     (complexMonomialBasis k) = rationalModularFormToComplex ∘ ratMonomial k := by
   funext d
-  have hsq := congrArg (fun F ↦ F k) (rationalModularFormsToComplex_evalE₄E₆Rat
-    (E₄E₆WeightedMonomialBasis k ℚ d : MvPolynomial (Fin 2) ℚ))
+  have hsq := congr($(rationalModularFormsToComplex_evalE₄E₆Rat
+    (E₄E₆WeightedMonomialBasis k ℚ d : MvPolynomial (Fin 2) ℚ)) k)
   simp only [rationalModularFormsToComplex_apply] at hsq
   rw [Function.comp_apply, ratMonomial, evalE₄E₆RatAtWeight_apply, hsq,
     coe_E₄E₆WeightedMonomialBasis, map_monomial, map_one, complexMonomialBasis_apply,
@@ -249,7 +249,7 @@ theorem evalE₄E₆Rat_eq_of_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
     apply rationalModularFormToComplex_injective
     have hsquare : rationalModularFormToComplex ((evalE₄E₆Rat p) j) =
         (evalE₄E₆ (p.1.map (algebraMap ℚ ℂ))) j := by
-      simpa using congrArg (fun F ↦ F j) (rationalModularFormsToComplex_evalE₄E₆Rat p)
+      simpa using congr($(rationalModularFormsToComplex_evalE₄E₆Rat p) j)
     rw [hsquare, map_zero, evalE₄E₆_eq_of_apply k _
       (isWeightedHomogeneous_map_rat p.property), DirectSum.of_eq_of_ne _ _ _ hj]
 

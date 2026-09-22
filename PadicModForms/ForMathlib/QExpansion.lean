@@ -86,7 +86,7 @@ private theorem levelOneCoeAddHom_periodic (F : ⨁ k, ModularForm 𝒮ℒ k) :
       simpa using (SlashInvariantFormClass.periodic_comp_ofComplex f one_mem_strictPeriods_SL)
   | add F G hF hG =>
       intro z
-      simpa using congrArg₂ (· + ·) (hF z) (hG z)
+      simpa using congr($(hF z) + $(hG z))
 
 private theorem levelOneCoeAddHom_holo (F : ⨁ k, ModularForm 𝒮ℒ k) :
     MDiff (levelOneCoeAddHom F) := by
@@ -145,7 +145,7 @@ private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k)
       · have hf : f = 0 := (FunLike.coe_zero_iff f).mp
           (ModularFormClass.levelOne_neg_weight_eq_zero (lt_of_not_ge hk) f)
         simp [levelOneWeightPolynomial, hf]
-  | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
+  | add F G hF hG => simpa using congr($hF + $hG)
 
 private theorem levelOneWeightPolynomial_coeff
     (F : ⨁ k, ModularForm 𝒮ℒ k) (z : ℍ) (hk : 0 ≤ k) :
@@ -160,7 +160,7 @@ private theorem levelOneWeightPolynomial_coeff
         · have hnat : j.toNat ≠ k.toNat := by lia
           simp [levelOneWeightPolynomial, hj, Polynomial.coeff_monomial, hnat]
         · simp [levelOneWeightPolynomial, hj]
-  | add F G hF hG => simpa using congrArg₂ (· + ·) hF hG
+  | add F G hF hG => simpa using congr($hF + $hG)
 
 /-- The matrix `!![0, -1; 1, n] ∈ SL(2, ℤ)`, whose `denom` at `z` is `z + n`. -/
 private def levelOneShift (n : ℕ) : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩

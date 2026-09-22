@@ -131,7 +131,7 @@ theorem discriminant_int_map_complex (hp : 5 ≤ p) :
     (by norm_num) ⟨2, rfl⟩, ERat_map_complex (by norm_num) ⟨3, rfl⟩]
 
 theorem qExpansion_discriminant_ne_zero : qExpansion 1 discriminant ≠ 0 := fun h ↦ by
-  simpa [discriminant_qExpansion_coeff_one] using congrArg (fun f ↦ coeff 1 f) h
+  simpa [discriminant_qExpansion_coeff_one] using congr(coeff 1 $h)
 
 /-- The rational modular form underlying `discriminant_int`. -/
 def discriminantRat (hp : 5 ≤ p) : rationalModularForms 12 :=
@@ -284,7 +284,7 @@ theorem evalE₄E₆IntAtWeight_surjective (hp : 5 ≤ p) {k : ℕ} :
     Function.Surjective (evalE₄E₆IntAtWeight (p := p) k) := fun f ↦ by
   obtain ⟨P, hP⟩ := evalE₄E₆Int_surjective hp (of _ (k : ℤ) f)
   exact ⟨⟨_, MvPolynomial.weightedHomogeneousComponent_isWeightedHomogeneous k P⟩, by
-    simpa [evalE₄E₆Int_component_eq] using congrArg (fun F ↦ F k) hP⟩
+    simpa [evalE₄E₆Int_component_eq] using congr($hP k)⟩
 
 theorem evalE₄E₆IntAtWeight_bijective (hp : 5 ≤ p) {k : ℕ} :
     Function.Bijective (evalE₄E₆IntAtWeight (p := p) k) :=

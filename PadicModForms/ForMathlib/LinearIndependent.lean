@@ -136,7 +136,7 @@ theorem linearIndependent_algebraMap_comp {X κ : Type*} (v : κ → X → A)
     simp [Basis.coord_apply, mul_comm]
   refine linearIndependent_iff'.2 fun s g hg k hk ↦ e.repr.injective (Finsupp.ext fun j ↦ ?_)
   have hrel : ∑ k ∈ s, e.repr (g k) j • v k = 0 := funext fun x ↦ by
-    simpa [H, mul_comm] using congrArg (fun w : X → B ↦ e.coord j (w x)) hg
+    simpa [H, mul_comm] using congr(e.coord j ($hg x))
   simpa using linearIndependent_iff'.1 hv s _ hrel k hk
 
 /-- A linearly independent family of power series over a field `A` remains linearly independent

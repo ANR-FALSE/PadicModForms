@@ -55,7 +55,7 @@ public theorem IsPLocalIntModularForm.smul : (a • f).isPLocalIntModularForm k 
   obtain ⟨F, hF⟩ := hf
   refine ⟨(a : ℚ) • F, ?_⟩
   ext n
-  simpa using congrArg ((a : ℚ) * ·) (congrArg (coeff n) hF)
+  simpa using congr(a * coeff n $hF)
 
 theorem IsPLocalIntModularForm.mul (hg : g.isPLocalIntModularForm l) :
     (f * g).isPLocalIntModularForm (k + l) := by

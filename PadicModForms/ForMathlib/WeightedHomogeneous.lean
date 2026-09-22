@@ -152,7 +152,7 @@ theorem toWeightPolynomial_eq_monomial_iff :
     toWeightPolynomial w P = Polynomial.monomial n P ↔ IsWeightedHomogeneous w P n := by
   refine ⟨fun h ↦ ?_, fun hP ↦ Polynomial.ext fun k ↦ ?_⟩
   · have hn : weightedHomogeneousComponent w n P = P := by
-      simpa [coeff_toWeightPolynomial] using congrArg (Polynomial.coeff · n) h
+      simpa [coeff_toWeightPolynomial] using congr(Polynomial.coeff $h n)
     exact hn ▸ weightedHomogeneousComponent_isWeightedHomogeneous ..
   · rw [coeff_toWeightPolynomial, Polynomial.coeff_monomial]
     split_ifs with hk
