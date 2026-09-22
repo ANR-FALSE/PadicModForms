@@ -25,7 +25,7 @@ There are no tests: correctness is the build. CI (`.github/workflows/lean_action
 bumped by `leanprover-community/mathlib-update-action` (manual `workflow_dispatch`), which opens a PR
 on success and an issue on failure.
 
-Toolchain: `lean-toolchain` (currently `v4.34.0-rc2`) — mathlib's revision in `lake-manifest.json`
+Toolchain: `lean-toolchain` (currently `v4.35.0-rc2`) — mathlib's revision in `lake-manifest.json`
 must match it, so never edit one without the other.
 
 ## Module system (important)
