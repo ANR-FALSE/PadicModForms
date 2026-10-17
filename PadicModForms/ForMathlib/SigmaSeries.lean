@@ -9,6 +9,7 @@ module
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import PadicModForms.ForMathlib.Theta
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
 # Divisor-sum power series
@@ -176,7 +177,14 @@ variable {p k} [Fact p.Prime]
 sums match by `ArithmeticFunction.natCast_sigma_mul_prime_left`. -/
 theorem sigmaSeries_sub_pow_prime (hk : k ≠ 0) :
     sigmaSeries (ZMod p) k - sigmaSeries (ZMod p) k ^ p = sigmaSeriesPrimeTo (ZMod p) p k := by
-  sorry
+  rw [← map_frobenius_expand p (Fact.out : p.Prime).ne_zero, ZMod.frobenius_zmod]
+  ext n
+  simp only [map_sub, coeff_map, RingHom.id_apply, coeff_expand, coeff_sigmaSeries,
+    coeff_sigmaSeriesPrimeTo]
+  split_ifs with hn
+  · obtain ⟨m, rfl⟩ := hn
+    simp [Nat.mul_div_cancel_left m (Fact.out : p.Prime).pos, natCast_sigma_mul_prime_left hk]
+  · exact sub_zero _
 
 /-- The prime-to-`p` divisor-sum series only depends on its exponent modulo `p - 1`. -/
 theorem sigmaSeriesPrimeTo_eq_of_natCast_eq {a b : ℕ} (hab : (a : ZMod (p - 1)) = b) :
@@ -192,6 +200,10 @@ single application of `Θ`, and the others are computed by
 theorem iterate_Θ_sigmaSeries_one (hp : 3 ≤ p) :
     (Θ (R := ZMod p))^[p - 2] (sigmaSeries (ZMod p) 1) =
       sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
-  sorry
+  ext n
+  rw [coeff_iterate_Θ, coeff_sigmaSeries, coeff_sigmaSeriesPrimeTo, nsmul_eq_mul, Nat.cast_pow]
+  split_ifs with hn
+  · rw [(ZMod.natCast_eq_zero_iff _ _).mpr hn, zero_pow (by lia), zero_mul]
+  · exact natCast_pow_mul_sigma_one ⟨1, by lia⟩ hn
 
 end PowerSeries
