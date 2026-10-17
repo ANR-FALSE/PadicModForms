@@ -9,6 +9,7 @@ module
 public import PadicModForms.ForMathlib.Theta
 
 import Mathlib.NumberTheory.ModularForms.RamanujanFormula
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
 import PadicModForms.ForMathlib.QExpansionDeriv
 public import PadicModForms.Rational.Eisenstein
 import Mathlib.CategoryTheory.Category.Init

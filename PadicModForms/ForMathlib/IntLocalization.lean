@@ -7,8 +7,10 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 import Mathlib.Data.ZMod.Units
+import Mathlib.Data.Nat.Prime.Int
+import Mathlib.RingTheory.Int.Basic
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Topology.Algebra.InfiniteSum.Order

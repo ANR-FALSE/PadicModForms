@@ -89,7 +89,7 @@ theorem IsWeightedHomogeneous.weightedHomogeneousComponent_mul [CommSemiring R] 
 /-- A polynomial which is weighted homogeneous of weighted degree `0`, for a weight function taking
 no zero value, is a constant. -/
 theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddCommMonoid M]
-    [PartialOrder M] [CanonicallyOrderedAdd M] [IsAddTorsionFree M] {w : σ → M}
+    [PartialOrder M] [CanonicallyOrderedAdd M] [HasUniqueDiv M] {w : σ → M}
     {φ : MvPolynomial σ R} (hw : ∀ i, w i ≠ 0) (hφ : IsWeightedHomogeneous w φ 0) :
     φ = C (φ.coeff 0) :=
   hφ.weightedHomogeneousComponent_same.symm.trans (weightedHomogeneousComponent_zero φ hw)
@@ -97,7 +97,7 @@ theorem IsWeightedHomogeneous.eq_C_coeff_zero [CommSemiring R] {M : Type*} [AddC
 /-- Over a field, a nonzero polynomial which is weighted homogeneous of weighted degree `0`, for a
 weight function taking no zero value, is a unit. -/
 theorem IsWeightedHomogeneous.isUnit_of_ne_zero [PartialOrder M] [CanonicallyOrderedAdd M]
-  [IsAddTorsionFree M] {w : σ → M} {φ : MvPolynomial σ K} (hw : ∀ i, w i ≠ 0)
+  [HasUniqueDiv M] {w : σ → M} {φ : MvPolynomial σ K} (hw : ∀ i, w i ≠ 0)
     (hφ : IsWeightedHomogeneous w φ 0) (hφ0 : φ ≠ 0) : IsUnit φ := by
   refine hφ.eq_C_coeff_zero hw ▸ (isUnit_iff_ne_zero.mpr fun h ↦ hφ0 ?_).map C
   rw [hφ.eq_C_coeff_zero hw, h, map_zero]
