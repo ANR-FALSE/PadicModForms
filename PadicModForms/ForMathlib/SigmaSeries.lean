@@ -8,12 +8,7 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import PadicModForms.ForMathlib.Theta
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Nat.Totient
 import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.Tactic.ContinuousFunctionalCalculus
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Divisor-sum power series
