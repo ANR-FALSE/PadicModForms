@@ -57,7 +57,14 @@ theorem twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP (hp : 5 ≤ p)
     12 * Θ (evalE₄E₆ModP F) = evalE₄E₆ModP
       ((n : MvPolynomial (Fin 2) (ZMod p)) * δModP (hasseInvPoly hp) * F +
         hasseInvPoly hp * δModP F) := by
-  sorry
+  rw [twelve_Θ_evalE₄E₆ModP hF, map_add, map_mul, map_mul, map_mul, map_natCast,
+    evalE₄E₆ModP_δModP_hasseInvPoly hp, evalE₄E₆ModP_hasseInvPoly hp, one_mul, mul_assoc]
+
+/-- `12` is invertible modulo `p` for `p ≥ 5`. -/
+theorem twelve_ne_zero (hp : 5 ≤ p) : (12 : ZMod p) ≠ 0 := by
+  rw [show (12 : ZMod p) = ((4 * 3 : ℕ) : ZMod p) by norm_num, Ne, ZMod.natCast_eq_zero_iff,
+    (Fact.out : p.Prime).dvd_mul]
+  rintro (h | h) <;> exact absurd (Nat.le_of_dvd (by norm_num) h) (by lia)
 
 /-- `Θ` sends mod-`p` modular forms to mod-`p` modular forms, raising the weight by `p + 1`:
 `Θ (ev F)` is the evaluation of `12⁻¹ • (n (δA) F + A (δF))`, which is weighted homogeneous of
@@ -66,7 +73,17 @@ theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G (n + (p + 1)) ∧
       evalE₄E₆ModP G = Θ (evalE₄E₆ModP F) := by
-  sorry
+  refine ⟨(12⁻¹ : ZMod p) • ((n : MvPolynomial (Fin 2) (ZMod p)) * δModP (hasseInvPoly hp) * F +
+    hasseInvPoly hp * δModP F), ?_, ?_⟩
+  · refine (weightedHomogeneousSubmodule _ _ _).smul_mem _ (IsWeightedHomogeneous.add ?_ ?_)
+    · have := ((isWeightedHomogeneous_C E₄E₆Weights (n : ZMod p)).mul
+        (isWeightedHomogeneous_δModP_hasseInvPoly hp)).mul hF
+      rwa [map_natCast C, show 0 + (p + 1) + n = n + (p + 1) by lia] at this
+    · have := (hasseInvPoly_isWeightedHomogeneous hp).mul (isWeightedHomogeneous_δModP hF)
+      rwa [show p - 1 + (n + 2) = n + (p + 1) by lia] at this
+  · rw [map_smul, ← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hF, PowerSeries.smul_eq_C_mul,
+      ← mul_assoc, ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← map_mul,
+      inv_mul_cancel₀ (twelve_ne_zero hp), map_one, one_mul]
 
 /-- **The theta filtration bound**: `fil (Θ f) ≤ fil f + p + 1`. -/
 theorem modPFiltration_Θ_le (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
