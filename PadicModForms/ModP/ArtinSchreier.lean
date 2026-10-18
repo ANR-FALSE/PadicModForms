@@ -57,7 +57,14 @@ theorem E₂ModP_eq_one_sub_sigmaSeries : E₂ModP = 1 - 24 * sigmaSeries (ZMod 
 being killed by the first application of `Θ`. -/
 theorem iterate_Θ_E₂ModP (hp : 5 ≤ p) :
     (Θ)^[p - 2] E₂ModP = -24 * sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
-  sorry
+  rw [← iterate_Θ_sigmaSeries_one (by lia), E₂ModP_eq_one_sub_sigmaSeries,
+    ← map_ofNat PowerSeries.C]
+  ext n
+  simp only [coeff_iterate_Θ, map_sub, PowerSeries.coeff_one, neg_mul, map_neg,
+    PowerSeries.coeff_C_mul, nsmul_eq_mul, Nat.cast_pow]
+  split_ifs with hn
+  · simp [hn, zero_pow (show p - 2 ≠ 0 by lia)]
+  · ring
 
 /-- `ψ` is a degree-zero mod-`p` modular form: `Θ^[p - 2] E₂` has a homogeneous representative of
 weight `(p - 1)(p + 1)`, which is divisible by `p - 1`, and `-24` is invertible. -/
@@ -78,7 +85,11 @@ multiple of `p - 1`, `φ_h - φ_h ^ p = ψ`. This combines
 theorem sigmaSeries_sub_pow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) :
     sigmaSeries (ZMod p) (h - 1) - sigmaSeries (ZMod p) (h - 1) ^ p =
       sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
-  sorry
+  have hph : p - 1 ≤ h := Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd
+  rw [sigmaSeries_sub_pow_prime (by grind)]
+  refine sigmaSeriesPrimeTo_eq_of_natCast_eq ?_
+  rw [show p - 2 = p - 1 - 1 by lia, Nat.cast_sub (by lia), Nat.cast_sub (by lia),
+    ZMod.natCast_self, (ZMod.natCast_eq_zero_iff _ _).mpr hhd]
 
 /-- **The forbidden series**: `φ_h = ∑ σ_{h-1}(n) qⁿ` is not a degree-zero mod-`p` modular form.
 Were it one, its filtration `a` would be positive because the coefficient of `q` in `φ_h` is `1`,
