@@ -8,6 +8,7 @@ module
 
 public import PadicModForms.ModP.Filtration
 public import PadicModForms.ModP.Differential
+import PadicModForms.ModP.Squarefree
 
 /-!
 # `Θ` and the filtration
@@ -60,6 +61,19 @@ theorem twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP (hp : 5 ≤ p)
   rw [twelve_Θ_evalE₄E₆ModP hF, map_add, map_mul, map_mul, map_mul, map_natCast,
     evalE₄E₆ModP_δModP_hasseInvPoly hp, evalE₄E₆ModP_hasseInvPoly hp, one_mul, mul_assoc]
 
+/-- The polynomial `n (δA) F + A (δF)` of `twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP` is weighted
+homogeneous of weight `n + (p + 1)`: `δA` has weight `p + 1` and `δ` raises the weight by `2`. -/
+theorem isWeightedHomogeneous_δModP_hasseInvPoly_mul_add (hp : 5 ≤ p)
+    (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
+    IsWeightedHomogeneous E₄E₆Weights ((n : MvPolynomial (Fin 2) (ZMod p)) *
+      δModP (hasseInvPoly hp) * F + hasseInvPoly hp * δModP F) (n + (p + 1)) := by
+  refine IsWeightedHomogeneous.add ?_ ?_
+  · have := ((isWeightedHomogeneous_C E₄E₆Weights (n : ZMod p)).mul
+      (isWeightedHomogeneous_δModP_hasseInvPoly hp)).mul hF
+    rwa [map_natCast C, show 0 + (p + 1) + n = n + (p + 1) by lia] at this
+  · have := (hasseInvPoly_isWeightedHomogeneous hp).mul (isWeightedHomogeneous_δModP hF)
+    rwa [show p - 1 + (n + 2) = n + (p + 1) by lia] at this
+
 /-- `12` is invertible modulo `p` for `p ≥ 5`. -/
 theorem twelve_ne_zero (hp : 5 ≤ p) : (12 : ZMod p) ≠ 0 := by
   rw [show (12 : ZMod p) = ((4 * 3 : ℕ) : ZMod p) by norm_num, Ne, ZMod.natCast_eq_zero_iff,
@@ -74,21 +88,18 @@ theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G (n + (p + 1)) ∧
       evalE₄E₆ModP G = Θ (evalE₄E₆ModP F) := by
   refine ⟨(12⁻¹ : ZMod p) • ((n : MvPolynomial (Fin 2) (ZMod p)) * δModP (hasseInvPoly hp) * F +
-    hasseInvPoly hp * δModP F), ?_, ?_⟩
-  · refine (weightedHomogeneousSubmodule _ _ _).smul_mem _ (IsWeightedHomogeneous.add ?_ ?_)
-    · have := ((isWeightedHomogeneous_C E₄E₆Weights (n : ZMod p)).mul
-        (isWeightedHomogeneous_δModP_hasseInvPoly hp)).mul hF
-      rwa [map_natCast C, show 0 + (p + 1) + n = n + (p + 1) by lia] at this
-    · have := (hasseInvPoly_isWeightedHomogeneous hp).mul (isWeightedHomogeneous_δModP hF)
-      rwa [show p - 1 + (n + 2) = n + (p + 1) by lia] at this
-  · rw [map_smul, ← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hF, PowerSeries.smul_eq_C_mul,
-      ← mul_assoc, ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← map_mul,
-      inv_mul_cancel₀ (twelve_ne_zero hp), map_one, one_mul]
+    hasseInvPoly hp * δModP F), (weightedHomogeneousSubmodule _ _ _).smul_mem _
+      (isWeightedHomogeneous_δModP_hasseInvPoly_mul_add hp hF), ?_⟩
+  rw [map_smul, ← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hF, PowerSeries.smul_eq_C_mul,
+    ← mul_assoc, ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← map_mul,
+    inv_mul_cancel₀ (twelve_ne_zero hp), map_one, one_mul]
 
 /-- **The theta filtration bound**: `fil (Θ f) ≤ fil f + p + 1`. -/
 theorem modPFiltration_Θ_le (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     modPFiltration p (Θ (evalE₄E₆ModP F)) ≤ modPFiltration p (evalE₄E₆ModP F) + (p + 1) := by
-  sorry
+  obtain ⟨G, hG, hGF⟩ := exists_isWeightedHomogeneous_modPFiltration hF
+  obtain ⟨H, hH, hHG⟩ := exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP hp hG
+  exact (hGF ▸ hHG) ▸ modPFiltration_le hH
 
 /-- **The sharp theta filtration formula**: if `p` does not divide `fil f` then
 `fil (Θ f) = fil f + p + 1`. For a reduced representative `F` of weight `a = fil f`, if `A`
@@ -97,7 +108,16 @@ divided `a (δA) F + A (δF)` it would divide `a (δA) F`, hence `F`, since `a` 
 theorem modPFiltration_Θ_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (h0 : evalE₄E₆ModP F ≠ 0) (hpa : ¬p ∣ modPFiltration p (evalE₄E₆ModP F)) :
     modPFiltration p (Θ (evalE₄E₆ModP F)) = modPFiltration p (evalE₄E₆ModP F) + (p + 1) := by
-  sorry
+  obtain ⟨G, hG, hGF, hGA⟩ := exists_isWeightedHomogeneous_not_dvd hp hF h0
+  have ha : IsUnit (modPFiltration p (evalE₄E₆ModP F) : MvPolynomial (Fin 2) (ZMod p)) := by
+    simpa using (isUnit_iff_ne_zero.mpr fun h ↦ hpa ((ZMod.natCast_eq_zero_iff _ _).1 h)).map C
+  have key := modPFiltration_eq_of_not_dvd hp
+    (isWeightedHomogeneous_δModP_hasseInvPoly_mul_add hp hG) fun h ↦ hGA
+      ((ha.isRelPrime_right.mul_right (isRelPrime_hasseInvPoly_δModP hp)).dvd_of_dvd_mul_left
+        ((dvd_add_left (dvd_mul_right _ _)).1 h))
+  rwa [← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hG, hGF,
+    ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← PowerSeries.smul_eq_C_mul,
+    modPFiltration_smul (twelve_ne_zero hp)] at key
 
 /-! ### Iterating `Θ` on `E₂` -/
 
@@ -107,12 +127,21 @@ representative `δModP (hasseInvPoly hp)` of `E₂ModP` through
 theorem exists_isWeightedHomogeneous_iterate_Θ_E₂ModP (hp : 5 ≤ p) (j : ℕ) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G ((j + 1) * (p + 1)) ∧
       evalE₄E₆ModP G = (Θ (R := ZMod p))^[j] E₂ModP := by
-  sorry
+  induction j with
+  | zero =>
+    exact ⟨_, by simpa using isWeightedHomogeneous_δModP_hasseInvPoly hp,
+      evalE₄E₆ModP_δModP_hasseInvPoly hp⟩
+  | succ j ih =>
+    obtain ⟨G, hG, hGE⟩ := ih
+    obtain ⟨H, hH, hHG⟩ := exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP hp hG
+    exact ⟨H, by grind, by rw [hHG, hGE, Function.iterate_succ_apply']⟩
 
 /-- The filtration of `E₂ = Ẽ_{p+1}` is exactly `p + 1`: its representative
 `δModP (hasseInvPoly hp)` is relatively prime to the Hasse invariant, hence reduced. -/
 theorem modPFiltration_E₂ModP (hp : 5 ≤ p) : modPFiltration p (E₂ModP (p := p)) = p + 1 := by
-  sorry
+  rw [← evalE₄E₆ModP_δModP_hasseInvPoly hp]
+  exact modPFiltration_eq_of_not_dvd hp (isWeightedHomogeneous_δModP_hasseInvPoly hp) fun h ↦
+    not_isUnit_hasseInvPoly hp (isRelPrime_hasseInvPoly_δModP hp dvd_rfl h)
 
 /-- **The filtration of the iterates of `Θ` on `E₂`**: `fil (Θ^[j] E₂) = (j + 1)(p + 1)` for
 `j ≤ p - 2`. In this range `(j + 1)(p + 1) ≡ j + 1 ≢ 0 mod p`, so the sharp theta formula applies
