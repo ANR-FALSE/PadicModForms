@@ -9,6 +9,8 @@ module
 public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.PAdic.Basic
 public import PadicModForms.pLocalInt.Basic
+import PadicModForms.ForMathlib.PowerSeries
+import PadicModForms.ModP.Congruences
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
@@ -52,7 +54,7 @@ forms, contradicting `ModularForm.sigmaSeries_notMem_modPWeightZeroForms`. Hence
 
 @[expose] public noncomputable section
 
-open EisensteinSeries PowerSeries PowerSeries.Padic
+open EisensteinSeries PowerSeries PowerSeries.Padic pLocalInt
 
 namespace ModularForm
 
@@ -68,10 +70,40 @@ theorem exists_map_toZMod_eq_mul_sigmaSeries (hp : 5 ≤ p) {k h : ℕ}
     (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) (hr : padicValNat p h + 1 < m)
     {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
     (hf' : f' ∈ pLocalIntModularForms p (k + h))
-    (hcong : f.map (pLocalInt.toZModPow m) = f'.map (pLocalInt.toZModPow m)) :
+    (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     ∃ g : (pLocalInt p)⟦X⟧, g ∈ pLocalIntModularForms p (k + h) ∧
-      g.map pLocalInt.toZMod = f.map pLocalInt.toZMod * sigmaSeries (ZMod p) (h - 1) := by
-  sorry
+      g.map toZMod = f.map toZMod * sigmaSeries (ZMod p) (h - 1) := by
+  have hh3 : 3 ≤ h := by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]
+  have hh2 : Even h := even_iff_two_dvd.2
+    ((even_iff_two_dvd.1 ((Fact.out : p.Prime).even_sub_one (by lia))).trans hhd)
+  obtain ⟨u, hu⟩ := E_int_sub_one_eq_unit_smul_sigmaSeries hp hh3 hh2 hhd
+  set r := padicValNat p h + 1 with hr_def
+  have hpr : (p : pLocalInt p) ^ r ≠ 0 := pow_ne_zero _ natCast_ne_zero
+  set E := E_int hh3 hh2 (inv_bernoulli_mem_pLocalInt hh3 hh2 hhd) with hE_def
+  have hE : E ∈ pLocalIntModularForms p h := E_int_mem_pLocalIntModularForms hh3 hh2 _
+  -- `f - f' = p ^ (r + 1) R`, since `r + 1 ≤ m`.
+  obtain ⟨R, hR⟩ : ∃ R : (pLocalInt p)⟦X⟧, (p : pLocalInt p) ^ (r + 1) • R = f - f' :=
+    exists_smul_eq_of_forall_dvd_coeff fun n ↦ (pow_dvd_pow _ hr).trans
+      (dvd_of_toZModPow_eq_zero (by rw [← coeff_map, map_sub, hcong, sub_self, map_zero]))
+  -- `f Eₕ - f' = p ^ r (p R + u f Φₕ)`.
+  have hD : f * E - f' = (p : pLocalInt p) ^ r •
+      ((p : pLocalInt p) • R + (u : pLocalInt p) • (f * sigmaSeries (pLocalInt p) (h - 1))) := by
+    simp [show f * E - f' = (f - f') + f * (E - 1) by ring, hu, ← hR, pow_succ, mul_smul]
+  have hDmem : f * E - f' ∈ pLocalIntModularForms p (k + h) :=
+    sub_mem (SetLike.mul_mem_graded hf hE) hf'
+  -- Divide by `p ^ r` inside the `p`-integral modular forms.
+  obtain ⟨D₀, hD₀mem, hD₀⟩ := IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff
+    (mem_pLocalIntModularForms.1 hDmem) hpr fun n ↦ by rw [hD, coeff_smul]; exact dvd_mul_right _ _
+  suffices hD₀' : D₀ = (p : pLocalInt p) • R +
+      (u : pLocalInt p) • (f * sigmaSeries (pLocalInt p) (h - 1)) by
+    -- `g = u⁻¹ D₀ = u⁻¹ p R + f Φₕ` reduces to `f̄ φₕ`.
+    refine ⟨((u⁻¹ : (pLocalInt p)ˣ) : pLocalInt p) • D₀, Submodule.smul_mem _ _ hD₀mem, ?_⟩
+    rw [hD₀', smul_add, smul_smul, smul_smul]
+    simp [smul_eq_C_mul, map_sigmaSeries]
+  ext n : 1
+  have := congr(coeff n $(hD₀.trans hD))
+  rw [coeff_smul, coeff_smul] at this
+  exact mul_left_cancel₀ hpr this
 
 /-- **The core of Serre's theorem**: two `p`-integral forms of weights `k` and `k + h`, with `h` a
 positive multiple of `p - 1`, congruent modulo `p ^ m` with nonzero common reduction, satisfy
@@ -81,10 +113,8 @@ Artin–Schreier identity, hence a degree-zero form by normality — contradicti
 `sigmaSeries_notMem_modPWeightZeroForms`. -/
 theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) {k h : ℕ} (hh0 : h ≠ 0) (hhd : p - 1 ∣ h)
     {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
-    (hf' : f' ∈ pLocalIntModularForms p (k + h))
-    (h0 : f.map pLocalInt.toZMod ≠ 0)
-    (hcong : f.map (pLocalInt.toZModPow m) = f'.map (pLocalInt.toZModPow m)) :
-    p ^ (m - 1) ∣ h := by
+    (hf' : f' ∈ pLocalIntModularForms p (k + h)) (h0 : f.map toZMod ≠ 0)
+    (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) : p ^ (m - 1) ∣ h := by
   sorry
 
 /-- **Serre's theorem on congruences of weights, normalized form**: two `p`-integral level-one
@@ -95,9 +125,8 @@ large aligns the weights as in `pow_dvd_of_map_toZModPow_eq` without changing th
 class of the weight difference modulo `(p - 1) p ^ (m - 1)`. -/
 theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k k' : ℕ}
     {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
-    (hf' : f' ∈ pLocalIntModularForms p k')
-    (h0 : f.map pLocalInt.toZMod ≠ 0)
-    (hcong : f.map (pLocalInt.toZModPow m) = f'.map (pLocalInt.toZModPow m)) :
+    (hf' : f' ∈ pLocalIntModularForms p k') (h0 : f.map toZMod ≠ 0)
+    (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     (k : ZMod ((p - 1) * p ^ (m - 1))) = (k' : ZMod ((p - 1) * p ^ (m - 1))) := by
   sorry
 

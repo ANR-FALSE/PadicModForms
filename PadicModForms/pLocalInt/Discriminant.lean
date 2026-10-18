@@ -9,6 +9,7 @@ module
 public import PadicModForms.pLocalInt.Graded
 public import Mathlib.NumberTheory.ModularForms.Discriminant
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
+import PadicModForms.ForMathlib.NatPrime
 import PadicModForms.ForMathlib.PowerSeries
 
 /-!
@@ -42,9 +43,7 @@ namespace ModularForm
 /-! ### Inverting `1728` -/
 
 theorem not_dvd_1728 (hp : 5 ≤ p) : ¬ p ∣ 1728 := by
-  intro h
-  have Hfact : Nat.primeFactors 1728 = {2, 3} := by decide +kernel
-  grind [(Nat.mem_primeFactors (n := 1728)).2 ⟨Fact.out, h, by decide⟩]
+  simpa using (Fact.out : p.Prime).not_dvd_two_pow_mul_three_pow hp 6 3
 
 theorem inv_1728_mem_pLocalInt (hp : 5 ≤ p) : (1728 : ℚ)⁻¹ ∈ pLocalInt p := by
   simp [mem_pLocalInt_iff, not_dvd_1728 hp]
@@ -52,7 +51,7 @@ theorem inv_1728_mem_pLocalInt (hp : 5 ≤ p) : (1728 : ℚ)⁻¹ ∈ pLocalInt 
 /-- For `p ≥ 5` the element `1728` is a unit of `pLocalInt p`. This is the whole reason the
 modular discriminant is `p`-integral. -/
 theorem isUnit_1728 (hp : 5 ≤ p) : IsUnit (1728 : pLocalInt p) :=
-  .of_mul_eq_one ⟨_, inv_1728_mem_pLocalInt hp⟩ <| Subtype.ext <| by norm_num
+  pLocalInt.isUnit_ofNat 1728 (not_dvd_1728 hp)
 
 /-- The inverse of `1728`, as an element of `ℚ`. -/
 @[simp]

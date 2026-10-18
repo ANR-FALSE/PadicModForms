@@ -8,7 +8,6 @@ module
 
 public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.ModP.Eisenstein
-public import PadicModForms.ForMathlib.Bernoulli
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
@@ -154,6 +153,37 @@ theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (h
     (hpk : p - 1 ∣ k) :
     ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
       ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by
-  sorry
+  have hp0 : (p : ℚ) ≠ 0 := Nat.cast_ne_zero.2 Hp.out.ne_zero
+  have hB0 : bernoulli k ≠ 0 := bernoulli_ne_zero_of_even hk hk2
+  -- Write `k = p ^ v * k'` with `p ∤ k'`.
+  obtain ⟨v, hv⟩ : ∃ v, padicValNat p k = v := ⟨_, rfl⟩
+  obtain ⟨k', hk'⟩ := (padicValNat_dvd_iff_le (p := p) (by lia : k ≠ 0)).2 (le_refl _)
+  rw [hv] at hk'
+  have hpk' : ¬p ∣ k' := fun ⟨c, hc⟩ ↦ pow_succ_padicValNat_not_dvd (p := p) (by lia : k ≠ 0)
+    ⟨c, by grind⟩
+  have hp2k' : ¬p ∣ 2 * k' := fun h ↦ (Hp.out.dvd_mul.1 h).elim
+    (fun h2 ↦ absurd (Nat.le_of_dvd two_pos h2) (by lia)) hpk'
+  -- By von Staudt–Clausen, `β = p Bₖ` is `p`-integral and reduces to `-1`, so it is a unit.
+  have hβ : p * bernoulli k ∈ pLocalInt p := by
+    grind [sub_mem (mul_mem (natCast_mem (pLocalInt p) p)
+      (bernoulli_add_inv_mem_pLocalInt (by lia) hk2 hpk)) (one_mem _)]
+  have hβu : IsUnit (⟨_, hβ⟩ : pLocalInt p) := pLocalInt.isUnit_iff_toZMod_ne_zero.2 <| by
+    suffices (⟨_, hβ⟩ : pLocalInt p) =
+        (p : pLocalInt p) * ⟨_, bernoulli_add_inv_mem_pLocalInt (by lia) hk2 hpk⟩ - 1 by
+      simp [this]
+    ext
+    simp [mul_add, mul_inv_cancel₀ hp0]
+  -- The unit is `u = -2 k' / (p Bₖ)`, where `-2 k'` is a unit since `p ∤ 2 k'`.
+  have : IsUnit (-(2 * k') : pLocalInt p) := by simpa using (pLocalInt.isUnit_natCast hp2k').neg
+  refine ⟨this.unit * hβu.unit⁻¹, ?_⟩
+  -- The scalar identity `-2k Bₖ⁻¹ = p ^ (v + 1) u`.
+  have key : (-(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+      (p : pLocalInt p) ^ (v + 1) * (this.unit * hβu.unit⁻¹ : (pLocalInt p)ˣ) := by
+    ext
+    push_cast [IsUnit.unit_spec, pLocalInt.coe_units_inv]
+    grind [show (k : ℚ) = p ^ v * k' by exact_mod_cast hk']
+  ext n
+  rcases eq_or_ne n 0 with rfl | hn <;>
+  · simp_all [coeff_E_int_of_ne_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)]
 
 end EisensteinSeries

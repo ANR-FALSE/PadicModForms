@@ -8,7 +8,6 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import PadicModForms.ForMathlib.Theta
-import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!

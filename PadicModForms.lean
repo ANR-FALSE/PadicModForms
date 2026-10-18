@@ -9,6 +9,7 @@ public import PadicModForms.ForMathlib.Finsupp
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.ForMathlib.LinearIndependent
 public import PadicModForms.ForMathlib.MvPolynomial
+public import PadicModForms.ForMathlib.NatPrime
 public import PadicModForms.ForMathlib.Padic
 public import PadicModForms.ForMathlib.PowerSeries
 public import PadicModForms.ForMathlib.PowerSeriesTopology

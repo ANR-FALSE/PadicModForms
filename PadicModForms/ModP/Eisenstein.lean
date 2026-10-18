@@ -6,7 +6,7 @@ Authors: Riccardo Brasca
 
 module
 
-public import PadicModForms.ForMathlib.Bernoulli
+public import PadicModForms.ForMathlib.Bernoulli -- shake: keep
 public import PadicModForms.ModP.Basic
 public import PadicModForms.pLocalInt.Eisenstein
 import Mathlib.Analysis.SpecialFunctions.Bernstein

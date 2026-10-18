@@ -8,6 +8,7 @@ module
 
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.Rational.Basic
+import PadicModForms.ForMathlib.NatPrime
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -33,12 +34,9 @@ variable {p : ℕ} [Fact p.Prime]
 This covers the denominators `12` and `24` of the theory of modular forms. -/
 theorem ZMod.ne_zero_of_eq_two_pow_mul_three_pow (hp : 5 ≤ p) (a b : ℕ) {x : ZMod p}
     (hx : x = 2 ^ a * 3 ^ b) : x ≠ 0 := by
-  have hprime : p.Prime := Fact.out
-  have : ¬p ∣ 2 ^ a * 3 ^ b := by
-    rw [hprime.dvd_mul]
-    rintro (h | h) <;> have := Nat.le_of_dvd (by norm_num) (hprime.dvd_of_dvd_pow h) <;> lia
   rw [hx]
-  exact_mod_cast (ZMod.natCast_eq_zero_iff _ _).not.2 this
+  exact_mod_cast (ZMod.natCast_eq_zero_iff _ _).not.2
+    ((Fact.out : p.Prime).not_dvd_two_pow_mul_three_pow hp a b)
 
 namespace PowerSeries
 
