@@ -78,7 +78,7 @@ theorem isWeightedHomogeneous_δModP_hasseInvPoly_mul_add (hp : 5 ≤ p)
 theorem twelve_ne_zero (hp : 5 ≤ p) : (12 : ZMod p) ≠ 0 := by
   rw [show (12 : ZMod p) = ((4 * 3 : ℕ) : ZMod p) by norm_num, Ne, ZMod.natCast_eq_zero_iff,
     (Fact.out : p.Prime).dvd_mul]
-  rintro (h | h) <;> exact absurd (Nat.le_of_dvd (by norm_num) h) (by lia)
+  rintro (h | h) <;> grind [Nat.le_of_dvd (by norm_num) h]
 
 /-- `Θ` sends mod-`p` modular forms to mod-`p` modular forms, raising the weight by `p + 1`:
 `Θ (ev F)` is the evaluation of `12⁻¹ • (n (δA) F + A (δF))`, which is weighted homogeneous of

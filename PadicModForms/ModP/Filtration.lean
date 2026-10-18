@@ -148,8 +148,8 @@ theorem modPFiltration_eq_of_not_dvd (hp : 5 ≤ p)
   rcases t with _ | t
   · lia
   · have hn : n = modPFiltration p (evalE₄E₆ModP F) + (t + 1) * (p - 1) := by rw [mul_comm]; lia
-    exact absurd (eq_hasseInvPoly_pow_mul_of_evalE₄E₆ModP_eq hp (hn ▸ hF) hG hGF.symm ▸
-      dvd_mul_of_dvd_left (dvd_pow_self _ t.succ_ne_zero) G) hA
+    grind [eq_hasseInvPoly_pow_mul_of_evalE₄E₆ModP_eq hp (hn ▸ hF) hG hGF.symm ▸
+      dvd_mul_of_dvd_left (dvd_pow_self _ t.succ_ne_zero) G]
 
 /-- Every nonzero mod-`p` modular form has a *reduced* representative: weighted homogeneous of
 weight the filtration and not divisible by the Hasse invariant. Dividing a representative of

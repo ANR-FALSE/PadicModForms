@@ -45,7 +45,7 @@ theorem DirectSum.mem_of_mul_mem_of_right_mem [IsDomain A] {i j : ι} {a b : A} 
   have : (a - decompose 𝒜 a i) * b = 0 := by rw [sub_mul, key, sub_self]
   obtain h0 | h0 := mul_eq_zero.mp this
   · exact sub_eq_zero.mp h0 ▸ SetLike.coe_mem _
-  · exact absurd h0 hb0
+  · grind
 
 end
 

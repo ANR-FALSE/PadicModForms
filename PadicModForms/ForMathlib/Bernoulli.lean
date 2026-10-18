@@ -207,7 +207,7 @@ theorem bernoulli_p_add_one_mem_pLocalInt (hp5 : 5 ≤ p) : bernoulli (p + 1) �
     exact mul_mem this (add_mem (one_mem _) (mul_mem (natCast_mem _ _) hwmem))
   refine inv_natCast_mem_pLocalInt (by norm_num) fun (h : p ∣ 4 * 3) ↦ ?_
   rcases (Nat.Prime.dvd_mul hp.out).mp h with h' | h' <;>
-  exact absurd (le_of_dvd (by norm_num) h') (by lia)
+  grind [le_of_dvd (by norm_num) h']
 
 /-- Kummer's congruence in weight `p + 1`: `12 B_{p+1} ≡ 1` modulo `p`. -/
 theorem toZMod_bernoulli_p_add_one_mul_twelve (hp5 : 5 ≤ p) :

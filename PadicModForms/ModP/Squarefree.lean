@@ -79,7 +79,7 @@ theorem exists_isWeightedHomogeneous_of_irreducible_dvd (hp : 5 ≤ p) (hF : Irr
     (hasseInvPoly_ne_zero hp) hF hFA
   refine ⟨c, ?_, hc⟩
   rcases Nat.eq_zero_or_pos c with rfl | hc0
-  · exact absurd (hc.isUnit_of_ne_zero E₄E₆Weights_ne_zero hF.ne_zero) hF.not_isUnit
+  · grind [hc.isUnit_of_ne_zero E₄E₆Weights_ne_zero hF.ne_zero, hF.not_isUnit]
   · exact hc0
 
 /-- The weight of a weighted homogeneous factor of the Hasse invariant is at most `p - 1`, the
@@ -102,7 +102,7 @@ theorem le_of_pow_dvd_hasseInvPoly (hp : 5 ≤ p) (hF : Irreducible F)
 private theorem isUnit_natCast (hk0 : 0 < k) (hkp : k < p) :
     IsUnit (k : MvPolynomial (Fin 2) (ZMod p)) := by
   have : (k : ZMod p) ≠ 0 := fun h ↦
-    absurd (Nat.le_of_dvd hk0 ((ZMod.natCast_eq_zero_iff _ _).1 h)) (by lia)
+    by grind [Nat.le_of_dvd hk0 ((ZMod.natCast_eq_zero_iff ..).1 h)]
   simpa using (isUnit_iff_ne_zero.mpr this).map C
 
 private theorem isUnit_natCast_of_pow_dvd (hp : 5 ≤ p) (hF : Irreducible F)
@@ -204,7 +204,7 @@ private theorem pderiv_eq_zero_of_dvd {i : Fin 2} (hr : IsWeightedHomogeneous E�
   · exact hr.pderiv_eq_zero hlt
   · obtain ⟨m, hm⟩ := Nat.exists_eq_add_of_le hle
     by_contra h0
-    exact absurd (hr.weight_le_of_dvd (hr.pderiv (n' := m) (by lia)) h0 h) (by lia)
+    grind [hr.weight_le_of_dvd (hr.pderiv (n' := m) (by lia)) h0 h]
 
 /-- **Step 3**: an irreducible factor of the Hasse invariant killed by `δ` divides `X₀³ - X₁²`,
 the polynomial whose evaluation is `1728 Δ`. -/

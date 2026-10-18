@@ -146,8 +146,7 @@ private theorem coeff_monicOfCoeffs_of_lt (d : ℕ) (c : ℕ → MvPolynomial (F
     Polynomial.finsetSum_coeff, zero_add,
     Finset.sum_eq_single i
       (fun j _ hj ↦ by rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right (Ne.symm hj)])
-      (fun h ↦ absurd (Finset.mem_range.2 hi) h),
-    Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl]
+      (fun h ↦ by grind [Finset.mem_range.2 hi]),Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl]
 
 private theorem coeff_monicOfCoeffs_self (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
     (monicOfCoeffs d c).coeff d = 1 := by
