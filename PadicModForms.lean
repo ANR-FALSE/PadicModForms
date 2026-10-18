@@ -6,7 +6,6 @@ public import PadicModForms.ForMathlib.DirectSum
 public import PadicModForms.ForMathlib.E2
 public import PadicModForms.ForMathlib.EInt
 public import PadicModForms.ForMathlib.Finsupp
-public import PadicModForms.ForMathlib.HomogeneousLocalization
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.ForMathlib.LinearIndependent
 public import PadicModForms.ForMathlib.MvPolynomial

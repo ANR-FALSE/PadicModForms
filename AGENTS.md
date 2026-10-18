@@ -121,8 +121,7 @@ with the literature.
 - `ModP/WeightZero.lean` — the degree-zero forms `𝓜⁰` and their normality, in the working form
   `mem_modPWeightZeroForms_of_isIntegral`. It is proved by the integral root theorem in the UFD
   `(ZMod p)[X₀, X₁]` (`ForMathlib/RationalRoot.lean`), **not** through the homogeneous localization
-  `(ZMod p)[X₀, X₁][A⁻¹]`; `ForMathlib/HomogeneousLocalization.lean` is a leftover of that abandoned
-  route and is imported by nothing.
+  `(ZMod p)[X₀, X₁][A⁻¹]`, a route that was tried and abandoned.
 - `ModP/Congruences.lean` → `ModP/Hasse.lean` — congruences `E_k ≡ 1 mod p^m` feeding the Hasse
   invariant as a weighted homogeneous polynomial `hasseInvPoly` of weight `p - 1` in `E₄`, `E₆`.
 - `pLocalInt/Discriminant.lean` — `Δ` over `pLocalInt`, its unit-series form, division by `Δ`, and
