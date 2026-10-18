@@ -148,6 +148,20 @@ theorem modPFiltration_E₂ModP (hp : 5 ≤ p) : modPFiltration p (E₂ModP (p :
 at every step of the induction. -/
 theorem modPFiltration_iterate_Θ_E₂ModP (hp : 5 ≤ p) {j : ℕ} (hj : j ≤ p - 2) :
     modPFiltration p ((Θ (R := ZMod p))^[j] E₂ModP) = (j + 1) * (p + 1) := by
-  sorry
+  induction j with
+  | zero => simpa using modPFiltration_E₂ModP hp
+  | succ j ih =>
+    obtain ⟨G, hG, hGE⟩ := exists_isWeightedHomogeneous_iterate_Θ_E₂ModP hp j
+    have ih := ih (by lia)
+    rw [← hGE] at ih
+    rw [Function.iterate_succ_apply', ← hGE]
+    rw [modPFiltration_Θ_eq hp hG (fun h ↦ ?_) ?_, ih]
+    · ring
+    · rw [ih, (Fact.out : p.Prime).dvd_mul]
+      rintro (h | h)
+      · grind [Nat.le_of_dvd j.succ_pos h]
+      · grind [Nat.le_of_dvd one_pos (Nat.dvd_add_self_left.1 h)]
+    · rw [h, modPFiltration_zero] at ih
+      exact Nat.mul_ne_zero j.succ_ne_zero p.succ_ne_zero ih.symm
 
 end ModularForm
