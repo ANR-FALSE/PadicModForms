@@ -11,6 +11,7 @@ public import PadicModForms.ModP.WeightZero
 public import PadicModForms.ModP.Filtration
 public import PadicModForms.ModP.Ramanujan
 import PadicModForms.ModP.Congruences
+import PadicModForms.ModP.ThetaFiltration
 
 /-!
 # The Artin–Schreier identity and the forbidden divisor-sum series
@@ -66,17 +67,35 @@ theorem iterate_Θ_E₂ModP (hp : 5 ≤ p) :
   · simp [hn, zero_pow (show p - 2 ≠ 0 by lia)]
   · ring
 
+/-- `ψ = (-24)⁻¹ • Θ^[p - 2] E₂`: the form of `iterate_Θ_E₂ModP` that transfers membership and
+filtration from `Θ^[p - 2] E₂` to `ψ`. -/
+theorem sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP (hp : 5 ≤ p) :
+    sigmaSeriesPrimeTo (ZMod p) p (p - 2) =
+      (-24 : ZMod p)⁻¹ • (Θ (R := ZMod p))^[p - 2] E₂ModP := by
+  have h24 : (24 : ZMod p) ≠ 0 := ZMod.ne_zero_of_eq_two_pow_mul_three_pow hp 3 1 (by norm_num)
+  rw [iterate_Θ_E₂ModP hp, PowerSeries.smul_eq_C_mul, ← mul_assoc,
+    show (-24 : (ZMod p)⟦X⟧) = PowerSeries.C (-24) by simp [map_ofNat], ← map_mul,
+    inv_mul_cancel₀ (neg_ne_zero.mpr h24), map_one, one_mul]
+
 /-- `ψ` is a degree-zero mod-`p` modular form: `Θ^[p - 2] E₂` has a homogeneous representative of
 weight `(p - 1)(p + 1)`, which is divisible by `p - 1`, and `-24` is invertible. -/
 theorem sigmaSeriesPrimeTo_mem_modPWeightZeroForms (hp : 5 ≤ p) :
     sigmaSeriesPrimeTo (ZMod p) p (p - 2) ∈ modPWeightZeroForms p := by
-  sorry
+  obtain ⟨G, hG, hGE⟩ := exists_isWeightedHomogeneous_iterate_Θ_E₂ModP hp (p - 2)
+  rw [sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP hp, ← hGE]
+  refine (modPWeightZeroForms p).smul_mem (mem_modPWeightZeroForms_of_isWeightedHomogeneous ?_ hG) _
+  simp [show p - 2 + 1 = p - 1 by lia]
 
 /-- The filtration of `ψ` is exactly `p² - 1`, by `modPFiltration_iterate_Θ_E₂ModP` at
 `j = p - 2`. -/
 theorem modPFiltration_sigmaSeriesPrimeTo (hp : 5 ≤ p) :
     modPFiltration p (sigmaSeriesPrimeTo (ZMod p) p (p - 2)) = p ^ 2 - 1 := by
-  sorry
+  have h24 : (24 : ZMod p) ≠ 0 := ZMod.ne_zero_of_eq_two_pow_mul_three_pow hp 3 1 (by norm_num)
+  rw [sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP hp,
+    modPFiltration_smul (inv_ne_zero (neg_ne_zero.mpr h24)),
+    modPFiltration_iterate_Θ_E₂ModP hp le_rfl]
+  zify [Nat.one_le_pow 2 p (by lia), (by lia : 2 ≤ p)]
+  ring
 
 /-- **The Artin–Schreier identity** with the exponent already reduced: for `h` a positive
 multiple of `p - 1`, `φ_h - φ_h ^ p = ψ`. This combines
@@ -92,12 +111,19 @@ theorem sigmaSeries_sub_pow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h
     ZMod.natCast_self, (ZMod.natCast_eq_zero_iff _ _).mpr hhd]
 
 /-- **The forbidden series**: `φ_h = ∑ σ_{h-1}(n) qⁿ` is not a degree-zero mod-`p` modular form.
-Were it one, its filtration `a` would be positive because the coefficient of `q` in `φ_h` is `1`,
-so `fil (φ_h ^ p) = p a > a` by the Frobenius formula, `fil (φ_h - φ_h ^ p) = p a` because
-unequal filtrations do not cancel, and the Artin–Schreier identity would give `p a = p² - 1`,
-which is impossible modulo `p`. -/
+Were it one, its filtration `a` would be positive because the coefficient of `q` in `φ_h` is `1`
+(`modPFiltration_pos_of_coeff_ne_zero`), so `fil (φ_h - φ_h ^ p) = p a` by the Frobenius
+difference formula `modPFiltration_sub_pow_prime`, and the Artin–Schreier identity would give
+`p a = p² - 1`, which is impossible modulo `p`. -/
 theorem sigmaSeries_notMem_modPWeightZeroForms (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) :
-    sigmaSeries (ZMod p) (h - 1) ∉ modPWeightZeroForms p := by
-  sorry
+    sigmaSeries (ZMod p) (h - 1) ∉ modPWeightZeroForms p := fun hmem ↦ by
+  obtain ⟨n, F, -, hF, hFφ⟩ := exists_isWeightedHomogeneous_of_mem_modPWeightZeroForms hp hmem
+  have ha : 0 < modPFiltration p (evalE₄E₆ModP F) := modPFiltration_pos_of_coeff_ne_zero hF
+    one_ne_zero (by simp [hFφ, isMultiplicative_sigma.map_one])
+  have key := modPFiltration_sub_pow_prime hp hF ha
+  rw [hFφ, sigmaSeries_sub_pow_eq hp hh0 hhd, modPFiltration_sigmaSeriesPrimeTo hp] at key
+  have h1 : p ∣ 1 := (Nat.dvd_add_right (show p ∣ p ^ 2 - 1 by rw [key]; exact dvd_mul_right _ _)).1
+    (by rw [Nat.sub_add_cancel (Nat.one_le_pow 2 p (by lia))]; exact dvd_pow_self p two_ne_zero)
+  exact absurd (Nat.le_of_dvd one_pos h1) (by lia)
 
 end ModularForm

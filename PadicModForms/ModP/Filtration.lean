@@ -40,6 +40,7 @@ under Frobenius.
   the reduced representative criterion.
 * `ModularForm.modPFiltration_add_of_lt`: forms of unequal filtrations do not cancel.
 * `ModularForm.modPFiltration_pow_prime`: `fil (f ^ p) = p * fil f`.
+* `ModularForm.modPFiltration_sub_pow_prime`: `fil (f - f ^ p) = p * fil f` when `fil f > 0`.
 -/
 
 @[expose] public noncomputable section
@@ -120,6 +121,10 @@ theorem modPFiltration_smul {f : (ZMod p)⟦X⟧} {c : ZMod p} (hc : c ≠ 0) :
   · rintro ⟨F, hF, hFf⟩
     exact ⟨c • F, (weightedHomogeneousSubmodule _ _ _).smul_mem _ hF, by rw [map_smul, hFf]⟩
 
+/-- The filtration is invariant under negation. -/
+theorem modPFiltration_neg (f : (ZMod p)⟦X⟧) : modPFiltration p (-f) = modPFiltration p f := by
+  rw [← neg_one_smul (ZMod p) f, modPFiltration_smul (neg_ne_zero.mpr one_ne_zero)]
+
 /-- A modular form of filtration `0` is constant, the weights of `E₄` and `E₆` being positive. -/
 theorem exists_C_of_modPFiltration_eq_zero (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (h : modPFiltration p (evalE₄E₆ModP F) = 0) : ∃ c, evalE₄E₆ModP F = PowerSeries.C c := by
@@ -129,6 +134,14 @@ theorem exists_C_of_modPFiltration_eq_zero (hF : IsWeightedHomogeneous E₄E₆W
   rw [← hGF]
   conv_lhs => rw [hG.eq_C_coeff_zero E₄E₆Weights_ne_zero]
   simp [evalE₄E₆ModP, PowerSeries.C_eq_algebraMap]
+
+/-- A form with a nonzero coefficient of positive index has positive filtration, a form of
+filtration `0` being constant. -/
+theorem modPFiltration_pos_of_coeff_ne_zero (hF : IsWeightedHomogeneous E₄E₆Weights F n) {m : ℕ}
+    (hm : m ≠ 0) (h : coeff m (evalE₄E₆ModP F) ≠ 0) : 0 < modPFiltration p (evalE₄E₆ModP F) := by
+  refine Nat.pos_of_ne_zero fun h0 ↦ h ?_
+  obtain ⟨c, hc⟩ := exists_C_of_modPFiltration_eq_zero hF h0
+  simp [hc, PowerSeries.coeff_C, hm]
 
 /-! ### Reduced representatives -/
 
@@ -220,5 +233,31 @@ theorem modPFiltration_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄
   have key := modPFiltration_eq_of_not_dvd hp (hU.pow p) fun h ↦
     hUA (((hasseInvPoly_squarefree hp).dvd_pow_iff_dvd (Fact.out : p.Prime).ne_zero).1 h)
   rwa [map_pow, hUF, smul_eq_mul] at key
+
+/-- **The Frobenius difference**: a form of positive filtration satisfies
+`fil (f - f ^ p) = p * fil f`. Indeed `fil (f ^ p) = p * fil f > fil f` by
+`modPFiltration_pow_prime`, the two terms have the same degree modulo `p - 1` because `p ≡ 1`, and
+unequal filtrations do not cancel. -/
+theorem modPFiltration_sub_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
+    (hfil : 0 < modPFiltration p (evalE₄E₆ModP F)) :
+    modPFiltration p (evalE₄E₆ModP F - evalE₄E₆ModP F ^ p) =
+      p * modPFiltration p (evalE₄E₆ModP F) := by
+  have h0 : evalE₄E₆ModP F ≠ 0 := by grind [modPFiltration_zero]
+  have hGfil : modPFiltration p (evalE₄E₆ModP (-(F ^ p))) =
+      p * modPFiltration p (evalE₄E₆ModP F) := by
+    rw [map_neg, map_pow, modPFiltration_neg, modPFiltration_pow_prime hp hF h0]
+  -- have hp1 : ((p : ℕ) : ZMod (p - 1)) = 1 := by
+  --   have : ((p - 1 + 1 : ℕ) : ZMod (p - 1)) = 1 := by
+  --     rw [Nat.cast_add, ZMod.natCast_self, zero_add, Nat.cast_one]
+  --   rwa [Nat.sub_add_cancel (show 1 ≤ p by lia)] at this
+  have key := modPFiltration_add_of_lt hp hF ((hF.pow p).neg) h0 (by grind [(pow_ne_zero _ h0)])
+    ?_ (hGfil ▸ lt_mul_left hfil (by lia))
+  · rwa [hGfil, map_neg, map_pow, ← sub_eq_add_neg] at key
+  · suffices ((p - 1 + 1 : ℕ) : ZMod (p - 1)) = 1 by
+      rw [Nat.sub_add_cancel (show 1 ≤ p by lia)] at this
+      grind
+    rw [Nat.cast_add, ZMod.natCast_self, zero_add, Nat.cast_one]
+
+
 
 end ModularForm

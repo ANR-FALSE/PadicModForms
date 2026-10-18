@@ -27,6 +27,19 @@ open PowerSeries ModularForm
 
 variable {p : ℕ} [Fact p.Prime]
 
+/-! ### Units modulo `p` -/
+
+/-- For `p ≥ 5`, an element of `ZMod p` of the form `2 ^ a * 3 ^ b` is nonzero, hence invertible.
+This covers the denominators `12` and `24` of the theory of modular forms. -/
+theorem ZMod.ne_zero_of_eq_two_pow_mul_three_pow (hp : 5 ≤ p) (a b : ℕ) {x : ZMod p}
+    (hx : x = 2 ^ a * 3 ^ b) : x ≠ 0 := by
+  have hprime : p.Prime := Fact.out
+  have : ¬p ∣ 2 ^ a * 3 ^ b := by
+    rw [hprime.dvd_mul]
+    rintro (h | h) <;> have := Nat.le_of_dvd (by norm_num) (hprime.dvd_of_dvd_pow h) <;> lia
+  rw [hx]
+  exact_mod_cast (ZMod.natCast_eq_zero_iff _ _).not.2 this
+
 namespace PowerSeries
 
 /-! ### Casts into power series modulo `p` -/

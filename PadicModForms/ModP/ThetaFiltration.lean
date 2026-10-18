@@ -74,12 +74,6 @@ theorem isWeightedHomogeneous_δModP_hasseInvPoly_mul_add (hp : 5 ≤ p)
   · have := (hasseInvPoly_isWeightedHomogeneous hp).mul (isWeightedHomogeneous_δModP hF)
     rwa [show p - 1 + (n + 2) = n + (p + 1) by lia] at this
 
-/-- `12` is invertible modulo `p` for `p ≥ 5`. -/
-theorem twelve_ne_zero (hp : 5 ≤ p) : (12 : ZMod p) ≠ 0 := by
-  rw [show (12 : ZMod p) = ((4 * 3 : ℕ) : ZMod p) by norm_num, Ne, ZMod.natCast_eq_zero_iff,
-    (Fact.out : p.Prime).dvd_mul]
-  rintro (h | h) <;> grind [Nat.le_of_dvd (by norm_num) h]
-
 /-- `Θ` sends mod-`p` modular forms to mod-`p` modular forms, raising the weight by `p + 1`:
 `Θ (ev F)` is the evaluation of `12⁻¹ • (n (δA) F + A (δF))`, which is weighted homogeneous of
 weight `n + (p + 1)`. -/
@@ -90,9 +84,10 @@ theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
   refine ⟨(12⁻¹ : ZMod p) • ((n : MvPolynomial (Fin 2) (ZMod p)) * δModP (hasseInvPoly hp) * F +
     hasseInvPoly hp * δModP F), (weightedHomogeneousSubmodule _ _ _).smul_mem _
       (isWeightedHomogeneous_δModP_hasseInvPoly_mul_add hp hF), ?_⟩
+  have h12 : (12 : ZMod p) ≠ 0 := ZMod.ne_zero_of_eq_two_pow_mul_three_pow hp 2 1 (by norm_num)
   rw [map_smul, ← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hF, PowerSeries.smul_eq_C_mul,
-    ← mul_assoc, ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← map_mul,
-    inv_mul_cancel₀ (twelve_ne_zero hp), map_one, one_mul]
+    ← mul_assoc, ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← map_mul, inv_mul_cancel₀ h12,
+    map_one, one_mul]
 
 /-- **The theta filtration bound**: `fil (Θ f) ≤ fil f + p + 1`. -/
 theorem modPFiltration_Θ_le (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
@@ -115,9 +110,10 @@ theorem modPFiltration_Θ_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆
     (isWeightedHomogeneous_δModP_hasseInvPoly_mul_add hp hG) fun h ↦ hGA
       ((ha.isRelPrime_right.mul_right (isRelPrime_hasseInvPoly_δModP hp)).dvd_of_dvd_mul_left
         ((dvd_add_left (dvd_mul_right _ _)).1 h))
+  have h12 : (12 : ZMod p) ≠ 0 := ZMod.ne_zero_of_eq_two_pow_mul_three_pow hp 2 1 (by norm_num)
   rwa [← twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP hp hG, hGF,
     ← map_ofNat (PowerSeries.C (R := ZMod p)) 12, ← PowerSeries.smul_eq_C_mul,
-    modPFiltration_smul (twelve_ne_zero hp)] at key
+    modPFiltration_smul h12] at key
 
 /-! ### Iterating `Θ` on `E₂` -/
 
