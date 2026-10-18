@@ -25,8 +25,7 @@ congruent modulo `p ^ m` and their common reduction modulo `p` is nonzero, then
   `k' ≡ k mod (p - 1) p ^ (m - 1)`.
 
 This is Serre's **Théorème 1** for `p ≥ 5`; the case `m = 1` is
-`ModularForm.natCast_eq_of_map_toZMod_eq` in `PadicModForms.PAdic.Weights.Congruence`, and the
-detailed proof of the case `m ≥ 2` formalized here is in `notes/serre_theorem_1_rest.tex`.
+`ModularForm.natCast_eq_of_map_toZMod_eq` in `PadicModForms.PAdic.Weights.Congruence`.
 
 The proof is by contradiction. After a harmless multiplication of `f'` by an Eisenstein series
 `E_{(p-1)pᴺ} ≡ 1 mod p^m`, the weight difference `h = k' - k` is a positive multiple of `p - 1`.
