@@ -143,7 +143,7 @@ theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) {k h : ℕ} (hh0 : h ≠ 0) (
       (Polynomial.X - Polynomial.C ⟨_, sigmaSeriesPrimeTo_mem_modPWeightZeroForms hp⟩),
       Polynomial.monic_X_pow_sub
         (by rw [Polynomial.degree_X_sub_C]; exact_mod_cast (by lia : 1 < p)), ?_⟩
-    simp [← sigmaSeries_sub_pow_eq hp hh0 hhd]
+    simp [← sigmaSeries_sub_pow_eq (by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]) hhd]
   exact sigmaSeries_notMem_modPWeightZeroForms hp hh0 hhd
     (mem_modPWeightZeroForms_of_isIntegral hp hu hw hw0 hwφ hint)
 

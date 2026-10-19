@@ -97,15 +97,16 @@ theorem modPFiltration_sigmaSeriesPrimeTo (hp : 5 ≤ p) :
   zify [Nat.one_le_pow 2 p (by lia), (by lia : 2 ≤ p)]
   ring
 
-/-- **The Artin–Schreier identity** with the exponent already reduced: for `h` a positive
-multiple of `p - 1`, `φ_h - φ_h ^ p = ψ`. This combines
+/-- **The Artin–Schreier identity** with the exponent already reduced: for `h ≥ 2` a multiple
+of `p - 1`, `φ_h - φ_h ^ p = ψ`. This holds for every prime `p`, and combines
 `PowerSeries.sigmaSeries_sub_pow_prime` with the reduction of the exponent
-`h - 1 ≡ p - 2 mod (p - 1)`. -/
-theorem sigmaSeries_sub_pow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) :
+`h - 1 ≡ p - 2 mod (p - 1)`. For `p ≥ 3` the hypothesis `2 ≤ h` just says that `h` is a positive
+multiple of `p - 1`. -/
+theorem sigmaSeries_sub_pow_eq (hh : 2 ≤ h) (hhd : p - 1 ∣ h) :
     sigmaSeries (ZMod p) (h - 1) - sigmaSeries (ZMod p) (h - 1) ^ p =
       sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
-  have hph : p - 1 ≤ h := Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd
-  rw [sigmaSeries_sub_pow_prime (by grind)]
+  have hp2 : 2 ≤ p := (Fact.out : p.Prime).two_le
+  rw [sigmaSeries_sub_pow_prime (by lia)]
   refine sigmaSeriesPrimeTo_eq_of_natCast_eq ?_
   rw [show p - 2 = p - 1 - 1 by lia, Nat.cast_sub (by lia), Nat.cast_sub (by lia),
     ZMod.natCast_self, (ZMod.natCast_eq_zero_iff _ _).mpr hhd]
@@ -121,7 +122,8 @@ theorem sigmaSeries_notMem_modPWeightZeroForms (hp : 5 ≤ p) (hh0 : h ≠ 0) (h
   have ha : 0 < modPFiltration p (evalE₄E₆ModP F) := modPFiltration_pos_of_coeff_ne_zero hF
     one_ne_zero (by simp [hFφ, isMultiplicative_sigma.map_one])
   have key := modPFiltration_sub_pow_prime hp hF ha
-  rw [hFφ, sigmaSeries_sub_pow_eq hp hh0 hhd, modPFiltration_sigmaSeriesPrimeTo hp] at key
+  rw [hFφ, sigmaSeries_sub_pow_eq (by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]) hhd,
+    modPFiltration_sigmaSeriesPrimeTo hp] at key
   have h1 : p ∣ 1 := (Nat.dvd_add_right (show p ∣ p ^ 2 - 1 by rw [key]; exact dvd_mul_right _ _)).1
     (by rw [Nat.sub_add_cancel (Nat.one_le_pow 2 p (by lia))]; exact dvd_pow_self p two_ne_zero)
   exact absurd (Nat.le_of_dvd one_pos h1) (by lia)
