@@ -197,6 +197,15 @@ theorem map_toZModPow_eq_iff (m : ℕ) {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)
   rw [← sub_eq_zero, ← map_sub, ← map_sub]
   exact map_toZModPow_eq_zero_iff m (by rw [map_sub, hg, hg'])
 
+/-- A congruence modulo `p ^ m` between power series over `pLocalInt p`, with `m ≥ 1`, implies a
+congruence modulo `p`. -/
+theorem map_toZMod_eq_of_map_toZModPow_eq {m : ℕ} (hm : 1 ≤ m) {g g' : (pLocalInt p)⟦X⟧}
+    (h : g.map (pLocalInt.toZModPow m) = g'.map (pLocalInt.toZModPow m)) :
+    g.map pLocalInt.toZMod = g'.map pLocalInt.toZMod := by
+  ext n
+  simpa [pLocalInt.castHom_toZModPow hm] using
+    congr(ZMod.castHom (dvd_pow_self p (by lia)) (ZMod p) (coeff n $h))
+
 /-- A rational power series with `p`-integral coefficients has nonnegative valuation. -/
 theorem v_map_nonneg_of_forall_mem {f : ℚ⟦X⟧} (h : ∀ n, coeff n f ∈ pLocalInt p) :
     0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) :=

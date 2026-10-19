@@ -24,6 +24,9 @@ and Serre's congruence `E₂ ≡ E_{p+1}` modulo `p`.
 * `E_int_mod_p`, `E_int_mod_p_pow_of_dvd`, `E_int_mod_two_pow_of_dvd`: `Eₖ ≡ 1` modulo `pᵐ` when
   `(p - 1) pᵐ⁻¹ ∣ k`, and its variant at `p = 2`.
 * `E_p_sub_one_mod_p`: the case `k = p - 1`, which is what the Hasse invariant is built from.
+* `E_int_sub_one_eq_smul_sigmaSeries`: `Eₖ - 1 = -(2k / Bₖ) Φₖ`, with `Φₖ = ∑ σ_{k-1}(n) qⁿ`.
+* `associated_pow_neg_two_mul_inv_bernoulli`: for `p ≥ 5` and `p - 1 ∣ k`, the coefficient
+  `-2k / Bₖ` is `p ^ (v_p(k) + 1)` times a unit of `ℤ₍ₚ₎`.
 * `E_int_sub_one_eq_unit_smul_sigmaSeries`: the exact form of the Eisenstein congruence,
   `Eₖ - 1 = p^r λ Φₖ` with `r = v_p(k) + 1` and `λ` a unit.
 * `E₂_int_map_toZMod`: **Serre's congruence** `E₂ ≡ E_{p+1}` modulo `p`.
@@ -144,15 +147,25 @@ end E₂
 
 /-! ### The exact form of the Eisenstein congruence -/
 
-/-- **The exact Eisenstein quotient**: for `p ≥ 5` and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
-there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. By von
-Staudt–Clausen `p Bₖ` is a unit, so the coefficient `-2k / Bₖ` is `p^r` times the unit
-`-2 (k / p^(r-1)) / (p Bₖ)`. In particular `Eₖ ≡ 1` modulo `p^r`, and modulo no higher power of
-`p` since the coefficient of `q` in `Φₖ` is `1`. -/
-theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
+/-- The nonconstant part of `Eₖ` is the divisor-sum series `Φₖ = ∑ σ_{k-1}(n) qⁿ` scaled by the
+coefficient `-2k / Bₖ`. -/
+theorem E_int_sub_one_eq_smul_sigmaSeries (hk : 3 ≤ k) (hk2 : Even k)
+    (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+    E_int hk hk2 hB - 1 = (-(2 * k) * ⟨_, hB⟩ : pLocalInt p) • sigmaSeries _ (k - 1) := by
+  ext n
+  rcases eq_or_ne n 0 with rfl | hn
+  · rw [map_sub, PowerSeries.coeff_smul, coeff_E_int_zero, coeff_sigmaSeries]
+    simp
+  · simp [coeff_E_int_of_ne_zero hk hk2 hB, coeff_sigmaSeries, hn]
+
+/-- **The valuation of the Eisenstein coefficient**: for `p ≥ 5` and `p - 1 ∣ k`, the coefficient
+`-2k / Bₖ` of `Eₖ` is `p ^ (v_p(k) + 1)` times a unit of `ℤ₍ₚ₎`. Indeed `p Bₖ` is a unit by von
+Staudt–Clausen, and writing `k = p ^ v k'` with `p ∤ k'` the coefficient is
+`p ^ (v + 1) · (-2 k' / (p Bₖ))`, where `-2 k'` is a unit because `p ≥ 5` and `p ∤ k'`. -/
+theorem associated_pow_neg_two_mul_inv_bernoulli (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) :
-    ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
-      ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by
+    Associated ((p : pLocalInt p) ^ (padicValNat p k + 1))
+      (-(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) := by
   have hp0 : (p : ℚ) ≠ 0 := Nat.cast_ne_zero.2 Hp.out.ne_zero
   have hB0 : bernoulli k ≠ 0 := bernoulli_ne_zero_of_even hk hk2
   -- Write `k = p ^ v * k'` with `p ∤ k'`.
@@ -160,30 +173,31 @@ theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (h
   obtain ⟨k', hk'⟩ := (padicValNat_dvd_iff_le (p := p) (by lia : k ≠ 0)).2 (le_refl _)
   rw [hv] at hk'
   have hpk' : ¬p ∣ k' := fun ⟨c, hc⟩ ↦ pow_succ_padicValNat_not_dvd (p := p) (by lia : k ≠ 0)
-    ⟨c, by grind⟩
+    ⟨c, by rw [hv, hk', hc]; ring⟩
   have hp2k' : ¬p ∣ 2 * k' := fun h ↦ (Hp.out.dvd_mul.1 h).elim
     (fun h2 ↦ absurd (Nat.le_of_dvd two_pos h2) (by lia)) hpk'
-  -- By von Staudt–Clausen, `β = p Bₖ` is `p`-integral and reduces to `-1`, so it is a unit.
-  have hβ : p * bernoulli k ∈ pLocalInt p := by
-    grind [sub_mem (mul_mem (natCast_mem (pLocalInt p) p)
-      (bernoulli_add_inv_mem_pLocalInt (by lia) hk2 hpk)) (one_mem _)]
-  have hβu : IsUnit (⟨_, hβ⟩ : pLocalInt p) := pLocalInt.isUnit_iff_toZMod_ne_zero.2 <| by
-    suffices (⟨_, hβ⟩ : pLocalInt p) =
-        (p : pLocalInt p) * ⟨_, bernoulli_add_inv_mem_pLocalInt (by lia) hk2 hpk⟩ - 1 by
-      simp [this]
-    ext
-    simp [mul_add, mul_inv_cancel₀ hp0]
-  -- The unit is `u = -2 k' / (p Bₖ)`, where `-2 k'` is a unit since `p ∤ 2 k'`.
-  have : IsUnit (-(2 * k') : pLocalInt p) := by simpa using (pLocalInt.isUnit_natCast hp2k').neg
-  refine ⟨this.unit * hβu.unit⁻¹, ?_⟩
-  -- The scalar identity `-2k Bₖ⁻¹ = p ^ (v + 1) u`.
-  have key : (-(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
-      (p : pLocalInt p) ^ (v + 1) * (this.unit * hβu.unit⁻¹ : (pLocalInt p)ˣ) := by
-    ext
-    push_cast [IsUnit.unit_spec, pLocalInt.coe_units_inv]
-    grind [show (k : ℚ) = p ^ v * k' by exact_mod_cast hk']
-  ext n
-  rcases eq_or_ne n 0 with rfl | hn <;>
-  · simp_all [coeff_E_int_of_ne_zero hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)]
+  -- The unit is `-2 k' / (p Bₖ)`.
+  have h2k' : IsUnit (-(2 * k') : pLocalInt p) := by
+    simpa using (pLocalInt.isUnit_natCast hp2k').neg
+  have hβ := isUnit_mul_bernoulli (p := p) (by lia) hk2 hpk
+  refine ⟨h2k'.unit * hβ.unit⁻¹, ?_⟩
+  have hkQ : (k : ℚ) = p ^ v * k' := by exact_mod_cast hk'
+  rw [hv]
+  ext
+  push_cast [Units.val_mul, IsUnit.unit_spec, pLocalInt.coe_units_inv]
+  rw [hkQ]
+  field_simp
+  ring
+
+/-- **The exact Eisenstein quotient**: for `p ≥ 5` and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
+there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. In
+particular `Eₖ ≡ 1` modulo `p^r`, and modulo no higher power of `p` since the coefficient of `q`
+in `Φₖ` is `1`. -/
+theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
+    (hpk : p - 1 ∣ k) :
+    ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
+      ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by
+  obtain ⟨u, hu⟩ := associated_pow_neg_two_mul_inv_bernoulli hp5 hk hk2 hpk
+  exact ⟨u, by rw [E_int_sub_one_eq_smul_sigmaSeries, ← hu]⟩
 
 end EisensteinSeries

@@ -24,7 +24,8 @@ instance `k = p + 1` of Kummer's congruence.
 
 * `bernoulli_mem_pLocalInt`: if `p - 1 ∤ k` then `Bₖ` is `p`-integral.
 * `bernoulli_add_inv_mem_pLocalInt`: if `p - 1 ∣ k` then `Bₖ + 1/p` is `p`-integral; equivalently
-  `p Bₖ ≡ -1` modulo `p`.
+  `p Bₖ ≡ -1` modulo `p` (`toZMod_mul_bernoulli`), so `p Bₖ` is a unit of `ℤ₍ₚ₎`
+  (`isUnit_mul_bernoulli`).
 * `inv_bernoulli_mem_pLocalInt`, `toZMod_inv_bernoulli_eq_zero`: if `p - 1 ∣ k` then `Bₖ⁻¹` is
   `p`-integral and reduces to `0` modulo `p`.
 * `exists_bernoulli_p_add_one`, `toZMod_bernoulli_p_add_one_mul_twelve`: Kummer's congruence
@@ -159,6 +160,32 @@ theorem bernoulli_add_inv_mem_pLocalInt (hk : 0 < k) (hk2 : Even k) (hpk : (p - 
   have hqprime : q.Prime := by simpa using (mem_filter.mp (mem_of_mem_erase hq)).2.1
   rw [mem_pLocalInt_iff, show ((1 : ℚ) / q).den = q by simp [hqprime.ne_zero]]
   exact fun h ↦ ((mem_erase.mp hq).1) ((prime_dvd_prime_iff_eq hp.out hqprime).mp h).symm
+
+/-- Von Staudt–Clausen at `p`, multiplied by `p`: if `p - 1 ∣ k` with `k` positive and even, then
+`p Bₖ` is `p`-integral. -/
+theorem mul_bernoulli_mem_pLocalInt (hk : 0 < k) (hk2 : Even k) (hpk : (p - 1) ∣ k) :
+    p * bernoulli k ∈ pLocalInt p := by
+  have := sub_mem (mul_mem (natCast_mem (pLocalInt p) p)
+    (bernoulli_add_inv_mem_pLocalInt hk hk2 hpk)) (one_mem _)
+  rwa [mul_add, mul_inv_cancel₀ (Nat.cast_ne_zero.2 hp.out.ne_zero), add_sub_cancel_right] at this
+
+/-- Von Staudt–Clausen at `p`, reduced modulo `p`: if `p - 1 ∣ k` with `k` positive and even,
+then `p Bₖ ≡ -1` modulo `p`. -/
+theorem toZMod_mul_bernoulli (hk : 0 < k) (hk2 : Even k) (hpk : (p - 1) ∣ k) :
+    pLocalInt.toZMod ⟨_, mul_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = -1 := by
+  have : (⟨_, mul_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
+      (p : pLocalInt p) * ⟨_, bernoulli_add_inv_mem_pLocalInt hk hk2 hpk⟩ - 1 := by
+    ext
+    simp [mul_add, mul_inv_cancel₀ (Nat.cast_ne_zero.2 hp.out.ne_zero : (p : ℚ) ≠ 0)]
+  rw [this]
+  simp
+
+/-- If `p - 1 ∣ k` with `k` positive and even, then `p Bₖ` is a unit of `ℤ₍ₚ₎`. -/
+theorem isUnit_mul_bernoulli (hk : 0 < k) (hk2 : Even k) (hpk : (p - 1) ∣ k) :
+    IsUnit (⟨_, mul_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) :=
+  pLocalInt.isUnit_iff_toZMod_ne_zero.2 <| by
+    rw [toZMod_mul_bernoulli hk hk2 hpk]
+    exact neg_ne_zero.2 one_ne_zero
 
 /-! ### Kummer's congruence in weight `p + 1` -/
 

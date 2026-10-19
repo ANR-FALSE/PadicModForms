@@ -7,6 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import PadicModForms.ForMathlib.IntLocalization
+public import PadicModForms.pLocalInt.Basic
 public import PadicModForms.Rational.Basic
 import PadicModForms.ForMathlib.NatPrime
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -119,6 +120,13 @@ omit hf hg
 
 @[simp]
 theorem mem_modPModularForms : f ∈ modPModularForms p k ↔ f.isModPModularForm k := .rfl
+
+/-- The reduction modulo `p` of a `p`-integral modular form is a mod-`p` modular form of the same
+weight. -/
+theorem map_toZMod_mem_modPModularForms {f : (pLocalInt p)⟦X⟧}
+    (hf : f ∈ pLocalIntModularForms p k) : f.map pLocalInt.toZMod ∈ modPModularForms p k := by
+  obtain ⟨F, hF⟩ := hf
+  exact ⟨f, F, hF, rfl⟩
 
 end PowerSeries
 

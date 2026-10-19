@@ -50,6 +50,16 @@ namespace ModularForm
 variable {p : ℕ} [Fact p.Prime] {k k' : ℤ} {f : rationalModularForms k}
   {f' : rationalModularForms k'} {g g' : (pLocalInt p)⟦X⟧}
 
+/-- A rational modular form with a `p`-integral lift that does not reduce to `0` modulo `p` is
+nonzero, so its weight is a natural number. -/
+theorem exists_natCast_eq_of_map_toZMod_ne_zero (hg : g.map (algebraMap _ ℚ) = rationalQExpansion f)
+    (h0 : g.map pLocalInt.toZMod ≠ 0) : ∃ n : ℕ, k = n := by
+  refine ⟨k.toNat, ?_⟩
+  have hgne : g ≠ 0 := fun hzero ↦ h0 (by rw [hzero, _root_.map_zero])
+  have : (f : ℚ⟦X⟧) ≠ 0 := fun hzero ↦ hgne <| map_injective _ pLocalInt.algebraMap_injective <|
+    by simpa [hg] using hzero
+  grind [nonneg_of_mem_rationalModularForms f.2 this]
+
 /-- **The case `m = 1` of Serre's theorem on congruences, for rational modular forms.** Two
 rational modular forms of weights `k` and `k'` admitting `p`-integral lifts with the same nonzero
 reduction modulo `p` satisfy `k ≡ k' mod (p - 1)`. -/
@@ -58,16 +68,8 @@ theorem natCast_eq_of_map_toZMod_eq (hp : 5 ≤ p)
     (hg' : g'.map (algebraMap _ ℚ) = rationalQExpansion f')
     (h0 : g.map pLocalInt.toZMod ≠ 0) (h : g.map pLocalInt.toZMod = g'.map pLocalInt.toZMod) :
     (k : ZMod (p - 1)) = (k' : ZMod (p - 1)) := by
-  have key {l : ℤ} {F : rationalModularForms l} {G : (pLocalInt p)⟦X⟧}
-      (hG : G.map (algebraMap _ ℚ) = rationalQExpansion F) (hG0 : G.map pLocalInt.toZMod ≠ 0) :
-      ∃ n : ℕ, l = n := by
-    refine ⟨l.toNat, ?_⟩
-    have hGne : G ≠ 0 := fun hzero ↦ hG0 (by rw [hzero, _root_.map_zero])
-    have : (F : ℚ⟦X⟧) ≠ 0 := fun hzero ↦ hGne <| map_injective _ pLocalInt.algebraMap_injective <|
-      by rw [hG, _root_.map_zero]; simpa using hzero
-    grind [nonneg_of_mem_rationalModularForms F.2 this]
-  obtain ⟨n, rfl⟩ := key hg h0
-  obtain ⟨n', rfl⟩ := key hg' (h ▸ h0)
+  obtain ⟨n, rfl⟩ := exists_natCast_eq_of_map_toZMod_ne_zero hg h0
+  obtain ⟨n', rfl⟩ := exists_natCast_eq_of_map_toZMod_ne_zero hg' (h ▸ h0)
   push_cast
   exact natCast_eq_of_mem_modPModularForms hp h0 ⟨g, f, hg, rfl⟩ ⟨g', f', hg', h.symm⟩
 
