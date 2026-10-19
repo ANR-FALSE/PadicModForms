@@ -158,11 +158,11 @@ theorem E_int_sub_one_eq_smul_sigmaSeries (hk : 3 ≤ k) (hk2 : Even k)
     simp
   · simp [coeff_E_int_of_ne_zero hk hk2 hB, coeff_sigmaSeries, hn]
 
-/-- **The valuation of the Eisenstein coefficient**: for `p ≥ 5` and `p - 1 ∣ k`, the coefficient
+/-- **The valuation of the Eisenstein coefficient**: for `p` odd and `p - 1 ∣ k`, the coefficient
 `-2k / Bₖ` of `Eₖ` is `p ^ (v_p(k) + 1)` times a unit of `ℤ₍ₚ₎`. Indeed `p Bₖ` is a unit by von
 Staudt–Clausen, and writing `k = p ^ v k'` with `p ∤ k'` the coefficient is
-`p ^ (v + 1) · (-2 k' / (p Bₖ))`, where `-2 k'` is a unit because `p ≥ 5` and `p ∤ k'`. -/
-theorem associated_pow_neg_two_mul_inv_bernoulli (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
+`p ^ (v + 1) · (-2 k' / (p Bₖ))`, where `-2 k'` is a unit because `p` is odd and `p ∤ k'`. -/
+theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) :
     Associated ((p : pLocalInt p) ^ (padicValNat p k + 1))
       (-(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) := by
@@ -175,7 +175,7 @@ theorem associated_pow_neg_two_mul_inv_bernoulli (hp5 : 5 ≤ p) (hk : 3 ≤ k) 
   have hpk' : ¬p ∣ k' := fun ⟨c, hc⟩ ↦ pow_succ_padicValNat_not_dvd (p := p) (by lia : k ≠ 0)
     ⟨c, by rw [hv, hk', hc]; ring⟩
   have hp2k' : ¬p ∣ 2 * k' := fun h ↦ (Hp.out.dvd_mul.1 h).elim
-    (fun h2 ↦ absurd (Nat.le_of_dvd two_pos h2) (by lia)) hpk'
+    (fun h2 ↦ hp2 ((Nat.prime_dvd_prime_iff_eq Hp.out Nat.prime_two).1 h2)) hpk'
   -- The unit is `-2 k' / (p Bₖ)`.
   have h2k' : IsUnit (-(2 * k') : pLocalInt p) := by
     simpa using (pLocalInt.isUnit_natCast hp2k').neg
@@ -189,15 +189,15 @@ theorem associated_pow_neg_two_mul_inv_bernoulli (hp5 : 5 ≤ p) (hk : 3 ≤ k) 
   field_simp
   ring
 
-/-- **The exact Eisenstein quotient**: for `p ≥ 5` and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
+/-- **The exact Eisenstein quotient**: for `p` odd and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
 there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. In
 particular `Eₖ ≡ 1` modulo `p^r`, and modulo no higher power of `p` since the coefficient of `q`
 in `Φₖ` is `1`. -/
-theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp5 : 5 ≤ p) (hk : 3 ≤ k) (hk2 : Even k)
+theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) :
     ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
       ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by
-  obtain ⟨u, hu⟩ := associated_pow_neg_two_mul_inv_bernoulli hp5 hk hk2 hpk
+  obtain ⟨u, hu⟩ := associated_pow_neg_two_mul_inv_bernoulli hp2 hk hk2 hpk
   exact ⟨u, by rw [E_int_sub_one_eq_smul_sigmaSeries, ← hu]⟩
 
 end EisensteinSeries

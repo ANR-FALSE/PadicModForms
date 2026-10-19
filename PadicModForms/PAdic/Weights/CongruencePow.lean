@@ -67,18 +67,18 @@ variable {p m : ℕ} [Fact p.Prime]
 `r = v_p(h) + 1`, there is a `p`-integral modular form `g` of weight `k + h` whose reduction
 modulo `p` is `f̄ φ_h`. Indeed `f E_h - f' = (f - f') + f (E_h - 1)` has all its coefficients
 divisible by `p ^ r`, the first summand even by `p ^ (r + 1)`, and dividing the exact Eisenstein
-congruence by `p ^ r λ` leaves `f Φ_h` modulo `p`. Note that `h` is automatically even and
-at least `4`, being a positive multiple of `p - 1` with `p ≥ 5`. -/
-theorem exists_map_toZMod_eq_mul_sigmaSeries (hp : 5 ≤ p) {k h : ℕ}
-    (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) (hr : padicValNat p h + 1 < m)
+congruence by `p ^ r λ` leaves `f Φ_h` modulo `p`. This holds for every odd prime `p`: `h` is
+automatically even, being a multiple of `p - 1`, and `3 ≤ h` (hence `4 ≤ h`) is what makes `E_h`
+a modular form. For `p ≥ 5` every positive multiple of `p - 1` qualifies. -/
+theorem exists_map_toZMod_eq_mul_sigmaSeries (hp : p ≠ 2) {k h : ℕ}
+    (hh3 : 3 ≤ h) (hhd : p - 1 ∣ h) (hr : padicValNat p h + 1 < m)
     {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
     (hf' : f' ∈ pLocalIntModularForms p (k + h))
     (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     ∃ g : (pLocalInt p)⟦X⟧, g ∈ pLocalIntModularForms p (k + h) ∧
       g.map toZMod = f.map toZMod * sigmaSeries (ZMod p) (h - 1) := by
-  have hh3 : 3 ≤ h := by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]
   have hh2 : Even h := even_iff_two_dvd.2
-    ((even_iff_two_dvd.1 ((Fact.out : p.Prime).even_sub_one (by lia))).trans hhd)
+    ((even_iff_two_dvd.1 ((Fact.out : p.Prime).even_sub_one hp)).trans hhd)
   obtain ⟨u, hu⟩ := E_int_sub_one_eq_unit_smul_sigmaSeries hp hh3 hh2 hhd
   set r := padicValNat p h + 1 with hr_def
   have hpr : (p : pLocalInt p) ^ r ≠ 0 := pow_ne_zero _ natCast_ne_zero
@@ -117,7 +117,8 @@ theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) {k h : ℕ} (hh0 : h ≠ 0) (
     (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) : p ^ (m - 1) ∣ h := by
   by_contra hndvd
   have hr : padicValNat p h + 1 < m := by grind [(padicValNat_dvd_iff_le hh0).not.1 hndvd]
-  obtain ⟨g, hg, hgφ⟩ := exists_map_toZMod_eq_mul_sigmaSeries hp hh0 hhd hr hf hf' hcong
+  have hh3 : 3 ≤ h := by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]
+  obtain ⟨g, hg, hgφ⟩ := exists_map_toZMod_eq_mul_sigmaSeries (by lia) hh3 hhd hr hf hf' hcong
   -- `w = f̄ ^ (p - 1)` is a nonzero degree-zero form.
   have hw : f.map toZMod ^ (p - 1) ∈ modPWeightZeroForms p := by
     refine mem_modPWeightZeroForms_of_mem_modPModularForms hp (n := (p - 1) * k)
@@ -143,7 +144,7 @@ theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) {k h : ℕ} (hh0 : h ≠ 0) (
       (Polynomial.X - Polynomial.C ⟨_, sigmaSeriesPrimeTo_mem_modPWeightZeroForms hp⟩),
       Polynomial.monic_X_pow_sub
         (by rw [Polynomial.degree_X_sub_C]; exact_mod_cast (by lia : 1 < p)), ?_⟩
-    simp [← sigmaSeries_sub_pow_eq (by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]) hhd]
+    simp [← sigmaSeries_sub_pow_eq (by lia) hhd]
   exact sigmaSeries_notMem_modPWeightZeroForms hp hh0 hhd
     (mem_modPWeightZeroForms_of_isIntegral hp hu hw hw0 hwφ hint)
 

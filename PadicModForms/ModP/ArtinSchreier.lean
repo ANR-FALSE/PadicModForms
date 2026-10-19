@@ -56,7 +56,7 @@ theorem E₂ModP_eq_one_sub_sigmaSeries : E₂ModP = 1 - 24 * sigmaSeries (ZMod 
 
 /-- Serre's `ψ` as an iterate of `Θ` on `E₂`: `Θ^[p - 2] E₂ = -24 ψ`, the constant term of `E₂`
 being killed by the first application of `Θ`. -/
-theorem iterate_Θ_E₂ModP (hp : 5 ≤ p) :
+theorem iterate_Θ_E₂ModP (hp : 3 ≤ p) :
     (Θ)^[p - 2] E₂ModP = -24 * sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
   rw [← iterate_Θ_sigmaSeries_one (by lia), E₂ModP_eq_one_sub_sigmaSeries,
     ← map_ofNat PowerSeries.C]
@@ -73,7 +73,7 @@ theorem sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP (hp : 5 ≤ p) :
     sigmaSeriesPrimeTo (ZMod p) p (p - 2) =
       (-24 : ZMod p)⁻¹ • (Θ (R := ZMod p))^[p - 2] E₂ModP := by
   have h24 : (24 : ZMod p) ≠ 0 := ZMod.ne_zero_of_eq_two_pow_mul_three_pow hp 3 1 (by norm_num)
-  rw [iterate_Θ_E₂ModP hp, PowerSeries.smul_eq_C_mul, ← mul_assoc,
+  rw [iterate_Θ_E₂ModP (by lia), PowerSeries.smul_eq_C_mul, ← mul_assoc,
     show (-24 : (ZMod p)⟦X⟧) = PowerSeries.C (-24) by simp [map_ofNat], ← map_mul,
     inv_mul_cancel₀ (neg_ne_zero.mpr h24), map_one, one_mul]
 
