@@ -85,7 +85,7 @@ private theorem eq_zero_of_evalE₄E₆ModP_eq_zero (hp : 5 ≤ p) {F : MvPolyno
     refine pLocalInt.dvd_of_toZMod_eq_zero ?_
     suffices (evalE₄E₆IntSeries G).map pLocalInt.toZMod = 0 by
       rw [hf, coe_evalE₄E₆IntAtWeight]
-      simpa using congrArg (coeff m) this
+      simpa using congr(coeff m $this)
     rw [← evalE₄E₆ModP_map, hGmap, hzero]
   obtain ⟨g, hgmem, hpg⟩ :=
     IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff f.2  pLocalInt.natCast_ne_zero hdvd
@@ -93,7 +93,7 @@ private theorem eq_zero_of_evalE₄E₆ModP_eq_zero (hp : 5 ≤ p) {F : MvPolyno
   suffices G = (p : pLocalInt p) • (H : MvPolynomial (Fin 2) (pLocalInt p)) by
     simp [← hGmap, this, MvPolynomial.smul_eq_C_mul, map_mul]
   suffices ⟨G, hGhom⟩ = (p : pLocalInt p) • H by
-    simpa using congrArg Subtype.val this
+    simpa using congr(Subtype.val $this)
   exact evalE₄E₆IntAtWeight_injective (by simpa [hH, ← hf] using Subtype.ext hpg.symm)
 
 /-- Evaluation modulo `p` is injective on weighted homogeneous polynomials of a fixed weight.

@@ -50,17 +50,17 @@ theorem E₂ModP_mem_modPModularForms (hp5 : 5 ≤ p) : E₂ModP ∈ modPModular
 
 /-- **Ramanujan's identity** for `E₂` modulo `p`: `12 Θ E₂ = E₂² - E₄`. -/
 theorem Θ_E₂ModP : 12 * Θ (R := ZMod p) E₂ModP = E₂ModP * E₂ModP - E₄ModP := by
-  simpa [E₂ModP, E₄ModP, map_Θ, map_ofNat] using congrArg (map (pLocalInt.toZMod (p := p))) Θ_E₂_int
+  simpa [E₂ModP, E₄ModP, map_Θ, map_ofNat] using congr(map (pLocalInt.toZMod (p := p)) $Θ_E₂_int)
 
 /-- **Ramanujan's identity** for `E₄` modulo `p`: `3 Θ E₄ = E₂E₄ - E₆`. -/
 theorem Θ_E₄ModP : 3 * Θ (R := ZMod p) E₄ModP = E₂ModP * E₄ModP - E₆ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
-    congrArg (map (pLocalInt.toZMod (p := p))) Θ_E₄_int
+    congr(map (pLocalInt.toZMod (p := p)) $Θ_E₄_int)
 
 /-- **Ramanujan's identity** for `E₆` modulo `p`: `2 Θ E₆ = E₂E₆ - E₄²`. -/
 theorem Θ_E₆ModP : 2 * Θ (R := ZMod p) E₆ModP = E₂ModP * E₆ModP - E₄ModP * E₄ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
-    congrArg (PowerSeries.map (pLocalInt.toZMod (p := p))) Θ_E₆_int
+    congr(PowerSeries.map (pLocalInt.toZMod (p := p)) $Θ_E₆_int)
 
 /-- `12 Θ E₄ = 4E₂E₄ - 4E₆`, weight-normalized. -/
 theorem twelve_Θ_E₄ModP : 12 * Θ (R := ZMod p) E₄ModP = 4 * (E₂ModP * E₄ModP) - 4 * E₆ModP :=

@@ -241,7 +241,7 @@ theorem toZMod_bernoulli_p_add_one_mul_twelve (hp5 : 5 ≤ p) :
     pLocalInt.toZMod ⟨bernoulli (p + 1), bernoulli_p_add_one_mem_pLocalInt hp5⟩ * 12 = 1 := by
   obtain ⟨w, hwmem, hw⟩ := exists_bernoulli_p_add_one hp5
   suffices (12 : pLocalInt p) * ⟨_, bernoulli_p_add_one_mem_pLocalInt hp5⟩ - 1 = p * ⟨w, hwmem⟩ by
-    simpa [map_ofNat, sub_eq_zero, mul_comm] using congrArg pLocalInt.toZMod this
+    simpa [map_ofNat, sub_eq_zero, mul_comm] using congr(pLocalInt.toZMod $this)
   exact Subtype.ext hw
 
 /-- For `p ≥ 5`, `B_{p+1}⁻¹` is `p`-integral. -/

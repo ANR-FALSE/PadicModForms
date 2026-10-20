@@ -171,8 +171,8 @@ theorem isWeightedHomogeneous_natDegree
       natTrailingDegree_le_of_mem_supp a ha, le_natDegree_of_mem_supp a ha]
   rw [← toWeightPolynomial_eq_monomial_iff]
   convert (monomial_natDegree_leadingCoeff_eq_self hcard).symm
-  simpa [eval_one_toWeightPolynomial] using (congrArg (Polynomial.eval 1)
-    (monomial_natDegree_leadingCoeff_eq_self hcard)).symm
+  simpa [eval_one_toWeightPolynomial] using
+    congr(Polynomial.eval 1 $(monomial_natDegree_leadingCoeff_eq_self hcard)).symm
 
 /-! ### Weighted homogenization -/
 

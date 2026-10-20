@@ -51,7 +51,7 @@ theorem LinearIndependent.of_comp_semilinear (f : M →ₛₗ[σ] N) (hσ : Inje
     (h : LinearIndependent B (f ∘ b)) : LinearIndependent A b := by
   rw [linearIndependent_iff'] at h ⊢
   intro s g hg i hi
-  have key : ∑ j ∈ s, σ (g j) • (f ∘ b) j = 0 := by simpa [comp_def] using congrArg f hg
+  have key : ∑ j ∈ s, σ (g j) • (f ∘ b) j = 0 := by simpa [comp_def] using congr(f $hg)
   exact hσ (by simpa using h s _ key i hi)
 
 end Ring

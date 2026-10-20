@@ -180,7 +180,7 @@ private theorem levelOneCoeAddHom_injective : Function.Injective levelOneCoeAddH
         (f := fun n : ℕ ↦ (z : ℂ) + n) (fun n m hnm ↦ by exact_mod_cast add_left_cancel hnm)
         fun n ↦ by
           simpa [IsRoot, ← denom_levelOneShift n z, levelOneWeightPolynomial_eval] using
-            congrFun hF (levelOneShift n • z)
+            congr($hF (levelOneShift n • z))
     simpa [hpoly] using (levelOneWeightPolynomial_coeff F z hk).symm
   · exact (FunLike.coe_zero_iff (F k)).mp
       (ModularFormClass.levelOne_neg_weight_eq_zero (lt_of_not_ge hk) (F k))

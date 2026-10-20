@@ -90,7 +90,7 @@ public theorem IsModPModularForm.smul (a : ZMod p) : (a • f).isModPModularForm
       _ = (a.val : ℚ) • rationalQExpansion F := congr((a.val : ℚ) • $hf'Q)
       _ = rationalQExpansion ((a.val : ℚ) • F) := by rw [map_smul]
   · ext n
-    have hn := congrArg (coeff n) hf'p
+    have hn := congr(coeff n $hf'p)
     rw [coeff_map] at hn
     simp [smul_eq_mul, map_mul, hn]
 

@@ -119,8 +119,8 @@ theorem discriminant_int_map_rat (hp : 5 ≤ p) :
 /-- The `q`-expansion of `Δ` is `(E₄³ - E₆²) / 1728`. -/
 theorem qExpansion_discriminant : qExpansion 1 discriminant =
       (1 / 1728 : ℂ) • (qExpansion 1 E₄ ^ 3 - qExpansion 1 E₆ ^ 2) := by
-  simpa using congrArg (qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL)
-    discriminant_eq_E₄_cube_sub_E₆_sq_graded
+  have h := discriminant_eq_E₄_cube_sub_E₆_sq_graded
+  simpa using congr(qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL $h)
 
 /-- Extending `discriminant_int` to `ℂ` gives the `q`-expansion of the modular discriminant. -/
 theorem discriminant_int_map_complex (hp : 5 ≤ p) :
@@ -154,7 +154,8 @@ theorem evalE₄E₆Int_discriminantPoly_int (hp : 5 ≤ p) : evalE₄E₆Int (d
     pLocalIntModularForms.of_pow_eq_of _ ⟨_, E₄_int_pow_three_mem⟩ (by norm_num) rfl,
     pLocalIntModularForms.of_pow_eq_of _ ⟨_, E₆_int_pow_two_mem⟩ (by norm_num) rfl,
     ← map_sub, ← of_smul]
-  exact congrArg _ (Subtype.ext (by simp [discriminantIntModularForm, discriminant_int]))
+  exact congr(of (fun i ↦ pLocalIntModularForms p i) 12 $(Subtype.ext (by
+    simp [discriminantIntModularForm, discriminant_int])))
 
 /-! ### Division by the discriminant -/
 
@@ -174,7 +175,7 @@ theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : ℤ}
   obtain ⟨F, hF⟩ := hf
   set Fℂ := rationalModularFormToComplex F with hFℂdef
   have hfℂ : (f.map (algebraMap (pLocalInt p) ℚ)).map (algebraMap ℚ ℂ) = qExpansion 1 Fℂ := by
-    simpa [hFℂdef] using congrArg (map (algebraMap ℚ ℂ)) hF
+    simpa [hFℂdef] using congr(map (algebraMap ℚ ℂ) $hF)
   have hFℂ₀ : coeff 0 (qExpansion 1 Fℂ) = 0 := by simp [← hfℂ, hf₀]
   refine ⟨⟨(divDiscriminant_int hp f).map (algebraMap _ ℚ),
     CuspForm.discriminantEquiv (toCuspForm Fℂ hFℂ₀), ?_⟩, by simp⟩
@@ -249,12 +250,12 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
       ⟨_, divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
     have hg : g = 0 :=
       eq_zero_of_rationalModularForms_eq_bot g (rationalModularForms_eq_bot_of_neg (by lia))
-    have hgVal : divDiscriminant_int hp f₀ = 0 := by simpa [g] using congrArg Subtype.val hg
+    have hgVal : divDiscriminant_int hp f₀ = 0 := by simpa [g] using congr(Subtype.val $hg)
     have hf₀Zero : f₀ = 0 := Subtype.ext <| by
       simpa [hgVal] using (discriminant_int_mul_divDiscriminant_int hp hf₀).symm
     have hfScalar : f = c • mn := by simpa [hf₀Zero] using hfDecomp
     exact ⟨MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b),
-      hmonomial.trans <| congrArg (of (fun i ↦ pLocalIntModularForms p i) (n : ℤ)) hfScalar.symm⟩
+      hmonomial.trans congr(of (fun i ↦ pLocalIntModularForms p i) n $(hfScalar.symm))⟩
 
 theorem evalE₄E₆Int_surjective (hp : 5 ≤ p) : Function.Surjective (evalE₄E₆Int (p := p)) := by
   intro F

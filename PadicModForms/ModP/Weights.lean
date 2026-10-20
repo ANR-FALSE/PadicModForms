@@ -43,13 +43,13 @@ with the same nonzero evaluation at `E₄` and `E₆` modulo `p` have weights co
 `p - 1`. -/
 theorem natCast_eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (hG : IsWeightedHomogeneous E₄E₆Weights G n') (h : evalE₄E₆ModP F = evalE₄E₆ModP G)
-    (h0 : evalE₄E₆ModP F ≠ 0) : (n : ZMod (p - 1)) = (n' : ZMod (p - 1)) := by
+    (h0 : evalE₄E₆ModP F ≠ 0) : (n : ZMod (p - 1)) = n' := by
   by_contra hne
   obtain ⟨H, hH⟩ := Ideal.mem_span_singleton.1 <| (ker_evalE₄E₆ModP hp) ▸
     (RingHom.mem_ker.2 (by rw [map_sub, h, sub_self]) : F - G ∈ RingHom.ker evalE₄E₆ModP)
   -- Comparing the components of degree `n` in the grading modulo `p - 1`.
-  have hcomp := congrArg
-    (weightedHomogeneousComponent (E₄E₆WeightsModPSubOne p) (n : ZMod (p - 1))) hH
+  have hcomp :=
+    congr(weightedHomogeneousComponent (E₄E₆WeightsModPSubOne p) (n : ZMod (p - 1)) $hH)
   rw [map_sub, (isWeightedHomogeneous_modPSubOne hF).weightedHomogeneousComponent_same,
     (isWeightedHomogeneous_modPSubOne hG).weightedHomogeneousComponent_ne _ hne, sub_zero,
     ← add_zero (n : ZMod (p - 1)),

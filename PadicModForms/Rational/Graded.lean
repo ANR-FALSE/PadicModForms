@@ -75,7 +75,7 @@ theorem rationalModularFormsToComplex_gMul : of _ (n + m) (rationalModularFormTo
     (GMul.mul (A := fun k ↦ rationalModularForms k) f g)) =
       of _ n (rationalModularFormToComplex f) * of _ m (rationalModularFormToComplex g) := by
   rw [rationalModularFormToComplex_mul, of_mul_of]
-  exact congrArg (of (ModularForm 𝒮ℒ) (n + m)) rfl
+  exact congr(of (ModularForm 𝒮ℒ) (n + m) $(rfl))
 
 /-- The underlying ring homomorphism for scalar extension from rational to complex modular forms. -/
 @[simps!]
@@ -265,7 +265,7 @@ theorem evalE₄E₆Rat_surjective : Function.Surjective evalE₄E₆Rat := fun 
       · obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
         obtain ⟨p, hp⟩ := evalE₄E₆RatAtWeight_surjective n f
         exact ⟨p, (evalE₄E₆Rat_eq_of_apply n p).trans
-          (congrArg (DirectSum.of (fun k : ℤ ↦ rationalModularForms k) (n : ℤ)) hp)⟩
+          congr(DirectSum.of (fun k : ℤ ↦ rationalModularForms k) (n : ℤ) $hp)⟩
   | add F G hF hG =>
       obtain ⟨p, hp⟩ := hF
       obtain ⟨q, hq⟩ := hG

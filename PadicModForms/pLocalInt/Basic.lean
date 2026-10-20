@@ -155,7 +155,8 @@ theorem of_pow_eq_of {n : ℕ} (x : pLocalIntModularForms p i) (y : pLocalIntMod
     (hij : n • i = j) (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
     (of (fun i ↦ pLocalIntModularForms p i) i x) ^ n = of _ j y := by
   subst hij
-  simpa [ofPow] using congrArg _ (Subtype.ext hxy)
+  simpa [ofPow] using congr(of (fun i ↦ pLocalIntModularForms p i) (n • i) $((Subtype.ext hxy :
+    GradedMonoid.GMonoid.gnpow (A := fun i ↦ ↥(pLocalIntModularForms p i)) n x = y)))
 
 /-- Multiplying in the graded ring of `p`-integral modular forms, with the resulting weight
 computed. -/
@@ -165,6 +166,7 @@ theorem of_mul_of_eq_of (x : pLocalIntModularForms p i) (y : pLocalIntModularFor
     of (fun i ↦ pLocalIntModularForms p i) i x * of (fun i ↦ pLocalIntModularForms p i) j y =
       of (fun i ↦ pLocalIntModularForms p i) l z := by
   subst hij
-  simpa [of_mul_of] using congrArg _ (Subtype.ext hxyz)
+  simpa [of_mul_of] using congr(of (fun i ↦ pLocalIntModularForms p i) (i + j) $((Subtype.ext hxyz :
+    GradedMonoid.GMul.mul (A := fun i ↦ ↥(pLocalIntModularForms p i)) x y = z)))
 
 end pLocalIntModularForms
