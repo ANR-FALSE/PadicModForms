@@ -1,0 +1,217 @@
+/*
+ * Site theme: the colors and fonts of the Read the Docs Sphinx theme (sphinx_rtd_theme, MIT
+ * licence), as used by https://b-mehta.github.io/formalising-mathematics-notes/, applied to
+ * Verso's manual genre. Only Verso's own variables and classes are restyled.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Roboto+Slab:wght@400;700&display=swap");
+
+:root:root {
+    --verso-text-font-family: Lato, "proxima-nova", "Helvetica Neue", Arial, sans-serif;
+    --verso-structure-font-family: Lato, "proxima-nova", "Helvetica Neue", Arial, sans-serif;
+    --verso-code-font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", Courier, monospace;
+    --verso-text-color: #404040;
+    --verso-structure-color: #404040;
+    --verso-code-color: #404040;
+    --verso-selected-color: #e3e3e3;
+
+    --verso-toc-width: 300px;
+    --verso-toc-background-color: #343131;
+    --verso-toc-text-color: #d9d9d9;
+    --verso-toc-border-color: #343131;
+    --verso-toc-resize-handle-color: #2980b9;
+
+    --verso-burger-toc-visible-color: #fcfcfc;
+    --verso-burger-toc-visible-shadow-color: transparent;
+    --verso-burger-toc-hidden-color: #fcfcfc;
+    --verso-burger-toc-hidden-shadow-color: transparent;
+
+    /* Lean code, in the colors of the Pygments style of the theme */
+    --verso-code-keyword-color: #008000;
+    --verso-code-keyword-weight: bold;
+    --verso-code-const-color: #404040;
+    --verso-code-var-color: #404040;
+}
+
+/* Page: a white text column on a light gray background */
+body {
+    background: #edf0f2;
+    color: #404040;
+}
+
+main {
+    background: #edf0f2;
+}
+
+.content-wrapper {
+    background: #fcfcfc;
+    box-sizing: border-box;
+    max-width: calc(var(--verso-content-max-width) + 2 * var(--verso--content-padding-x));
+    min-height: calc(100vh - var(--verso-header-height));
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Roboto Slab", "ff-tisa-web-pro", Georgia, Arial, sans-serif;
+    font-weight: 700;
+    color: #404040;
+}
+
+main a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+main a:visited {
+    color: #9b59b6;
+}
+
+main a:hover {
+    color: #3091d1;
+}
+
+main .hl a, main .hl a:visited, main .permalink-widget a {
+    color: inherit;
+}
+
+/* Header: the blue bar of the theme */
+header {
+    background: #2980b9;
+    box-shadow: none;
+}
+
+.header-title, .header-title h1 {
+    color: #fcfcfc;
+    font-family: var(--verso-structure-font-family);
+}
+
+.header-title {
+    font-size: 1.5rem;
+}
+
+/* Table of contents: the dark sidebar */
+#toc {
+    background-color: #343131;
+    color: #d9d9d9;
+}
+
+#toc a {
+    color: #d9d9d9;
+}
+
+#toc a:hover {
+    color: #fcfcfc;
+    text-decoration: none;
+}
+
+#toc .toc-title h1 {
+    color: #fcfcfc;
+}
+
+#toc .split-toc label.toggle-split-toc::before {
+    background-color: #d9d9d9;
+}
+
+/* Captions in light blue capitals */
+#toc .split-toc.book > .title {
+    color: #55a5d9;
+    text-transform: uppercase;
+    font-size: 85%;
+    font-weight: 700;
+}
+
+/* The current chapter in white, its sections on light gray, as in the theme */
+#toc .split-toc .current td:not(.num), #toc .split-toc .title .current {
+    text-decoration-line: none;
+}
+
+#toc .split-toc.book tr.current td {
+    background: #fcfcfc;
+    color: #404040;
+    font-weight: 700;
+}
+
+#toc .split-toc.book tr.current a {
+    color: #404040;
+}
+
+#toc .split-toc:not(.book) {
+    background: #e3e3e3;
+    color: #404040;
+    padding: 0.4rem 0.5rem;
+}
+
+#toc .split-toc:not(.book) a {
+    color: #404040;
+}
+
+#toc .split-toc:not(.book) a:hover {
+    color: #000;
+}
+
+#toc .split-toc:not(.book) label.toggle-split-toc::before {
+    background-color: #404040;
+}
+
+/* Inline code: literals in red, references in bold, both boxed */
+main section code:not(.math):not(.hl) {
+    background: #fff;
+    border: 1px solid #e1e4e5;
+    padding: 0 5px;
+    font-size: 75%;
+    color: #e74c3c;
+}
+
+main section .hl.lean.inline {
+    background: #fff;
+    border: 1px solid #e1e4e5;
+    padding: 0 5px;
+    font-size: 75%;
+    font-weight: 700;
+}
+
+/* Code blocks */
+main section .hl.lean.block, main section pre {
+    background: #f8f8f8;
+    border: 1px solid #e1e4e5;
+    padding: 12px;
+    margin-left: 0;
+    font-size: 75%;
+    line-height: 1.4;
+}
+
+/* Full-width rows in the table of contents */
+#toc .split-tocs {
+    padding-right: 0;
+}
+
+/* Verso displays the table as a block (so that it can collapse); its body is the table box */
+#toc .split-toc table > tbody {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#toc .split-toc.book tr.current td {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Search field: the rounded field of the theme */
+#search-wrapper {
+    padding: 0 0.8rem;
+    background-color: #2980b9;
+}
+
+#search-wrapper .combobox .cb_edit {
+    background-color: #fcfcfc;
+    border: 1px solid #2472a4;
+    border-radius: 50px;
+    padding: 6px 12px;
+    font-family: var(--verso-text-font-family);
+}
+
+#toc .split-toc td.num {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 0.4rem;
+}

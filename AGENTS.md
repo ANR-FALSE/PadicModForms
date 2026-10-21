@@ -147,6 +147,8 @@ Verso is pinned to the tag matching `lean-toolchain`; bump `verso/lakefile.toml`
 `verso/Doc/*.lean`, one module per chapter, included from `verso/Doc.lean`; declarations are
 referred to with `{name}` roles and shown with `{docstring}` blocks, so the document fails to
 build when the code it describes changes.
+The site's look (colors and fonts of the Read the Docs Sphinx theme) is `verso/theme.css`, which
+`verso/Main.lean` reads when the site is generated; it only restyles Verso's own variables and classes.
 
 ## Lean options (from `lakefile.toml`)
 
