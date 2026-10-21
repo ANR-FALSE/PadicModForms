@@ -4,7 +4,7 @@
 [![Documentation](https://img.shields.io/badge/documentation-doc--gen4-blue)](https://anr-false.github.io/PadicModForms/docs/)
 
 A formalization, in Lean 4 and `mathlib`, of the theory of *p*-adic modular forms in the sense of
-Serre, from the definition up to the construction of the eigenvariety. Part of the ANR FALSE effort.
+Serre, from the definition up to the construction of the eigenvariety, including classicality. Part of the ANR FALSE project.
 
 📖 **[Website](https://anr-false.github.io/PadicModForms/)**: the definitions of the project and
 the design decisions behind them, as a Verso document built from the code (sources in
