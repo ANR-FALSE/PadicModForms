@@ -130,6 +130,36 @@ theorem v_ne_bot_mul_of_nonneg {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : 0
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hppos.le (fun ⟨i, j⟩ _  ↦ ?_)
   simpa using mul_le_mul (hm i) (hg' j) (norm_nonneg _) hppos.le
 
+/-! ### The ultrametric inequality -/
+
+theorem v_neg : v (-f) = v f := by
+  simp [v_def, AddValuation.map_neg]
+
+theorem v_sub_comm (g : ℚ_[p]⟦X⟧) : v (f - g) = v (g - f) := by
+  rw [← neg_sub, v_neg]
+
+/-- The ultrametric inequality for `v`, coefficient by coefficient. -/
+theorem min_le_v_add (g : ℚ_[p]⟦X⟧) : min (v f) (v g) ≤ v (f + g) :=
+  le_v_iff.2 fun n ↦
+    (min_le_min (v_le_coeffPadicValuation n f) (v_le_coeffPadicValuation n g)).trans
+      ((WithBot.coe_min _ _).symm.trans_le (WithBot.coe_le_coe.2 (by simp)))
+
+/-- The ultrametric inequality, in the form used to bound a sum from below. -/
+theorem le_v_add {g : ℚ_[p]⟦X⟧} (hf : m ≤ v f) (hg : m ≤ v g) : m ≤ v (f + g) :=
+  (le_min hf hg).trans (min_le_v_add g)
+
+/-- Adding a series of strictly larger valuation does not change the valuation. -/
+theorem v_add_eq_left_of_lt {g : ℚ_[p]⟦X⟧} (h : v f < v g) : v (f + g) = v f := by
+  refine le_antisymm ?_ ((min_eq_left h.le).symm.le.trans (min_le_v_add g))
+  refine (min_le_iff.1 ?_).resolve_right (not_le.2 h)
+  simpa [add_neg_cancel_right, v_neg] using min_le_v_add (f := f + g) (-g)
+
+/-- A power series has infinite valuation iff it is zero. -/
+theorem v_eq_top_iff : v f = ⊤ ↔ f = 0 := by
+  rw [v_def, iInf_eq_top, PowerSeries.ext_iff]
+  refine forall_congr' fun n ↦ ?_
+  rw [_root_.map_zero, ← AddValuation.top_iff addValuation, ← WithBot.coe_top, WithBot.coe_eq_coe]
+
 /-! ### Scaling by a constant -/
 
 /-- Multiplying a power series by a nonzero constant shifts its valuation by the valuation of the

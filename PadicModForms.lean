@@ -11,6 +11,7 @@ public import PadicModForms.ForMathlib.LinearIndependent
 public import PadicModForms.ForMathlib.MvPolynomial
 public import PadicModForms.ForMathlib.NatPrime
 public import PadicModForms.ForMathlib.Padic
+public import PadicModForms.ForMathlib.PadicUnits
 public import PadicModForms.ForMathlib.PowerSeries
 public import PadicModForms.ForMathlib.PowerSeriesTopology
 public import PadicModForms.ForMathlib.QExpansion
@@ -41,6 +42,8 @@ public import PadicModForms.PAdic.Eisenstein
 public import PadicModForms.PAdic.Weights.Congruence
 public import PadicModForms.PAdic.Weights.CongruencePow
 public import PadicModForms.PAdic.Weights.Defs
+public import PadicModForms.PAdic.Weights.Presentation
+public import PadicModForms.PAdic.Weights.Topology
 public import PadicModForms.Rational.Basic
 public import PadicModForms.Rational.E2
 public import PadicModForms.Rational.Eisenstein
