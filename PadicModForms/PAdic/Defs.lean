@@ -20,7 +20,9 @@ import Mathlib.Tactic.NormNum.Parity
 # p-adic modular forms
 
 This file defines p-adic weight space and p-adic modular forms as limits of rational classical
-modular forms.
+modular forms. A *presentation* of a p-adic modular form `f` (`pAdicModularFormStruct f`) is a
+sequence of classical rational modular forms whose coefficients converge uniformly to those of
+`f`; a `p`-adic power series is a p-adic modular form when it admits a presentation.
 -/
 
 @[expose] public section

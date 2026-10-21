@@ -22,7 +22,7 @@ import Mathlib.Tactic.NormNum.Parity
 
 This file relates the classical integral weights in a presentation of a nonzero p-adic modular
 form to its limiting p-adic weight: Serre's **Théorème 2**. The weights `S.w i` of a presentation
-`S` are Cauchy for the moduli `(p - 1) p ^ (m - 1)`, by Théorème 1 along the presentation
+`S` are Cauchy for the moduli `(p - 1) p ^ (m - 1)`, by Théorème 1 for the presentation
 (`pAdicModularFormStruct.exists_forall_dvd_sub`), hence converge in weight space
 (`WeightSpace.exists_tendsto_ι_of_forall_exists_dvd`). Two presentations have eventually
 congruent weights (`pAdicModularFormStruct.eventually_dvd_sub`), hence the same limit
