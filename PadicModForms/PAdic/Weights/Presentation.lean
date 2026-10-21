@@ -13,7 +13,8 @@ import PadicModForms.PAdic.Weights.CongruencePow
 /-!
 # The weights of a presentation of a `p`-adic modular form
 
-Let `f ≠ 0` be a `p`-adic modular form with presentation `S`: classical forms `S.F i` of weights
+Let `p ≥ 5` and let `f ≠ 0` be a `p`-adic modular form with presentation `S`: classical forms
+`S.F i` of weights
 `S.w i` whose `q`-expansions converge uniformly to `f`. This file turns that convergence into
 congruences between the weights, through Serre's Théorème 1
 (`ModularForm.natCast_eq_of_v_sub_le_pow`): for every `m`, the weights `S.w i` are eventually
@@ -171,25 +172,18 @@ variable (S : pAdicModularFormStruct f)
 
 /-! ### The weights of a presentation -/
 
-/-- **The weights of a presentation are Cauchy** for the moduli `(p - 1) p ^ (m - 1)`. For
-`p ≥ 5` this is Théorème 1 for the presentation (`ModularForm.exists_forall_dvd_sub_of_tendsto`).
-For `p = 2, 3` it follows from Serre's form of Théorème 1 for the small primes, whose moduli
-`2 ^ (m - 2)` and `2 · 3 ^ (m - 1)` are cofinal with these; that case is not formalized. -/
-theorem exists_forall_dvd_sub (hf : f ≠ 0) (m : ℕ) :
-    ∃ N, ∀ i ≥ N, ∀ j ≥ N, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ S.w i - S.w j := by
-  by_cases hp : 5 ≤ p
-  · exact ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S.tendsto_map m
-  · sorry
+/-- **The weights of a presentation are Cauchy** for the moduli `(p - 1) p ^ (m - 1)`, for
+`p ≥ 5`: Théorème 1 along the presentation (`ModularForm.exists_forall_dvd_sub_of_tendsto`). -/
+theorem exists_forall_dvd_sub (hp : 5 ≤ p) (hf : f ≠ 0) (m : ℕ) :
+    ∃ N, ∀ i ≥ N, ∀ j ≥ N, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ S.w i - S.w j :=
+  ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S.tendsto_map m
 
 /-- **Two presentations of the same nonzero form have eventually congruent weights**, modulo
-every `(p - 1) p ^ (m - 1)`. Same proof as `exists_forall_dvd_sub`, for the two
-presentations. -/
-theorem eventually_dvd_sub (S' : pAdicModularFormStruct f) (hf : f ≠ 0) (m : ℕ) :
+every `(p - 1) p ^ (m - 1)`, for `p ≥ 5`: Théorème 1 along the two presentations. -/
+theorem eventually_dvd_sub (hp : 5 ≤ p) (S' : pAdicModularFormStruct f) (hf : f ≠ 0) (m : ℕ) :
     ∀ᶠ i in atTop, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ S.w i - S'.w i := by
-  by_cases hp : 5 ≤ p
-  · obtain ⟨N, hN⟩ :=
-      ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S'.tendsto_map m
-    exact eventually_atTop.2 ⟨N, fun i hi ↦ hN i hi i hi⟩
-  · sorry
+  obtain ⟨N, hN⟩ :=
+    ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S'.tendsto_map m
+  exact eventually_atTop.2 ⟨N, fun i hi ↦ hN i hi i hi⟩
 
 end pAdicModularFormStruct
