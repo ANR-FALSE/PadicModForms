@@ -135,6 +135,19 @@ backports mathlib PR #38813 and should be deleted once that PR lands upstream. W
 mathlib's standards (full generality, complete docstrings), since they are meant to be upstreamed
 verbatim.
 
+## The Verso document (`verso/`)
+
+`verso/` is a separate Lake package holding the project's write-up, a Verso document (manual
+genre) explaining the definitions and the design decisions. It is deployed to GitHub Pages at the
+site root by CI, with the doc-gen4 API documentation at `/docs`. Its `lakefile.toml` takes the
+library and every one of its dependencies from this checkout by path, so it must be built after
+the library: `cd verso && lake build Doc && lake exe generate` (output in `verso/_out/html-multi`).
+Verso is pinned to the tag matching `lean-toolchain`; bump `verso/lakefile.toml`,
+`verso/lean-toolchain` and `verso/lake-manifest.json` together with the toolchain. Prose goes in
+`verso/Doc/*.lean`, one module per chapter, included from `verso/Doc.lean`; declarations are
+referred to with `{name}` roles and shown with `{docstring}` blocks, so the document fails to
+build when the code it describes changes.
+
 ## Lean options (from `lakefile.toml`)
 
 `autoImplicit = false` and `relaxedAutoImplicit = false` (declare every variable, in a `variable`

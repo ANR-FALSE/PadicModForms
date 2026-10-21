@@ -35,3 +35,10 @@ serre.pdf
 
 ## Personal, per-machine agent instructions (AGENTS.md and CLAUDE.md are tracked)
 /CLAUDE.local.md
+
+## Formalization write-up (not tracked for the moment)
+/Formalization/
+
+## Verso document (verso/): build artifacts and generated site
+/verso/.lake/
+/verso/_out/

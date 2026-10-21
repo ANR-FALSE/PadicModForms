@@ -1,0 +1,57 @@
+# The Verso document describing the project. It is a separate Lake package so that the library
+# never depends on Verso. The library and every one of its dependencies are taken from the parent
+# project's checkout, so building this package reuses the artifacts of `lake build` in the parent.
+name = "PadicModFormsDoc"
+defaultTargets = ["Doc"]
+
+[[require]]
+name = "verso"
+git = "https://github.com/leanprover/verso"
+rev = "v4.36.0-rc1"
+
+[[require]]
+name = "PadicModForms"
+path = ".."
+
+[[require]]
+name = "mathlib"
+path = "../.lake/packages/mathlib"
+
+[[require]]
+name = "batteries"
+path = "../.lake/packages/batteries"
+
+[[require]]
+name = "aesop"
+path = "../.lake/packages/aesop"
+
+[[require]]
+name = "Qq"
+path = "../.lake/packages/Qq"
+
+[[require]]
+name = "proofwidgets"
+path = "../.lake/packages/proofwidgets"
+
+[[require]]
+name = "importGraph"
+path = "../.lake/packages/importGraph"
+
+[[require]]
+name = "LeanSearchClient"
+path = "../.lake/packages/LeanSearchClient"
+
+[[require]]
+name = "plausible"
+path = "../.lake/packages/plausible"
+
+[[require]]
+name = "Cli"
+path = "../.lake/packages/Cli"
+
+[[lean_lib]]
+name = "Doc"
+
+[[lean_exe]]
+name = "generate"
+root = "Main"
