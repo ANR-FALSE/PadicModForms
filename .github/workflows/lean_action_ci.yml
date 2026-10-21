@@ -54,7 +54,12 @@ jobs:
     # `github-pages` environment), so there is no point in spending an hour generating the
     # documentation for a pull request.
     if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    # Pinned instead of `ubuntu-latest`: since that label started moving to Ubuntu 26.04 (rollout
+    # from 2026-10-19), every run of this job on the new image has died with "resource exhausted
+    # (error code: 12, not enough memory)" the moment `coreDocs` finished and Lake spawned the
+    # `srcUri.github` `git` jobs, while the identical build was green on 24.04. The other two jobs
+    # are unaffected. Re-test on the newer image before 24.04 is retired.
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pages: write # deploy to GitHub Pages
