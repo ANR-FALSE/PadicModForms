@@ -34,17 +34,17 @@ form is that limit.
 
 open PowerSeries Filter Topology
 
-variable {p : ℕ} [Fact p.Prime]
+variable {p : ℕ} [Fact p.Prime] {f : ℚ_[p]⟦X⟧}
 
 /-- **Serre's Théorème 2, existence**: the classical weights of a presentation of a nonzero
 `p`-adic modular form converge in weight space. -/
-theorem w_tendsto {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
+theorem w_tendsto (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
     ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) :=
   WeightSpace.exists_tendsto_ι_of_forall_exists_dvd (S.exists_forall_dvd_sub hf)
 
 /-- **Serre's Théorème 2, uniqueness**: the limit of the classical weights does not depend on
 the presentation. -/
-theorem limit_unique {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
+theorem limit_unique (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
     {x x' : X_[p]}
     (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
     (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' :=
@@ -52,5 +52,5 @@ theorem limit_unique {f : ℚ_[p]⟦X⟧} (hf : f ≠ 0) (S S' : pAdicModularFor
 
 open Classical in
 /-- The p-adic weight of a p-adic modular form. -/
-noncomputable def w {f : ℚ_[p]⟦X⟧} (hf : f.isPAdicModularForm p) : X_[p] :=
+noncomputable def w (hf : f.isPAdicModularForm p) : X_[p] :=
   if hf0 : f = 0 then ι 0 else (w_tendsto hf0 (choice hf)).choose

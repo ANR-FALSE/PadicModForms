@@ -63,6 +63,10 @@ namespace ModularForm
 
 variable {p m : ℕ} [Fact p.Prime]
 
+section
+
+variable {k h : ℕ} {f f' : (pLocalInt p)⟦X⟧}
+
 /-- Division of `f E_h - f'` by `p ^ r λ`: under the contradiction hypothesis `r < m`, with
 `r = v_p(h) + 1`, there is a `p`-integral modular form `g` of weight `k + h` whose reduction
 modulo `p` is `f̄ φ_h`. Indeed `f E_h - f' = (f - f') + f (E_h - 1)` has all its coefficients
@@ -70,9 +74,8 @@ divisible by `p ^ r`, the first summand even by `p ^ (r + 1)`, and dividing the 
 congruence by `p ^ r λ` leaves `f Φ_h` modulo `p`. This holds for every odd prime `p`: `h` is
 automatically even, being a multiple of `p - 1`, and `3 ≤ h` (hence `4 ≤ h`) is what makes `E_h`
 a modular form. For `p ≥ 5` every positive multiple of `p - 1` qualifies. -/
-theorem exists_map_toZMod_eq_mul_sigmaSeries (hp : p ≠ 2) {k h : ℕ}
-    (hh3 : 3 ≤ h) (hhd : p - 1 ∣ h) (hr : padicValNat p h + 1 < m)
-    {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
+theorem exists_map_toZMod_eq_mul_sigmaSeries (hp : p ≠ 2) (hh3 : 3 ≤ h) (hhd : p - 1 ∣ h)
+    (hr : padicValNat p h + 1 < m) (hf : f ∈ pLocalIntModularForms p k)
     (hf' : f' ∈ pLocalIntModularForms p (k + h))
     (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     ∃ g : (pLocalInt p)⟦X⟧, g ∈ pLocalIntModularForms p (k + h) ∧
@@ -111,10 +114,10 @@ positive multiple of `p - 1`, congruent modulo `p ^ m` with nonzero common reduc
 `φ_h = ḡ f̄ ^ (p - 2) / f̄ ^ (p - 1)` as a quotient of degree-zero forms, integral over them by the
 Artin–Schreier identity, hence a degree-zero form by normality — contradicting
 `sigmaSeries_notMem_modPWeightZeroForms`. -/
-theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) {k h : ℕ} (hh0 : h ≠ 0) (hhd : p - 1 ∣ h)
-    {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
-    (hf' : f' ∈ pLocalIntModularForms p (k + h)) (h0 : f.map toZMod ≠ 0)
-    (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) : p ^ (m - 1) ∣ h := by
+theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h)
+    (hf : f ∈ pLocalIntModularForms p k) (hf' : f' ∈ pLocalIntModularForms p (k + h))
+    (h0 : f.map toZMod ≠ 0) (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
+    p ^ (m - 1) ∣ h := by
   by_contra hndvd
   have hr : padicValNat p h + 1 < m := by grind [(padicValNat_dvd_iff_le hh0).not.1 hndvd]
   have hh3 : 3 ≤ h := by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]
@@ -154,10 +157,9 @@ modular forms of weights `k` and `k'`, congruent modulo `p ^ m`, whose common re
 `p - 1 ∣ k' - k`. The hypotheses are symmetric in `f` and `f'`, whose reductions modulo `p` agree,
 so one may assume `k ≤ k'`; then `pow_dvd_of_map_toZModPow_eq` applies to `h = k' - k`, and
 `p - 1` and `p ^ (m - 1)` are coprime. -/
-theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k k' : ℕ}
-    {f f' : (pLocalInt p)⟦X⟧} (hf : f ∈ pLocalIntModularForms p k)
-    (hf' : f' ∈ pLocalIntModularForms p k') (h0 : f.map toZMod ≠ 0)
-    (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
+theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k' : ℕ}
+    (hf : f ∈ pLocalIntModularForms p k) (hf' : f' ∈ pLocalIntModularForms p k')
+    (h0 : f.map toZMod ≠ 0) (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     (k : ZMod ((p - 1) * p ^ (m - 1))) = (k' : ZMod ((p - 1) * p ^ (m - 1))) := by
   have hcong₁ := map_toZMod_eq_of_map_toZModPow_eq hm hcong
   -- By symmetry, we may assume `k ≤ k'`.
@@ -173,6 +175,8 @@ theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k k' : ℕ
   refine Nat.Coprime.mul_dvd_of_dvd_of_dvd ?_ hd
     (pow_dvd_of_map_toZModPow_eq hp hh hd hf (by grind) h0 hcong)
   exact ((Nat.coprime_self_sub_left (by lia)).2 (Nat.coprime_one_left p)).pow_right _
+
+end
 
 /-- **Serre's theorem on congruences of weights, in Serre's normalized form**: if `f` has
 valuation `0` and `v (f - f') ≥ m`, then the weights of `f` and `f'` are congruent modulo

@@ -147,12 +147,12 @@ namespace pLocalIntModularForms
 
 open DirectSum
 
-variable {i j l : ℤ}
+variable {i j l : ℤ} (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
 
 /-- Taking a power in the graded ring of `p`-integral modular forms, with the resulting weight
 computed. -/
-theorem of_pow_eq_of {n : ℕ} (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
-    (hij : n • i = j) (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
+theorem of_pow_eq_of {n : ℕ} (hij : n • i = j)
+    (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
     (of (fun i ↦ pLocalIntModularForms p i) i x) ^ n = of _ j y := by
   subst hij
   simpa [ofPow] using congr(of (fun i ↦ pLocalIntModularForms p i) (n • i) $((Subtype.ext hxy :
@@ -160,8 +160,7 @@ theorem of_pow_eq_of {n : ℕ} (x : pLocalIntModularForms p i) (y : pLocalIntMod
 
 /-- Multiplying in the graded ring of `p`-integral modular forms, with the resulting weight
 computed. -/
-theorem of_mul_of_eq_of (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
-    (z : pLocalIntModularForms p l) (hij : i + j = l)
+theorem of_mul_of_eq_of (z : pLocalIntModularForms p l) (hij : i + j = l)
     (hxyz : (x : (pLocalInt p)⟦X⟧) * (y : (pLocalInt p)⟦X⟧) = (z : (pLocalInt p)⟦X⟧)) :
     of (fun i ↦ pLocalIntModularForms p i) i x * of (fun i ↦ pLocalIntModularForms p i) j y =
       of (fun i ↦ pLocalIntModularForms p i) l z := by

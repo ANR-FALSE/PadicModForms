@@ -48,9 +48,11 @@ theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k �
   rw [← two_mul] at h
   simpa [h] using riemannZeta_two_mul_nat (k := m) (by lia)
 
+variable {p : ℕ} [hp : Fact p.Prime]
+
 /-- If `k` is positive and even, and `p - 1 ∣ k`, then the denominator of `Bₖ⁻¹` is
 not divisible by `p`. -/
-theorem not_dvd_den_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 0 < k) (hk2 : Even k)
+theorem not_dvd_den_inv_bernoulli (hk : 0 < k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : ¬ p ∣ (bernoulli k)⁻¹.den := by
   obtain ⟨m, rfl⟩ := hk2
   rw [← two_mul] at hk hpk ⊢
@@ -60,7 +62,7 @@ theorem not_dvd_den_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 0 < k) (hk2 : E
 
 /-- If `k` is positive and even, and `p - 1 ∣ k`, then `p` divides the numerator of `Bₖ⁻¹`:
 by von Staudt–Clausen `p` divides the denominator of `Bₖ`. -/
-theorem dvd_num_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 0 < k) (hk2 : Even k)
+theorem dvd_num_inv_bernoulli (hk : 0 < k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (p : ℤ) ∣ (bernoulli k)⁻¹.num := by
   obtain ⟨m, rfl⟩ := hk2
   rw [← two_mul] at hk hpk ⊢
@@ -70,14 +72,13 @@ theorem dvd_num_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 0 < k) (hk2 : Even 
 /-! ### Integrality of `Bₖ⁻¹` at `p` -/
 
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral. -/
-theorem inv_bernoulli_mem_pLocalInt {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
+theorem inv_bernoulli_mem_pLocalInt (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p :=
   (mem_pLocalInt_iff p).2 <| not_dvd_den_inv_bernoulli (by lia) hk2 hpk
 
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` reduces to zero
 modulo `p`. -/
-theorem toZMod_inv_bernoulli_eq_zero {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
-    (hpk : p - 1 ∣ k) :
+theorem toZMod_inv_bernoulli_eq_zero (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 ∣ k) :
     pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 := by
   let qden : (span {(p : ℤ)}).primeCompl := ⟨(bernoulli k)⁻¹.den, fun h ↦
     not_dvd_den_inv_bernoulli (by lia) hk2 hpk (by exact_mod_cast mem_span_singleton.mp h)⟩
@@ -88,7 +89,7 @@ theorem toZMod_inv_bernoulli_eq_zero {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk
   simpa using (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).2 (dvd_num_inv_bernoulli (by lia) hk2 hpk)
 
 /-- If `p - 1 ∣ k`, then `p` divides `Bₖ⁻¹` in the localization of `ℤ` at `p`. -/
-theorem p_dvd_inv_bernoulli {p : ℕ} [Fact p.Prime] (hk : 3 ≤ k) (hk2 : Even k)
+theorem p_dvd_inv_bernoulli (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) : (p : pLocalInt p) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ :=
   pLocalInt.dvd_of_toZMod_eq_zero (toZMod_inv_bernoulli_eq_zero hk hk2 hpk)
 
@@ -121,8 +122,6 @@ theorem bernoulli_six : bernoulli 6 = 1 / 42 := by
 /-! ### von Staudt–Clausen: `p`-integrality of `Bₖ` -/
 
 section Kummer
-
-variable {p : ℕ} [hp : Fact p.Prime]
 
 /-- If `p - 1` does not divide `k`, then `Bₖ` is `p`-integral. -/
 theorem bernoulli_mem_pLocalInt (hpk : ¬ (p - 1) ∣ k) : bernoulli k ∈ pLocalInt p := by

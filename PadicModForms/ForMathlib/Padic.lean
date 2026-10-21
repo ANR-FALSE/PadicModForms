@@ -56,13 +56,15 @@ namespace pLocalInt
 
 open Padic
 
-variable {x : pLocalInt p}
+variable (x : pLocalInt p)
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational has `p`-adic norm at most `1`. -/
-theorem norm_coe_le_one (x : pLocalInt p) : ‖(x : ℚ_[p])‖ ≤ 1 :=
+theorem norm_coe_le_one : ‖(x : ℚ_[p])‖ ≤ 1 :=
   (zero_le_addValuation_iff_norm_le_one _).1
     ((zero_le_addValuation_ratCast_iff p _).2 ((mem_pLocalInt_iff _).1 x.2))
+
+variable {x}
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational with nonzero reduction modulo `p` is a unit of `pLocalInt p`, hence has
@@ -102,10 +104,12 @@ theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
   rw [pLocalInt.toZModPow_eq_zero_iff]
   exact (IsLocalization.map_units (pLocalInt p) z).dvd_mul_right.mp hdvdy
 
+variable (x)
+
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p ^ m`
 exactly when its `p`-adic norm is `≤ (p ^ m)⁻¹`. -/
-theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
+theorem norm_coe_le_inv_pow_iff (m : ℕ) :
     ‖(x : ℚ_[p])‖ ≤ ((p : ℝ) ^ m)⁻¹ ↔ pLocalInt.toZModPow m x = 0 := by
   by_cases hm : m = 0
   · rw [hm, pow_zero, inv_one]
@@ -116,7 +120,7 @@ theorem norm_coe_le_inv_pow_iff (m : ℕ) (x : pLocalInt p) :
   simpa [hcast, norm_mul, norm_p] using mul_le_of_le_one_right (by positivity) (norm_coe_le_one y)
 
 /-- A `p`-integral rational reduces to `0` modulo `p` exactly when its `p`-adic norm is `≤ p⁻¹`. -/
-theorem norm_coe_le_inv_iff (x : pLocalInt p) :
+theorem norm_coe_le_inv_iff :
     ‖(x : ℚ_[p])‖ ≤ (p : ℝ)⁻¹ ↔ pLocalInt.toZMod x = 0 := by
   rw [← pow_one (p : ℝ), norm_coe_le_inv_pow_iff (m := 1) x]
   exact toZModPow_one_eq_zero_iff x
@@ -124,13 +128,13 @@ theorem norm_coe_le_inv_iff (x : pLocalInt p) :
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational reduces to `0` modulo `p ^ m` exactly when its valuation is at least
 `m`. This generalizes `pLocalInt.one_le_addValuation_iff`. -/
-theorem natCast_le_addValuation_iff (m : ℕ) (x : pLocalInt p) :
+theorem natCast_le_addValuation_iff (m : ℕ) :
     ((m : ℤ) : EInt) ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZModPow m x = 0 := by
   rw [intCast_le_addValuation_iff_norm_le_pow, zpow_neg, zpow_natCast, norm_coe_le_inv_pow_iff]
 
-theorem one_le_addValuation_iff (x : pLocalInt p) :
+theorem one_le_addValuation_iff :
     1 ≤ (addValuation (x : ℚ_[p]) : EInt) ↔ pLocalInt.toZMod x = 0 := by
-  rw [← toZModPow_one_eq_zero_iff, ← natCast_le_addValuation_iff 1 x]
+  rw [← toZModPow_one_eq_zero_iff, ← natCast_le_addValuation_iff x 1]
   simp [WithBotTop.coe]
 
 end pLocalInt

@@ -187,15 +187,17 @@ theorem pLocalInt.ker_toZModPow (n : ℕ) :
     Int.natCast_dvd.not.mp (mem_span_singleton.not.mp (mem_primeCompl_iff.mp z.property))
   simpa using Int.natCast_dvd.mpr (Prime.pow_dvd_of_dvd_mul_right hp.out.prime n hz hdvdprod)
 
+variable {m : ℕ} {x : pLocalInt p}
+
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- The kernel of reduction modulo `p`: an element of `pLocalInt p` reduces to `0` exactly when
 it is divisible by `p`. -/
-theorem pLocalInt.toZMod_eq_zero_iff {x : pLocalInt p} :
+theorem pLocalInt.toZMod_eq_zero_iff :
     pLocalInt.toZMod x = 0 ↔ (p : pLocalInt p) ∣ x := by
   rw [← RingHom.mem_ker, pLocalInt.ker_toZMod, pLocalInt.maximalIdeal_eq_span, mem_span_singleton]
 
 /-- An element of `pLocalInt p` killed by reduction modulo `p` is divisible by `p`. -/
-theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod x = 0) :
+theorem pLocalInt.dvd_of_toZMod_eq_zero (hx : pLocalInt.toZMod x = 0) :
     (p : pLocalInt p) ∣ x :=
   pLocalInt.toZMod_eq_zero_iff.1 hx
 
@@ -204,13 +206,13 @@ theorem pLocalInt.dvd_of_toZMod_eq_zero {x : pLocalInt p} (hx : pLocalInt.toZMod
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- An element of the local ring `pLocalInt p` is a unit exactly when its reduction modulo `p` is
 nonzero. -/
-theorem pLocalInt.isUnit_iff_toZMod_ne_zero {x : pLocalInt p} :
+theorem pLocalInt.isUnit_iff_toZMod_ne_zero :
     IsUnit x ↔ pLocalInt.toZMod x ≠ 0 := by
   rw [← IsLocalRing.notMem_maximalIdeal, ← pLocalInt.ker_toZMod, RingHom.mem_ker]
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- An element of `pLocalInt p` is a unit exactly when it is not divisible by `p`. -/
-theorem pLocalInt.isUnit_iff_not_dvd {x : pLocalInt p} : IsUnit x ↔ ¬(p : pLocalInt p) ∣ x := by
+theorem pLocalInt.isUnit_iff_not_dvd : IsUnit x ↔ ¬(p : pLocalInt p) ∣ x := by
   rw [pLocalInt.isUnit_iff_toZMod_ne_zero, Ne, pLocalInt.toZMod_eq_zero_iff]
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
@@ -244,24 +246,24 @@ theorem inv_mem_pLocalInt {x : ℚ} (hx : x ∈ pLocalInt p) (h : pLocalInt.toZM
   have := (((pLocalInt.isUnit_iff_toZMod_ne_zero.2 h).unit⁻¹ : (pLocalInt p)ˣ) : pLocalInt p).2
   rwa [pLocalInt.coe_units_inv, IsUnit.unit_spec] at this
 
-theorem pLocalInt.toZModPow_eq_zero_of_dvd {m : ℕ} {x : pLocalInt p}
-  (hx : (p : pLocalInt p) ^ m ∣ x) : pLocalInt.toZModPow m x = 0 := by
+theorem pLocalInt.toZModPow_eq_zero_of_dvd (hx : (p : pLocalInt p) ^ m ∣ x) :
+    pLocalInt.toZModPow m x = 0 := by
   obtain ⟨y, rfl⟩ := hx
   rw [map_mul, pLocalInt.toZModPow_pow, zero_mul]
 
-theorem pLocalInt.dvd_of_toZModPow_eq_zero {m : ℕ} {x : pLocalInt p}
-    (hx : pLocalInt.toZModPow m x = 0) : (p : pLocalInt p) ^ m ∣ x := by
+theorem pLocalInt.dvd_of_toZModPow_eq_zero (hx : pLocalInt.toZModPow m x = 0) :
+    (p : pLocalInt p) ^ m ∣ x := by
   rwa [← mem_span_singleton, ← pLocalInt.ker_toZModPow m]
 
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- The kernel of reduction modulo `p ^ m`: an element of `pLocalInt p` reduces to `0` exactly
 when it is divisible by `p ^ m`. -/
-theorem pLocalInt.toZModPow_eq_zero_iff {m : ℕ} {x : pLocalInt p} :
+theorem pLocalInt.toZModPow_eq_zero_iff :
     pLocalInt.toZModPow m x = 0 ↔ (p : pLocalInt p) ^ m ∣ x :=
   ⟨fun h ↦ pLocalInt.dvd_of_toZModPow_eq_zero h, fun h ↦ pLocalInt.toZModPow_eq_zero_of_dvd h⟩
 
 /-- Reduction modulo `p ^ m` refines reduction modulo `p`. -/
-theorem pLocalInt.castHom_toZModPow {m : ℕ} (hm : 1 ≤ m) (x : pLocalInt p) :
+theorem pLocalInt.castHom_toZModPow (hm : 1 ≤ m) (x : pLocalInt p) :
     ZMod.castHom (dvd_pow_self p (by lia : m ≠ 0)) (ZMod p) (pLocalInt.toZModPow m x) =
       pLocalInt.toZMod x := by
   rw [← RingHom.comp_apply]

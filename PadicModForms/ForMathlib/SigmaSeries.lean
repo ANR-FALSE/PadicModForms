@@ -72,12 +72,12 @@ end ZMod
 
 namespace ArithmeticFunction
 
-variable {p a b k : ℕ} [Fact p.Prime]
+variable {p a b k n : ℕ} [Fact p.Prime]
 
 -- should go to Mathlib.NumberTheory.ArithmeticFunction.Misc
 omit [Fact p.Prime] in
 /-- Every divisor of an integer prime to `p` is invertible modulo `p`. -/
-theorem natCast_ne_zero_of_mem_divisors {n d : ℕ} (hn : ¬p ∣ n) (hd : d ∈ n.divisors) :
+theorem natCast_ne_zero_of_mem_divisors {d : ℕ} (hn : ¬p ∣ n) (hd : d ∈ n.divisors) :
     (d : ZMod p) ≠ 0 :=
   fun h ↦ hn (((ZMod.natCast_eq_zero_iff _ _).mp h).trans (mem_divisors.mp hd).1)
 
@@ -111,7 +111,7 @@ theorem natCast_sigma_mul_prime_left (hk : k ≠ 0) (n : ℕ) :
 -- should go to Mathlib.NumberTheory.ArithmeticFunction.Misc
 /-- For `n` prime to `p`, the reduction of `σ_a(n)` modulo `p` only depends on the exponent `a`
 modulo `p - 1`, every divisor of `n` being a unit modulo `p`. -/
-theorem natCast_sigma_eq_of_natCast_eq (hab : (a : ZMod (p - 1)) = b) {n : ℕ} (hn : ¬p ∣ n) :
+theorem natCast_sigma_eq_of_natCast_eq (hab : (a : ZMod (p - 1)) = b) (hn : ¬p ∣ n) :
     ((σ a n : ℕ) : ZMod p) = ((σ b n : ℕ) : ZMod p) := by
   simp only [sigma_apply, cast_sum, cast_pow]
   exact sum_congr rfl fun d hd ↦
@@ -120,7 +120,7 @@ theorem natCast_sigma_eq_of_natCast_eq (hab : (a : ZMod (p - 1)) = b) {n : ℕ} 
 -- should go to Mathlib.NumberTheory.ArithmeticFunction.Misc
 /-- For `n` prime to `p` and `p - 1 ∣ a + 1`, one has `n ^ a σ₁(n) = σ_a(n)` in `ZMod p`: pair
 each divisor `d` of `n` with `n / d` and apply Fermat's little theorem. -/
-theorem natCast_pow_mul_sigma_one (ha : p - 1 ∣ a + 1) {n : ℕ} (hn : ¬p ∣ n) :
+theorem natCast_pow_mul_sigma_one (ha : p - 1 ∣ a + 1) (hn : ¬p ∣ n) :
     (n : ZMod p) ^ a * ((σ 1 n : ℕ) : ZMod p) = ((σ a n : ℕ) : ZMod p) := by
   simp only [sigma_apply, cast_sum, cast_pow, pow_one]
   rw [mul_sum, ← sum_div_divisors n fun d ↦ (d : ZMod p) ^ a]
@@ -138,7 +138,7 @@ end ArithmeticFunction
 
 namespace PowerSeries
 
-variable (R : Type*) [Semiring R] (p k : ℕ)
+variable (R : Type*) [Semiring R] (p k n : ℕ)
 
 -- should go to a new file Mathlib.NumberTheory.SigmaSeries
 /-- The divisor-sum power series `∑_{n ≥ 1} σ_k(n) qⁿ`. The constant coefficient vanishes because
@@ -146,7 +146,7 @@ variable (R : Type*) [Semiring R] (p k : ℕ)
 def sigmaSeries : R⟦X⟧ := mk fun n ↦ (σ k n : R)
 
 @[simp]
-theorem coeff_sigmaSeries (n : ℕ) : coeff n (sigmaSeries R k) = ((σ k n : ℕ) : R) :=
+theorem coeff_sigmaSeries : coeff n (sigmaSeries R k) = ((σ k n : ℕ) : R) :=
   coeff_mk ..
 
 @[simp]
@@ -162,7 +162,7 @@ theorem map_sigmaSeries {S : Type*} [Semiring S] (f : R →+* S) :
 def sigmaSeriesPrimeTo : R⟦X⟧ := mk fun n ↦ if p ∣ n then 0 else (σ k n : R)
 
 @[simp]
-theorem coeff_sigmaSeriesPrimeTo (n : ℕ) :
+theorem coeff_sigmaSeriesPrimeTo :
     coeff n (sigmaSeriesPrimeTo R p k) = if p ∣ n then 0 else ((σ k n : ℕ) : R) :=
   coeff_mk ..
 

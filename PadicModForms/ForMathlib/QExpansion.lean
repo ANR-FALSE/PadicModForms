@@ -78,7 +78,9 @@ private theorem levelOneCoeAddHom_of (k) (f : ModularForm 𝒮ℒ k) :
     levelOneCoeAddHom (of _ k f) = f := by
   simp [levelOneCoeAddHom]
 
-private theorem levelOneCoeAddHom_periodic (F : ⨁ k, ModularForm 𝒮ℒ k) :
+variable (F : ⨁ k, ModularForm 𝒮ℒ k)
+
+private theorem levelOneCoeAddHom_periodic :
     Function.Periodic (levelOneCoeAddHom F ∘ ofComplex) 1 := by
   induction F using DirectSum.induction_on with
   | zero => simp [levelOneCoeAddHom, Function.Periodic]
@@ -88,26 +90,26 @@ private theorem levelOneCoeAddHom_periodic (F : ⨁ k, ModularForm 𝒮ℒ k) :
       intro z
       simpa using congr($(hF z) + $(hG z))
 
-private theorem levelOneCoeAddHom_holo (F : ⨁ k, ModularForm 𝒮ℒ k) :
+private theorem levelOneCoeAddHom_holo :
     MDiff (levelOneCoeAddHom F) := by
   induction F using DirectSum.induction_on with
   | zero => exact mdifferentiable_const
   | of k f => simpa using ModularFormClass.holo f
   | add F G hF hG => simpa using hF.add hG
 
-private theorem levelOneCoeAddHom_bdd (F : ⨁ k, ModularForm 𝒮ℒ k) :
+private theorem levelOneCoeAddHom_bdd :
     IsBoundedAtImInfty (levelOneCoeAddHom F) := by
   induction F using DirectSum.induction_on with
   | zero => exact Asymptotics.isBigO_zero _ atImInfty
   | of k f => simpa using ModularFormClass.bdd_at_infty f
   | add F G hF hG => exact map_add levelOneCoeAddHom F G ▸ hF.add hG
 
-private theorem levelOneCoeAddHom_analyticAt (F : ⨁ k, ModularForm 𝒮ℒ k) :
+private theorem levelOneCoeAddHom_analyticAt :
     AnalyticAt ℂ (cuspFunction 1 (levelOneCoeAddHom F)) 0 :=
   analyticAt_cuspFunction_zero one_pos (levelOneCoeAddHom_periodic F) (levelOneCoeAddHom_holo F)
     (levelOneCoeAddHom_bdd F)
 
-private theorem qExpansion_levelOneCoeAddHom (F : ⨁ k, ModularForm 𝒮ℒ k) :
+private theorem qExpansion_levelOneCoeAddHom :
     qExpansion 1 (levelOneCoeAddHom F) =
       qExpansionRingHom 1 one_pos one_mem_strictPeriods_SL F := by
   induction F using DirectSum.induction_on with
@@ -117,9 +119,11 @@ private theorem qExpansion_levelOneCoeAddHom (F : ⨁ k, ModularForm 𝒮ℒ k) 
       rw [map_add, map_add, qExpansion_add (levelOneCoeAddHom_analyticAt F)
         (levelOneCoeAddHom_analyticAt G), hF, hG]
 
+variable (z : ℍ)
+
 /-- The polynomial `∑ k, (F k z) • X ^ k`, recording the values at `z` of the components of
 `F` together with their weights. -/
-private noncomputable def levelOneWeightPolynomial (z : ℍ) : (⨁ k, ModularForm 𝒮ℒ k) →+ ℂ[X] :=
+private noncomputable def levelOneWeightPolynomial : (⨁ k, ModularForm 𝒮ℒ k) →+ ℂ[X] :=
   toAddMonoid fun k ↦ if hk : 0 ≤ k then
     { toFun := fun f ↦ Polynomial.monomial k.toNat (f z)
       map_zero' := by simp
@@ -128,8 +132,7 @@ private noncomputable def levelOneWeightPolynomial (z : ℍ) : (⨁ k, ModularFo
 
 /-- Evaluating the weight polynomial of `F` at `denom γ z` gives the value at `γ • z` of the
 (mixed weight) function attached to `F`: this is just the slash equation, weight by weight. -/
-private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k) (z : ℍ)
-    (γ : SL(2, ℤ)) :
+private theorem levelOneWeightPolynomial_eval (γ : SL(2, ℤ)) :
     (levelOneWeightPolynomial z F).eval (denom γ z) = levelOneCoeAddHom F (γ • z) := by
   induction F using DirectSum.induction_on with
   | zero => simp
@@ -147,8 +150,7 @@ private theorem levelOneWeightPolynomial_eval (F : ⨁ k, ModularForm 𝒮ℒ k)
         simp [levelOneWeightPolynomial, hf]
   | add F G hF hG => simpa using congr($hF + $hG)
 
-private theorem levelOneWeightPolynomial_coeff
-    (F : ⨁ k, ModularForm 𝒮ℒ k) (z : ℍ) (hk : 0 ≤ k) :
+private theorem levelOneWeightPolynomial_coeff (hk : 0 ≤ k) :
     (levelOneWeightPolynomial z F).coeff k.toNat = F k z := by
   induction F using DirectSum.induction_on with
   | zero => simp
@@ -165,7 +167,7 @@ private theorem levelOneWeightPolynomial_coeff
 /-- The matrix `!![0, -1; 1, n] ∈ SL(2, ℤ)`, whose `denom` at `z` is `z + n`. -/
 private def levelOneShift (n : ℕ) : SL(2, ℤ) := ⟨!![0, -1; 1, n], by simp [Matrix.det_fin_two]⟩
 
-private theorem denom_levelOneShift (n : ℕ) (z : ℍ) : denom (levelOneShift n) z = (z : ℂ) + n := by
+private theorem denom_levelOneShift (n : ℕ) : denom (levelOneShift n) z = (z : ℂ) + n := by
   rw [ModularGroup.denom_apply]
   simp [levelOneShift]
 
@@ -179,7 +181,7 @@ private theorem levelOneCoeAddHom_injective : Function.Injective levelOneCoeAddH
       Polynomial.eq_zero_of_infinite_isRoot _ <| Set.infinite_of_injective_forall_mem
         (f := fun n : ℕ ↦ (z : ℂ) + n) (fun n m hnm ↦ by exact_mod_cast add_left_cancel hnm)
         fun n ↦ by
-          simpa [IsRoot, ← denom_levelOneShift n z, levelOneWeightPolynomial_eval] using
+          simpa [IsRoot, ← denom_levelOneShift z n, levelOneWeightPolynomial_eval] using
             congr($hF (levelOneShift n • z))
     simpa [hpoly] using (levelOneWeightPolynomial_coeff F z hk).symm
   · exact (FunLike.coe_zero_iff (F k)).mp

@@ -187,12 +187,14 @@ def weightedHomogenize (w : σ → ℕ) (N : ℕ) :
     ext i
     simp [coeff_reflect, coeff_toWeightPolynomial]
 
-theorem weightedHomogenize_apply (N : ℕ) :
+variable (N : ℕ)
+
+theorem weightedHomogenize_apply :
     weightedHomogenize w N P = reflect N (toWeightPolynomial w P) :=
   rfl
 
 @[simp]
-theorem coeff_weightedHomogenize (N i : ℕ) :
+theorem coeff_weightedHomogenize (i : ℕ) :
     (weightedHomogenize w N P).coeff i = weightedHomogeneousComponent w (revAt N i) P := by
   rw [weightedHomogenize_apply, coeff_reflect, coeff_toWeightPolynomial]
 
@@ -211,13 +213,13 @@ theorem weightedHomogenize_of_isWeightedHomogeneous {N : ℕ} (hP : IsWeightedHo
     ← Polynomial.C_mul_X_pow_eq_monomial, reflect_C_mul, reflect_monomial, revAt_le hn]
 
 @[simp]
-theorem weightedHomogenize_one (N : ℕ) :
+theorem weightedHomogenize_one :
     weightedHomogenize w N (1 : MvPolynomial σ R) = Polynomial.X ^ N := by
   simpa using weightedHomogenize_of_isWeightedHomogeneous (isWeightedHomogeneous_one R w) N.zero_le
 
 /-- The top coefficient of the homogenization is the constant coefficient of `P`; in particular the
 homogenization has degree `N` as soon as `P` has a nonzero constant coefficient. -/
-theorem coeff_weightedHomogenize_self (hw : ∀ i, w i ≠ 0) (N : ℕ) :
+theorem coeff_weightedHomogenize_self (hw : ∀ i, w i ≠ 0) :
     (weightedHomogenize w N P).coeff N = C (P.coeff 0) := by
   rw [coeff_weightedHomogenize, revAt_le le_rfl, Nat.sub_self,
     weightedHomogeneousComponent_zero P hw]

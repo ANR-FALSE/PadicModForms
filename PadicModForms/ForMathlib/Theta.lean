@@ -40,7 +40,9 @@ variable {R : Type*} [CommSemiring R]
 the formal derivative, hence a derivation. -/
 def Θ : Derivation R R⟦X⟧ R⟦X⟧ := (X : R⟦X⟧) • derivative
 
-theorem Θ_apply (f : R⟦X⟧) : Θ f = X * derivative f := by
+variable (f : R⟦X⟧)
+
+theorem Θ_apply : Θ f = X * derivative f := by
   rw [Θ, Derivation.smul_apply, smul_eq_mul]
 
 @[simp]
@@ -48,28 +50,28 @@ theorem Θ_C (a : R) : Θ (C a) = 0 := by
   simp [Θ_apply]
 
 @[simp]
-theorem coeff_Θ (f : R⟦X⟧) (n : ℕ) : coeff n (Θ f) = n • coeff n f := by
+theorem coeff_Θ (n : ℕ) : coeff n (Θ f) = n • coeff n f := by
   cases n with
   | zero => simp [Θ_apply]
   | succ n => simp [Θ_apply, coeff_succ_X_mul, coeff_derivative, mul_comm]
 
 /-- The coefficientwise description of `Θ`: it sends `∑ aₙ qⁿ` to `∑ n aₙ qⁿ`. -/
-theorem Θ_eq_mk (f : R⟦X⟧) : Θ f = mk fun n ↦ n • coeff n f :=
+theorem Θ_eq_mk : Θ f = mk fun n ↦ n • coeff n f :=
   ext fun n ↦ by simp
 
 @[simp]
-theorem constantCoeff_Θ (f : R⟦X⟧) : constantCoeff (Θ f) = 0 := by
+theorem constantCoeff_Θ : constantCoeff (Θ f) = 0 := by
   simp [Θ_apply]
 
 /-- `Θ` commutes with extension of the coefficient ring: it only rescales coefficients by natural
 numbers. -/
-theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) (f : R⟦X⟧) :
+theorem map_Θ {S : Type*} [CommSemiring S] (φ : R →+* S) :
     (Θ f).map φ = Θ (f.map φ) :=
   ext fun n ↦ by simp [nsmul_eq_mul]
 
 /-- The iterates of `Θ` multiply the `n`-th coefficient by `n ^ k`. -/
 @[simp]
-theorem coeff_iterate_Θ (k n : ℕ) (f : R⟦X⟧) : coeff n (Θ^[k] f) = n ^ k • coeff n f := by
+theorem coeff_iterate_Θ (k n : ℕ) : coeff n (Θ^[k] f) = n ^ k • coeff n f := by
   induction k with
   | zero => simp
   | succ k ih => simp [Function.iterate_succ_apply', ih, pow_succ', mul_smul]

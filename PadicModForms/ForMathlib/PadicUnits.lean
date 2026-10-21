@@ -57,27 +57,28 @@ theorem isUnit_of_tendsto {ι : Type*} {l : Filter ι} [l.NeBot] {u : ι → ℤ
     tendsto_nhds_unique h.norm (tendsto_const_nhds.congr fun i ↦ (norm_units (u i)).symm)
 
 -- should go to Mathlib.NumberTheory.Padics.RingHoms
-/-- **Fermat–Euler in `ℤ_[p]`**: a unit raised to the power `φ(p ^ m)` reduces to `1` modulo
-`p ^ m`. This is `ZMod.pow_totient` transported along `PadicInt.toZModPow`. -/
-theorem toZModPow_pow_totient (u : ℤ_[p]ˣ) (m : ℕ) :
-    toZModPow m ((u : ℤ_[p]) ^ Nat.totient (p ^ m)) = 1 := by
-  have h : Units.map (toZModPow m).toMonoidHom (u ^ Nat.totient (p ^ m)) = 1 := by simp
-  have := congr(Units.val $h)
-  rwa [Units.coe_map, Units.val_pow_eq_pow_val, Units.val_one] at this
-
--- should go to Mathlib.NumberTheory.Padics.RingHoms
 /-- An element of `ℤ_[p]` reducing to `0` modulo `p ^ m` has norm at most `p ^ (-m)`
 (`PadicInt.ker_toZModPow`, `PadicInt.norm_le_pow_iff_mem_span_pow`). -/
 theorem norm_le_pow_of_toZModPow_eq_zero {x : ℤ_[p]} {m : ℕ} (hx : toZModPow m x = 0) :
     ‖x‖ ≤ (p : ℝ) ^ (-(m : ℤ)) :=
   (norm_le_pow_iff_mem_span_pow x m).2 (by simp [← ker_toZModPow, RingHom.mem_ker.2 hx])
 
+variable (u : ℤ_[p]ˣ) (m : ℕ)
+
+-- should go to Mathlib.NumberTheory.Padics.RingHoms
+/-- **Fermat–Euler in `ℤ_[p]`**: a unit raised to the power `φ(p ^ m)` reduces to `1` modulo
+`p ^ m`. This is `ZMod.pow_totient` transported along `PadicInt.toZModPow`. -/
+theorem toZModPow_pow_totient :
+    toZModPow m ((u : ℤ_[p]) ^ Nat.totient (p ^ m)) = 1 := by
+  have h : Units.map (toZModPow m).toMonoidHom (u ^ Nat.totient (p ^ m)) = 1 := by simp
+  have := congr(Units.val $h)
+  rwa [Units.coe_map, Units.val_pow_eq_pow_val, Units.val_one] at this
+
 -- should go to Mathlib.NumberTheory.Padics.RingHoms
 /-- An integer power of a unit of `ℤ_[p]` whose exponent is divisible by `(p - 1) p ^ (m - 1)`
 reduces to `1` modulo `p ^ m`: for `m ≥ 1` the modulus is `φ(p ^ m)`, so this is Fermat–Euler
 (`toZModPow_pow_totient`) through the order of the reduction of `u`. -/
-theorem toZModPow_units_zpow_eq_one (u : ℤ_[p]ˣ) (m : ℕ) {n : ℤ}
-    (hn : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ n) :
+theorem toZModPow_units_zpow_eq_one {n : ℤ} (hn : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ n) :
     toZModPow m ((u ^ n : ℤ_[p]ˣ) : ℤ_[p]) = 1 := by
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · exact (ZMod.subsingleton_iff.2 (pow_zero p)).allEq _ _
@@ -94,8 +95,7 @@ theorem toZModPow_units_zpow_eq_one (u : ℤ_[p]ˣ) (m : ℕ) {n : ℤ}
 -- should go to Mathlib.NumberTheory.Padics.RingHoms
 /-- The integer-exponent form of `norm_pow_sub_one_le`: `u ^ n ≡ 1 mod p ^ m` whenever
 `(p - 1) p ^ (m - 1) ∣ n`. -/
-theorem norm_zpow_sub_one_le (u : ℤ_[p]ˣ) (m : ℕ) {n : ℤ}
-    (hn : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ n) :
+theorem norm_zpow_sub_one_le {n : ℤ} (hn : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ n) :
     ‖((u ^ n : ℤ_[p]ˣ) : ℤ_[p]) - 1‖ ≤ (p : ℝ) ^ (-(m : ℤ)) :=
   norm_le_pow_of_toZModPow_eq_zero (by simp [toZModPow_units_zpow_eq_one u m hn])
 
@@ -104,7 +104,7 @@ theorem norm_zpow_sub_one_le (u : ℤ_[p]ˣ) (m : ℕ) {n : ℤ}
 `m ≥ 1` the exponent is `φ(p ^ m)` (`Nat.totient_prime_pow`), and the kernel of `toZModPow m` is
 the ideal of elements of norm at most `p ^ (-m)` (`PadicInt.ker_toZModPow`,
 `PadicInt.norm_le_pow_iff_mem_span_pow`); for `m = 0` the bound is trivial. -/
-theorem norm_pow_sub_one_le (u : ℤ_[p]ˣ) (m : ℕ) :
+theorem norm_pow_sub_one_le :
     ‖(u : ℤ_[p]) ^ ((p - 1) * p ^ (m - 1)) - 1‖ ≤ (p : ℝ) ^ (-(m : ℤ)) := by
   have := norm_zpow_sub_one_le u m (n := (((p - 1) * p ^ (m - 1) : ℕ) : ℤ)) dvd_rfl
   rwa [zpow_natCast, Units.val_pow_eq_pow_val] at this
@@ -113,8 +113,7 @@ theorem norm_pow_sub_one_le (u : ℤ_[p]ˣ) (m : ℕ) :
 /-- Two integer powers of a unit of `ℤ_[p]` whose exponents are congruent modulo
 `(p - 1) p ^ (m - 1)` are congruent modulo `p ^ m`: `u ^ a - u ^ b = u ^ b (u ^ (a - b) - 1)` and
 `u ^ b` has norm `1` (`PadicInt.norm_units`). -/
-theorem norm_zpow_sub_zpow_le (u : ℤ_[p]ˣ) (m : ℕ) {a b : ℤ}
-    (hab : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ a - b) :
+theorem norm_zpow_sub_zpow_le {a b : ℤ} (hab : (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ a - b) :
     ‖((u ^ a : ℤ_[p]ˣ) : ℤ_[p]) - (u ^ b : ℤ_[p]ˣ)‖ ≤ (p : ℝ) ^ (-(m : ℤ)) :=
   calc _ = ‖((u ^ b : ℤ_[p]ˣ) : ℤ_[p]) * (((u ^ (a - b) : ℤ_[p]ˣ) : ℤ_[p]) - 1)‖ := by
         rw [mul_sub, mul_one, ← Units.val_mul, ← zpow_add, add_sub_cancel]

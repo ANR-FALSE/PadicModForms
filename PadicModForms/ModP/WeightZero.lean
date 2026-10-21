@@ -118,46 +118,49 @@ theorem exists_isWeightedHomogeneous_of_mem_modPWeightZeroForms (hp : 5 ≤ p)
 
 section Normality
 
+variable (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p))
+
 /-- The monic polynomial `T ^ d + ∑ i < d, c i T ^ i` over `(ZMod p)[X₀, X₁]`, with prescribed
 coefficients below the leading one. -/
-private def monicOfCoeffs (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
+private def monicOfCoeffs :
     Polynomial (MvPolynomial (Fin 2) (ZMod p)) :=
   Polynomial.X ^ d + ∑ i ∈ Finset.range d, Polynomial.C (c i) * Polynomial.X ^ i
 
-private theorem degree_lt_of_monicOfCoeffs (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
+private theorem degree_lt_of_monicOfCoeffs :
     (∑ i ∈ Finset.range d, Polynomial.C (c i) * Polynomial.X ^ i).degree < (d : WithBot ℕ) := by
   rw [← Fin.sum_univ_eq_sum_range]
   exact Polynomial.degree_sum_fin_lt _
 
-private theorem monicOfCoeffs_monic (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
+private theorem monicOfCoeffs_monic :
     (monicOfCoeffs d c).Monic :=
   Polynomial.monic_X_pow_add (degree_lt_of_monicOfCoeffs d c)
 
 @[simp]
-private theorem natDegree_monicOfCoeffs (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
+private theorem natDegree_monicOfCoeffs :
     (monicOfCoeffs d c).natDegree = d := by
   rw [monicOfCoeffs, Polynomial.natDegree_add_eq_left_of_degree_lt
     (by rw [Polynomial.degree_X_pow]; exact degree_lt_of_monicOfCoeffs d c),
     Polynomial.natDegree_X_pow]
 
-private theorem coeff_monicOfCoeffs_of_lt (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) {i : ℕ}
-    (hi : i < d) : (monicOfCoeffs d c).coeff i = c i := by
+private theorem coeff_monicOfCoeffs_of_lt {i : ℕ} (hi : i < d) :
+    (monicOfCoeffs d c).coeff i = c i := by
   rw [monicOfCoeffs, Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right hi.ne,
     Polynomial.finsetSum_coeff, zero_add,
     Finset.sum_eq_single i
       (fun j _ hj ↦ by rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right (Ne.symm hj)])
       (fun h ↦ by grind [Finset.mem_range.2 hi]),Polynomial.coeff_C_mul_X_pow, ite_eq_left rfl]
 
-private theorem coeff_monicOfCoeffs_self (d : ℕ) (c : ℕ → MvPolynomial (Fin 2) (ZMod p)) :
+private theorem coeff_monicOfCoeffs_self :
     (monicOfCoeffs d c).coeff d = 1 := by
   have := (monicOfCoeffs_monic d c).coeff_natDegree
   rwa [natDegree_monicOfCoeffs] at this
 
+variable {d c}
+
 /-- If the prescribed coefficients evaluate to those of a monic polynomial `P` over `𝓜⁰` of degree
 `d` that kills `f`, then `monicOfCoeffs d c` evaluated at `f` vanishes too. -/
-private theorem eval₂_monicOfCoeffs_eq_zero {d : ℕ} {c : ℕ → MvPolynomial (Fin 2) (ZMod p)}
-    {P : Polynomial (modPWeightZeroForms p)} (hP : P.Monic) (hd : P.natDegree = d)
-    (hPf : Polynomial.aeval f P = 0)
+private theorem eval₂_monicOfCoeffs_eq_zero {P : Polynomial (modPWeightZeroForms p)}
+    (hP : P.Monic) (hd : P.natDegree = d) (hPf : Polynomial.aeval f P = 0)
     (hc : ∀ i < d, evalE₄E₆ModP.toRingHom (c i) =
       algebraMap (modPWeightZeroForms p) (ZMod p)⟦X⟧ (P.coeff i)) :
     Polynomial.eval₂ evalE₄E₆ModP.toRingHom f (monicOfCoeffs d c) = 0 := by
@@ -178,8 +181,8 @@ private theorem eval₂_monicOfCoeffs_eq_zero {d : ℕ} {c : ℕ → MvPolynomia
 /-- The polynomial `(monicOfCoeffs d c).scaleRoots W` evaluated at `U` — whose vanishing says that
 `U / W` is a root of `monicOfCoeffs d c` — is weighted homogeneous of weight `d * a`, as soon as
 each term `c i * W ^ (d - i) * U ^ i` has that weight. -/
-private theorem isWeightedHomogeneous_eval_scaleRoots {d : ℕ}
-    {c : ℕ → MvPolynomial (Fin 2) (ZMod p)} {U W : MvPolynomial (Fin 2) (ZMod p)} {a b : ℕ}
+private theorem isWeightedHomogeneous_eval_scaleRoots
+    {U W : MvPolynomial (Fin 2) (ZMod p)} {a b : ℕ}
     (hU : IsWeightedHomogeneous E₄E₆Weights U a) (hW : IsWeightedHomogeneous E₄E₆Weights W b)
     (m : ℕ → ℕ) (hc : ∀ i < d, IsWeightedHomogeneous E₄E₆Weights (c i) (m i))
     (hm : ∀ i < d, m i + (d - i) * b + i * a = d * a) :

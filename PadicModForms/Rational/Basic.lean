@@ -169,20 +169,20 @@ public theorem coe_basisOfComplexBasis {ι : Type*} (b : ι → rationalModularF
 
 /-- Rational modular forms of weight `k` have rank over `ℚ` at most the rank over `ℂ` of the
 complex modular forms of the same weight. -/
-public theorem rationalModularForms_rank_le (k : ℤ) :
+public theorem rationalModularForms_rank_le :
     Module.rank ℚ (rationalModularForms k) ≤ Module.rank ℂ (ModularForm 𝒮ℒ k) := by
   rw [rank_eq_card_chooseBasisIndex]
   exact (linearIndependent_rationalModularFormToComplex (chooseBasis ℚ (rationalModularForms k))
     (chooseBasis ℚ (rationalModularForms k)).linearIndependent).cardinal_le_rank
 
 /-- Rational modular forms of a fixed weight form a finite-dimensional `ℚ`-vector space. -/
-public noncomputable instance rationalModularForms_finiteDimensional (k : ℤ) :
+public noncomputable instance rationalModularForms_finiteDimensional :
     FiniteDimensional ℚ (rationalModularForms k) := by
   simpa [← rank_lt_aleph0_iff] using (rationalModularForms_rank_le k).trans_lt (rank_lt_aleph0 ℂ _)
 
 /-- The `ℚ`-dimension of the rational modular forms of weight `k` is at most the `ℂ`-dimension of
 the complex modular forms of the same weight. -/
-public theorem rationalModularForms_finrank_le (k : ℤ) :
+public theorem rationalModularForms_finrank_le :
     finrank ℚ (rationalModularForms k) ≤ finrank ℂ (ModularForm 𝒮ℒ k) := by
   rw [← Nat.cast_le (α := Cardinal), finrank_eq_rank, finrank_eq_rank]
   exact rationalModularForms_rank_le k

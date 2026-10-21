@@ -93,7 +93,7 @@ omit hk hk2
 /-! ### `E₂` -/
 
 /-- The coefficients of `E₂Rat` are integral at every prime. -/
-theorem coeff_E₂Rat_mem_pLocalInt (n : ℕ) : coeff n E₂Rat ∈ pLocalInt p := by
+theorem coeff_E₂Rat_mem_pLocalInt : coeff n E₂Rat ∈ pLocalInt p := by
   rw [coeff_E₂Rat]
   split_ifs
   · exact one_mem ..
@@ -106,8 +106,8 @@ noncomputable def E₂_int : (pLocalInt p)⟦X⟧ :=
 
 -- Apply before `coeff_zero_eq_constantCoeff` rewrites the expression inside the coercion.
 @[simp↓]
-theorem coeff_E₂_int (n : ℕ) : ((coeff n E₂_int : pLocalInt p) : ℚ) =
-    if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
+theorem coeff_E₂_int :
+    ((coeff n E₂_int : pLocalInt p) : ℚ) = if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
   rw [E₂_int, coeff_toSubring, coeff_E₂Rat]
 
 /-- The constant coefficient of `E₂_int` is `1`. -/
@@ -127,7 +127,7 @@ theorem E₂_int_map : E₂_int.map (algebraMap (pLocalInt p) ℚ) = E₂Rat := 
 /-! ### `E₄` -/
 
 /-- The coefficients of `E₄Rat` are integral at every prime. -/
-theorem coeff_E₄Rat_mem_pLocalInt (n : ℕ) : coeff n (E₄Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
+theorem coeff_E₄Rat_mem_pLocalInt : coeff n (E₄Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
   rw [coeff_E₄Rat]
   split_ifs
   · exact one_mem ..
@@ -139,8 +139,8 @@ noncomputable def E₄_int : (pLocalInt p)⟦X⟧ :=
   (E₄Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₄Rat_mem_pLocalInt
 
 @[simp↓]
-theorem coeff_E₄_int (n : ℕ) : ((coeff n E₄_int : pLocalInt p) : ℚ) =
-    if n = 0 then 1 else (240 : ℚ) * σ 3 n := by
+theorem coeff_E₄_int :
+    ((coeff n E₄_int : pLocalInt p) : ℚ) = if n = 0 then 1 else (240 : ℚ) * σ 3 n := by
   rw [E₄_int, coeff_toSubring, coeff_E₄Rat]
 
 /-- The constant coefficient of `E₄_int` is `1`. -/
@@ -174,7 +174,7 @@ theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := 
 /-! ### `E₆` -/
 
 /-- The coefficients of `E₆Rat` are integral at every prime. -/
-theorem coeff_E₆Rat_mem_pLocalInt (n : ℕ) : coeff n (E₆Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
+theorem coeff_E₆Rat_mem_pLocalInt : coeff n (E₆Rat : ℚ⟦X⟧) ∈ pLocalInt p := by
   rw [coeff_E₆Rat]
   split_ifs
   · exact one_mem ..
@@ -186,8 +186,8 @@ noncomputable def E₆_int : (pLocalInt p)⟦X⟧ :=
   (E₆Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₆Rat_mem_pLocalInt
 
 @[simp↓]
-theorem coeff_E₆_int (n : ℕ) : ((coeff n E₆_int : pLocalInt p) : ℚ) =
-    if n = 0 then 1 else -(504 : ℚ) * σ 5 n := by
+theorem coeff_E₆_int :
+    ((coeff n E₆_int : pLocalInt p) : ℚ) = if n = 0 then 1 else -(504 : ℚ) * σ 5 n := by
   rw [E₆_int, coeff_toSubring, coeff_E₆Rat]
 
 /-- The constant coefficient of `E₆_int` is `1`. -/

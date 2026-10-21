@@ -202,12 +202,14 @@ and `E₆`. -/
 def complexMonomialBasis : Basis (E₄E₆WeightedMonomials k) ℂ (ModularForm 𝒮ℒ k) :=
   (E₄E₆WeightedMonomialBasis k ℂ).map (evalE₄E₆AtWeightEquiv k)
 
+variable (d : E₄E₆WeightedMonomials k)
+
 @[simp]
-theorem complexMonomialBasis_apply (d : E₄E₆WeightedMonomials k) :
+theorem complexMonomialBasis_apply :
     complexMonomialBasis k d = evalE₄E₆AtWeight k (E₄E₆WeightedMonomialBasis k ℂ d) := rfl
 
 /-- The rational modular form of weight `k` given by the monomial `d` in `E₄` and `E₆`. -/
-def ratMonomial (d : E₄E₆WeightedMonomials k) : rationalModularForms k :=
+def ratMonomial : rationalModularForms k :=
   evalE₄E₆RatAtWeight k (E₄E₆WeightedMonomialBasis k ℚ d)
 
 /-- Each complex monomial in `E₄` and `E₆` is the scalar extension of the corresponding rational
@@ -228,7 +230,7 @@ noncomputable def ratMonomialBasis : Basis (E₄E₆WeightedMonomials k) ℚ (ra
   basisOfComplexBasis (ratMonomial k) (complexMonomialBasis k) (complexMonomialBasis_eq k)
 
 @[simp]
-theorem ratMonomialBasis_apply (d : E₄E₆WeightedMonomials k) :
+theorem ratMonomialBasis_apply :
     ratMonomialBasis k d = ratMonomial k d := by
   simp [ratMonomialBasis]
 
