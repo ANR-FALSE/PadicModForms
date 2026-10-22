@@ -40,15 +40,6 @@ open Filter Topology
 
 variable {p : ℕ} [Fact p.Prime]
 
-/-! ### The classical weights -/
-
-@[simp]
-theorem ι_apply (n : ℤ) (u : ℤ_[p]ˣ) : ι n u = u ^ n := rfl
-
-/-- `ι` is a homomorphism from the integers to weight space. -/
-theorem ι_add (a b : ℤ) : ι (p := p) (a + b) = ι a * ι b :=
-  ContinuousMonoidHom.ext fun u ↦ by simp [ContinuousMonoidHom.mul_apply, zpow_add]
-
 namespace WeightSpace
 
 variable {ι' : Type*} {l : Filter ι'} {χ : ι' → X_[p]} {χ₀ : X_[p]}

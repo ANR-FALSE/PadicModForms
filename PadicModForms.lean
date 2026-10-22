@@ -2,6 +2,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 public import PadicModForms.ForMathlib.Bernoulli
 public import PadicModForms.ForMathlib.Choose
+public import PadicModForms.ForMathlib.ContinuousMonoidHom
 public import PadicModForms.ForMathlib.DirectSum
 public import PadicModForms.ForMathlib.E2
 public import PadicModForms.ForMathlib.EInt

@@ -9,6 +9,7 @@ module
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.NumberTheory.Padics.ProperSpace
 public import Mathlib.NumberTheory.Padics.RingHoms
+public import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Analysis.Normed.Ring.Units
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.FieldTheory.Finite.Basic
@@ -120,5 +121,25 @@ theorem norm_zpow_sub_zpow_le {a b : ℤ} (hab : (((p - 1) * p ^ (m - 1) : ℕ) 
     _ ≤ ‖((u ^ b : ℤ_[p]ˣ) : ℤ_[p])‖ * ‖((u ^ (a - b) : ℤ_[p]ˣ) : ℤ_[p]) - 1‖ := norm_mul_le _ _
     _ = ‖((u ^ (a - b) : ℤ_[p]ˣ) : ℤ_[p]) - 1‖ := by rw [norm_units, one_mul]
     _ ≤ _ := norm_zpow_sub_one_le u m hab
+
+-- should go to Mathlib.NumberTheory.Padics.PadicIntegers
+/-- `1 + p` is a unit of `ℤ_[p]`. -/
+theorem isUnit_one_add_natCast : IsUnit (1 + p : ℤ_[p]) := by
+  suffices (-(p : ℤ_[p])) ∈ nonunits ℤ_[p] by
+    simpa [sub_neg_eq_add] using IsLocalRing.isUnit_one_sub_self_of_mem_nonunits _ this
+  rw [mem_nonunits, norm_neg, norm_p]
+  exact inv_lt_one_of_one_lt₀ (by exact_mod_cast (Fact.out : p.Prime).one_lt)
+
+-- should go to Mathlib.NumberTheory.Padics.PadicIntegers
+/-- The unit `1 + p` of `ℤ_[p]` has infinite order: a power `(1 + p) ^ k` with `k ≠ 0` is a natural
+number larger than `1`. -/
+theorem orderOf_unit_one_add_natCast : orderOf (isUnit_one_add_natCast (p := p)).unit = 0 := by
+  rw [orderOf_eq_zero_iff, isOfFinOrder_iff_pow_eq_one]
+  rintro ⟨k, hk, hku⟩
+  suffices (1 + p) ^ k = 1 by
+    rcases Nat.pow_eq_one.1 this with h | h
+    · exact (Fact.out : p.Prime).ne_zero (by omega)
+    · exact hk.ne' h
+  exact_mod_cast (by simpa using congr(Units.val $hku) : ((1 + p : ℕ) : ℤ_[p]) ^ k = 1)
 
 end PadicInt

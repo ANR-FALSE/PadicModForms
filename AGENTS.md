@@ -44,6 +44,12 @@ are no legacy files, and a new file must not introduce one. Visibility is explic
   `Rational/Eisenstein.lean`).
 - Inside a non-exposed section, mark each intended-public declaration (`public def`,
   `public theorem`). Helper lemmas are deliberately left non-`public`.
+- A file may also open a plain `public section` and put `@[expose]` only on the definitions whose
+  unfolding is part of the API: `PAdic/Defs.lean` exposes `isPAdicModularForm` and
+  `PAdicModularForms`, whose bodies downstream files see through (`f.1`, `f.2`, `⟨S⟩`), but not
+  `ι`, which is used only through `ι_apply` and the other `ι_…` lemmas. Instances are exposed by
+  default. An exported theorem proved by a bare `rfl` cannot unfold a non-exposed definition, so
+  the one lemma that looks inside such a definition is proved by `rw` with it.
 
 When adding a file, copy the header of a neighbouring file in the same directory rather than
 inventing a layout, and add it to the root `PadicModForms.lean` as `public import` (alphabetical,
