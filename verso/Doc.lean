@@ -1,6 +1,7 @@
 import VersoManual
 import Doc.References
 import Doc.Introduction
+import Doc.Preliminaries
 
 open Verso.Genre Manual
 
@@ -12,3 +13,5 @@ authors := ["Riccardo Brasca"]
 %%%
 
 {include 1 Doc.Introduction}
+
+{include 1 Doc.Preliminaries}
