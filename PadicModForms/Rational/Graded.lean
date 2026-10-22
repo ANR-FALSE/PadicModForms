@@ -127,7 +127,9 @@ public theorem evalE₄E₆Rat_injective : Function.Injective evalE₄E₆Rat :=
 
 /-! ### The weight grading on `R[X₀, X₁]` -/
 
-/-- The weights `(4, 6)` of `E₄` and `E₆`, used to grade `R[X₀, X₁]` by modular weight. -/
+/-- The weight function on the two variables of `MvPolynomial (Fin 2) R`, giving `X₀` the weight
+`4` of `E₄` and `X₁` the weight `6` of `E₆`. A polynomial that is weighted homogeneous of weight `k`
+for these weights evaluates at `X₀ = E₄`, `X₁ = E₆` to a modular form of weight `k`. -/
 public abbrev E₄E₆Weights : Fin 2 → ℕ := ![4, 6]
 
 public theorem E₄E₆Weights_ne_zero (i : Fin 2) : E₄E₆Weights i ≠ 0 := by fin_cases i <;> simp

@@ -1,6 +1,7 @@
 import VersoManual
 import PadicModForms
 import Doc.References
+import Doc.TitleMath
 
 open Verso.Genre Manual
 open Verso.Genre.Manual.InlineLean

@@ -1,6 +1,7 @@
 import VersoManual
 import PadicModForms
 import Doc.References
+import Doc.TitleMath
 
 open Verso.Genre Manual
 open Verso.Genre.Manual.InlineLean
@@ -100,8 +101,10 @@ $`\mathbb{N} \to R` with the uniform structure of uniform convergence.
 # Weighted homogeneous polynomials
 
 Let $`R` be a commutative semiring. We grade $`R[X_0, X_1]` by giving $`X_0` weight $`4` and
-$`X_1` weight $`6`, and we denote by $`R[X_0, X_1]_k` the $`R`-submodule of polynomials that are
-weighted homogeneous of weight $`k` for this grading, in the sense of
+$`X_1` weight $`6`, the weights of $`E_4` and $`E_6`: a polynomial that is weighted homogeneous of
+weight $`k` for this grading evaluates at $`X_0 = E_4`, $`X_1 = E_6` to a modular form of weight
+$`k`. We denote by $`R[X_0, X_1]_k` the $`R`-submodule of polynomials that are weighted
+homogeneous of weight $`k` for this grading, in the sense of
 {name MvPolynomial.IsWeightedHomogeneous}`MvPolynomial.IsWeightedHomogeneous`.
 
 {docstring ModularForm.E₄E₆Weights}
