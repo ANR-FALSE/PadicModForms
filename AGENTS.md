@@ -163,7 +163,10 @@ docstring, and only sees files listed in `PadicModForms.lean`.
 
 Full mathlib style: naming, copyright header, module docstring with `# Title` and (for substantial
 files) a `## Main results` section, 100-column lines, `variable` blocks with `include`/`omit`.
-`p : ℕ` always comes with `[Fact p.Prime]`.
+`p : ℕ` always comes with `[Fact p.Prime]`. From `PAdic/Weights/Defs.lean` on (the weight `w` and
+everything built on it, such as `PAdic/Classical.lean`), the hypothesis `5 ≤ p` is the instance
+argument `[Fact (5 ≤ p)]`, never an explicit `(hp : 5 ≤ p)`; pass `Fact.out` to the earlier lemmas
+that take it explicitly.
 
 Terminology — in docstrings, comments and identifiers alike, use the standard words:
 

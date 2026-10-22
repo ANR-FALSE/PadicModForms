@@ -190,4 +190,10 @@ public theorem E₄Rat_map_complex : (E₄Rat : ℚ⟦X⟧).map (algebraMap ℚ 
 public theorem E₆Rat_map_complex : (E₆Rat : ℚ⟦X⟧).map (algebraMap ℚ ℂ) = qExpansion 1 E₆ := by
   rw [← qExpansion_rationalModularFormToComplex, rationalModularFormToComplex_E₆Rat]
 
+public theorem E₄Rat_ne_zero : (E₄Rat : rationalModularForms 4) ≠ 0 := fun h ↦ by
+  simpa [coeff_E₄Rat] using congr(coeff 0 (Subtype.val $h))
+
+public theorem E₆Rat_ne_zero : (E₆Rat : rationalModularForms 6) ≠ 0 := fun h ↦ by
+  simpa [coeff_E₆Rat] using congr(coeff 0 (Subtype.val $h))
+
 end ModularForm

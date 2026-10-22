@@ -102,6 +102,7 @@ tag := "theoreme-2"
 Let $`p \geq 5` and let $`f \neq 0` be a $`p`-adic modular form. For every presentation
 $`(w_i, F_i)` of $`f` the sequence $`(\iota(w_i))` converges in $`\mathcal{X}`, and its limit does
 not depend on the presentation.
+From here on, the hypothesis $`p \geq 5` is the instance argument `[Fact (5 ≤ p)]`.
 
 {docstring w_tendsto}
 

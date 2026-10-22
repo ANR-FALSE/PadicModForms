@@ -28,29 +28,50 @@ presentation `S` are Cauchy for the moduli `(p - 1) p ^ (m - 1)`, by Théorème 
 weights (`pAdicModularFormStruct.eventually_dvd_sub`), hence the same limit
 (`WeightSpace.eq_of_tendsto_ι_of_forall_eventually_dvd`). The weight `w` of a `p`-adic modular form
 is that limit.
+
+From this file on, the hypothesis `5 ≤ p` is the instance argument `[Fact (5 ≤ p)]`.
 -/
 
 @[expose] public section
 
 open PowerSeries Filter Topology
 
-variable {p : ℕ} [Fact p.Prime] {f : ℚ_[p]⟦X⟧}
+variable {p : ℕ} [Fact p.Prime] [Fact (5 ≤ p)] {f : ℚ_[p]⟦X⟧}
 
 /-- **Serre's Théorème 2, existence**, for `p ≥ 5`: the classical weights of a presentation of
 a nonzero `p`-adic modular form converge in weight space. -/
-theorem w_tendsto (hp : 5 ≤ p) (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
+theorem w_tendsto (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
     ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) :=
-  WeightSpace.exists_tendsto_ι_of_forall_exists_dvd (S.exists_forall_dvd_sub hp hf)
+  WeightSpace.exists_tendsto_ι_of_forall_exists_dvd (S.exists_forall_dvd_sub Fact.out hf)
 
 /-- **Serre's Théorème 2, uniqueness**, for `p ≥ 5`: the limit of the classical weights does not
 depend on the presentation. -/
-theorem limit_unique (hp : 5 ≤ p) (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
+theorem limit_unique (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
     {x x' : X_[p]}
     (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
     (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' :=
-  WeightSpace.eq_of_tendsto_ι_of_forall_eventually_dvd hx hx' (S.eventually_dvd_sub hp S' hf)
+  WeightSpace.eq_of_tendsto_ι_of_forall_eventually_dvd hx hx' (S.eventually_dvd_sub Fact.out S' hf)
 
 open Classical in
 /-- The p-adic weight of a p-adic modular form, for `p ≥ 5`. -/
-noncomputable def w (hp : 5 ≤ p) (hf : f.isPAdicModularForm p) : X_[p] :=
-  if hf0 : f = 0 then ι 0 else (w_tendsto hp hf0 (choice hf)).choose
+noncomputable def w (f : PAdicModularForms p) : X_[p] :=
+  if hf0 : f = 0 then ι 0
+  else (w_tendsto (PAdicModularForms.val_eq_zero_iff.not.2 hf0) (choice f.2)).choose
+
+open Classical in
+theorem w_def (f : PAdicModularForms p) :
+    w f = if hf0 : f = 0 then ι 0
+      else (w_tendsto (PAdicModularForms.val_eq_zero_iff.not.2 hf0) (choice f.2)).choose := rfl
+
+/-- The classical weights of the presentation chosen to define `w` converge to `w`. -/
+theorem tendsto_ι_w {f : PAdicModularForms p} (hf0 : f ≠ 0) :
+    Tendsto (fun i ↦ ι ((Classical.choice f.2).w i)) atTop (𝓝 (w f)) := by
+  simpa [w_def, hf0] using (w_tendsto (PAdicModularForms.val_eq_zero_iff.not.2 hf0)
+    (Classical.choice f.2)).choose_spec
+
+/-- The weight of a nonzero `p`-adic modular form is the limit of the classical weights of any
+of its presentations. -/
+theorem w_eq_of_tendsto {f : PAdicModularForms p} (hf0 : f ≠ 0)
+    (S : pAdicModularFormStruct f.1) {x : X_[p]} (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x)) :
+    w f = x :=
+  limit_unique (PAdicModularForms.val_eq_zero_iff.not.2 hf0) _ S (tendsto_ι_w hf0) hx

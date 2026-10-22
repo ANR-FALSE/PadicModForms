@@ -37,6 +37,7 @@ public import PadicModForms.ModP.ThetaFiltration
 public import PadicModForms.ModP.WeightZero
 public import PadicModForms.ModP.Weights
 public import PadicModForms.PAdic.Basic
+public import PadicModForms.PAdic.Classical
 public import PadicModForms.PAdic.Defs
 public import PadicModForms.PAdic.Eisenstein
 public import PadicModForms.PAdic.Weights.Congruence

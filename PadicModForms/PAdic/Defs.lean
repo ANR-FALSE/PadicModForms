@@ -57,3 +57,21 @@ def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModula
 
 /-- The type of p-adic modular forms. -/
 def PAdicModularForms := {f // PowerSeries.isPAdicModularForm p f}
+
+namespace PAdicModularForms
+
+variable {p}
+
+/-- The zero power series is a `p`-adic modular form, presented by the zero form of weight `0`. -/
+noncomputable instance : Zero (PAdicModularForms p) :=
+  ⟨⟨0, ⟨⟨fun _ ↦ 0, fun _ ↦ 0, fun u hu ↦ by
+    filter_upwards with i n
+    simpa using refl_mem_uniformity hu⟩⟩⟩⟩
+
+@[simp]
+theorem val_zero : (0 : PAdicModularForms p).1 = 0 := rfl
+
+theorem val_eq_zero_iff {f : PAdicModularForms p} : f.1 = 0 ↔ f = 0 :=
+  ⟨fun h ↦ Subtype.ext (h.trans val_zero.symm), fun h ↦ h ▸ rfl⟩
+
+end PAdicModularForms
