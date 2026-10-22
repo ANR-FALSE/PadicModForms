@@ -20,7 +20,7 @@ This file defines integral models at `p` of rational Eisenstein series. It also 
 canonical integral models of `E₂`, `E₄`, and `E₆`; the latter two are integral modular forms.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open PowerSeries ArithmeticFunction sigma ModularForm SetLike
 
@@ -34,7 +34,7 @@ variable (hk : 3 ≤ k) (hk2 : Even k)
 
 include hk hk2 in
 /-- The coefficients of `ERat` are `p`-integral as soon as `Bₖ⁻¹` is. -/
-theorem coeff_ERat_mem_pLocalInt (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) (n : ℕ) :
+public theorem coeff_ERat_mem_pLocalInt (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) (n : ℕ) :
     coeff n (rationalQExpansion (ERat hk hk2)) ∈ pLocalInt p := by
   rw [rationalQExpansion_apply, coeff_ERat _ hk hk2]
   by_cases hn : n = 0
@@ -45,7 +45,7 @@ theorem coeff_ERat_mem_pLocalInt (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) (n : 
     grind [div_eq_mul_inv, mul_mem, neg_mem]
 
 /-- The normalized Eisenstein series `E_k` over the localization of `ℤ` at `p`. -/
-noncomputable def E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : (pLocalInt p)⟦X⟧ :=
+@[expose] public noncomputable def E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : (pLocalInt p)⟦X⟧ :=
   (rationalQExpansion (ERat hk hk2)).toSubring (pLocalInt p).toSubring
     (coeff_ERat_mem_pLocalInt hk hk2 hB)
 
@@ -53,38 +53,39 @@ variable (n : ℕ)
 
 -- Apply before `coeff_zero_eq_constantCoeff` rewrites the expression inside the coercion.
 @[simp↓]
-theorem coeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+public theorem coeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     (coeff n (E_int hk hk2 hB) : pLocalInt p) =
       if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n := by
   rw [E_int, coeff_toSubring, rationalQExpansion_apply, coeff_ERat]
 
 /-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
-theorem coeff_E_int_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : coeff 0 (E_int hk hk2 hB) = 1 := by
+public theorem coeff_E_int_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) : coeff 0
+    (E_int hk hk2 hB) = 1 := by
   ext
   simp
 
 /-- The constant coefficient of `E_int` is `1`. -/
 @[simp]
-theorem constantCoeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+public theorem constantCoeff_E_int (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     constantCoeff (E_int hk hk2 hB) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_E_int_zero]
 
 /-- A nonconstant coefficient of `E_int` factors through `Bₖ⁻¹`. -/
-theorem coeff_E_int_of_ne_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) {m : ℕ} (hm : m ≠ 0) :
+public theorem coeff_E_int_of_ne_zero (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) {m : ℕ} (hm : m ≠ 0) :
     coeff m (E_int hk hk2 hB) =
       -(2 * k) * ⟨_, hB⟩ * σ (k - 1) m := Subtype.ext <| by
   simp [hm, div_eq_mul_inv]
 
 /-- Extending scalars from `pLocalInt p` to `ℚ` sends `E_int` to the rational `q`-expansion of
 `ERat`. -/
-theorem E_int_map (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+public theorem E_int_map (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     (E_int hk hk2 hB).map (algebraMap _ ℚ) = rationalQExpansion (ERat hk hk2) := by
   ext
   simp
 
 /-- `E_int` is a `p`-integral modular form of weight `k`. -/
-theorem E_int_mem_pLocalIntModularForms (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
+public theorem E_int_mem_pLocalIntModularForms (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     E_int hk hk2 hB ∈ pLocalIntModularForms p k :=
   ⟨ERat hk hk2, E_int_map hk hk2 hB⟩
 
@@ -101,27 +102,27 @@ theorem coeff_E₂Rat_mem_pLocalInt : coeff n E₂Rat ∈ pLocalInt p := by
     exact intCast_mem _ _
 
 /-- The rational `q`-expansion `E₂Rat`, with coefficients in `pLocalInt p`. -/
-noncomputable def E₂_int : (pLocalInt p)⟦X⟧ :=
+public noncomputable def E₂_int : (pLocalInt p)⟦X⟧ :=
   E₂Rat.toSubring (pLocalInt p).toSubring coeff_E₂Rat_mem_pLocalInt
 
 -- Apply before `coeff_zero_eq_constantCoeff` rewrites the expression inside the coercion.
 @[simp↓]
-theorem coeff_E₂_int :
+public theorem coeff_E₂_int :
     ((coeff n E₂_int : pLocalInt p) : ℚ) = if n = 0 then 1 else (-24 : ℚ) * σ 1 n := by
   rw [E₂_int, coeff_toSubring, coeff_E₂Rat]
 
 /-- The constant coefficient of `E₂_int` is `1`. -/
 @[simp]
-theorem constantCoeff_E₂_int : constantCoeff (E₂_int (p := p)) = 1 := by
+public theorem constantCoeff_E₂_int : constantCoeff (E₂_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
   ext
   simp
 
 @[simp]
-theorem coeff_zero_E₂_int : coeff 0 (E₂_int (p := p)) = 1 := by simp
+public theorem coeff_zero_E₂_int : coeff 0 (E₂_int (p := p)) = 1 := by simp
 
 /-- Extending scalars to `ℚ` sends `E₂_int` to `E₂Rat`. -/
-theorem E₂_int_map : E₂_int.map (algebraMap (pLocalInt p) ℚ) = E₂Rat := by
+public theorem E₂_int_map : E₂_int.map (algebraMap (pLocalInt p) ℚ) = E₂Rat := by
   ext; simp
 
 /-! ### `E₄` -/
@@ -135,40 +136,40 @@ theorem coeff_E₄Rat_mem_pLocalInt : coeff n (E₄Rat : ℚ⟦X⟧) ∈ pLocalI
     exact intCast_mem _ _
 
 /-- The normalized Eisenstein series `E₄` over `pLocalInt p`. -/
-noncomputable def E₄_int : (pLocalInt p)⟦X⟧ :=
+public noncomputable def E₄_int : (pLocalInt p)⟦X⟧ :=
   (E₄Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₄Rat_mem_pLocalInt
 
 @[simp↓]
-theorem coeff_E₄_int :
+public theorem coeff_E₄_int :
     ((coeff n E₄_int : pLocalInt p) : ℚ) = if n = 0 then 1 else (240 : ℚ) * σ 3 n := by
   rw [E₄_int, coeff_toSubring, coeff_E₄Rat]
 
 /-- The constant coefficient of `E₄_int` is `1`. -/
 @[simp]
-theorem constantCoeff_E₄_int : constantCoeff (E₄_int (p := p)) = 1 := by
+public theorem constantCoeff_E₄_int : constantCoeff (E₄_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
   ext
   simp
 
 @[simp]
-theorem coeff_zero_E₄_int : coeff 0 (E₄_int (p := p)) = 1 :=
+public theorem coeff_zero_E₄_int : coeff 0 (E₄_int (p := p)) = 1 :=
   (coeff_zero_eq_constantCoeff_apply _).trans constantCoeff_E₄_int
 
 /-- The `q`-coefficient of `E₄_int` is `240`. -/
 @[simp]
-theorem coeff_one_E₄_int : coeff 1 (E₄_int (p := p)) = 240 := Subtype.ext <| by
+public theorem coeff_one_E₄_int : coeff 1 (E₄_int (p := p)) = 240 := Subtype.ext <| by
   simp
 
 /-- Extending scalars to `ℚ` sends `E₄_int` to the rational `q`-expansion of `E₄Rat`. -/
-theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rationalQExpansion E₄Rat := by
+public theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rationalQExpansion E₄Rat := by
   ext; simp [rationalQExpansion_apply, coeff_E₄Rat]
 
 /-- `E₄_int` is a `p`-integral modular form of weight `4`. -/
-theorem E₄_int_mem_pLocalIntModularForms :  E₄_int ∈ pLocalIntModularForms p 4 :=
+public theorem E₄_int_mem_pLocalIntModularForms :  E₄_int ∈ pLocalIntModularForms p 4 :=
   ⟨E₄Rat, E₄_int_map⟩
 
 /-- `E₄_int ^ 3` is a `p`-integral modular form of weight `12`. -/
-theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := by
+public theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := by
   simpa using pow_mem_graded 3 (E₄_int_mem_pLocalIntModularForms (p := p))
 
 /-! ### `E₆` -/
@@ -182,47 +183,47 @@ theorem coeff_E₆Rat_mem_pLocalInt : coeff n (E₆Rat : ℚ⟦X⟧) ∈ pLocalI
     exact intCast_mem ..
 
 /-- The normalized Eisenstein series `E₆` over `pLocalInt p`. -/
-noncomputable def E₆_int : (pLocalInt p)⟦X⟧ :=
+public noncomputable def E₆_int : (pLocalInt p)⟦X⟧ :=
   (E₆Rat : ℚ⟦X⟧).toSubring (pLocalInt p).toSubring coeff_E₆Rat_mem_pLocalInt
 
 @[simp↓]
-theorem coeff_E₆_int :
+public theorem coeff_E₆_int :
     ((coeff n E₆_int : pLocalInt p) : ℚ) = if n = 0 then 1 else -(504 : ℚ) * σ 5 n := by
   rw [E₆_int, coeff_toSubring, coeff_E₆Rat]
 
 /-- The constant coefficient of `E₆_int` is `1`. -/
 @[simp]
-theorem constantCoeff_E₆_int : constantCoeff (E₆_int (p := p)) = 1 := by
+public theorem constantCoeff_E₆_int : constantCoeff (E₆_int (p := p)) = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply]
   ext
   simp
 
 @[simp]
-theorem coeff_zero_E₆_int : coeff 0 (E₆_int (p := p)) = 1 :=
+public theorem coeff_zero_E₆_int : coeff 0 (E₆_int (p := p)) = 1 :=
   (coeff_zero_eq_constantCoeff_apply _).trans constantCoeff_E₆_int
 
 /-- The `q`-coefficient of `E₆_int` is `-504`. -/
 @[simp]
-theorem coeff_one_E₆_int : coeff 1 (E₆_int (p := p)) = -504 := Subtype.ext <| by
+public theorem coeff_one_E₆_int : coeff 1 (E₆_int (p := p)) = -504 := Subtype.ext <| by
   simp
 
 /-- Extending scalars to `ℚ` sends `E₆_int` to the rational `q`-expansion of `E₆Rat`. -/
-theorem E₆_int_map :
+public theorem E₆_int_map :
     E₆_int.map (algebraMap (pLocalInt p) ℚ) = rationalQExpansion E₆Rat := by
   ext; simp [rationalQExpansion_apply, coeff_E₆Rat]
 
 /-- `E₆_int` is a `p`-integral modular form of weight `6`. -/
-theorem E₆_int_mem_pLocalIntModularForms : E₆_int ∈ pLocalIntModularForms p 6 :=
+public theorem E₆_int_mem_pLocalIntModularForms : E₆_int ∈ pLocalIntModularForms p 6 :=
   ⟨E₆Rat, E₆_int_map⟩
 
 /-- `E₆_int ^ 2` is a `p`-integral modular form of weight `12`. -/
-theorem E₆_int_pow_two_mem : E₆_int ^ 2 ∈ pLocalIntModularForms p 12 := by
+public theorem E₆_int_pow_two_mem : E₆_int ^ 2 ∈ pLocalIntModularForms p 12 := by
   simpa using pow_mem_graded 2 (E₆_int_mem_pLocalIntModularForms (p := p))
 
 /-! ### Monomials in `E₄` and `E₆` -/
 
 /-- The monomial `E₄_int ^ a * E₆_int ^ b` is a `p`-integral modular form of weight `4a + 6b`. -/
-theorem E₄_int_pow_mul_E₆_int_pow_mem {a b n : ℕ} (hab : 4 * a + 6 * b = n) :
+public theorem E₄_int_pow_mul_E₆_int_pow_mem {a b n : ℕ} (hab : 4 * a + 6 * b = n) :
     E₄_int ^ a * E₆_int ^ b ∈ pLocalIntModularForms p n := by
   simpa [show a * 4 + (b : ℤ) * 6 = n by grind] using mul_mem_graded (pow_mem_graded a
     (E₄_int_mem_pLocalIntModularForms (p := p))) (pow_mem_graded b E₆_int_mem_pLocalIntModularForms)

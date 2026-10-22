@@ -32,21 +32,19 @@ is that limit.
 From this file on, the hypothesis `5 ≤ p` is the instance argument `[Fact (5 ≤ p)]`.
 -/
 
-@[expose] public section
-
 open PowerSeries Filter Topology
 
 variable {p : ℕ} [Fact p.Prime] [Fact (5 ≤ p)] {f : ℚ_[p]⟦X⟧}
 
 /-- **Serre's Théorème 2, existence**, for `p ≥ 5`: the classical weights of a presentation of
 a nonzero `p`-adic modular form converge in weight space. -/
-theorem w_tendsto (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
+public theorem w_tendsto (hf : f ≠ 0) (S : pAdicModularFormStruct f) :
     ∃ (x : X_[p]), Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x) :=
   WeightSpace.exists_tendsto_ι_of_forall_exists_dvd (S.exists_forall_dvd_sub Fact.out hf)
 
 /-- **Serre's Théorème 2, uniqueness**, for `p ≥ 5`: the limit of the classical weights does not
 depend on the presentation. -/
-theorem limit_unique (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
+public theorem limit_unique (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
     {x x' : X_[p]}
     (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x))
     (hx' : Tendsto (fun i ↦ ι (S'.w i)) atTop (𝓝 x')) : x = x' :=
@@ -54,7 +52,7 @@ theorem limit_unique (hf : f ≠ 0) (S S' : pAdicModularFormStruct f)
 
 open Classical in
 /-- The p-adic weight of a p-adic modular form, for `p ≥ 5`. -/
-noncomputable def w (f : PAdicModularForms p) : X_[p] :=
+@[expose] public noncomputable def w (f : PAdicModularForms p) : X_[p] :=
   if hf0 : f = 0 then ι 0
   else (w_tendsto (PAdicModularForms.val_eq_zero_iff.not.2 hf0) (choice f.2)).choose
 
@@ -71,7 +69,7 @@ theorem tendsto_ι_w {f : PAdicModularForms p} (hf0 : f ≠ 0) :
 
 /-- The weight of a nonzero `p`-adic modular form is the limit of the classical weights of any
 of its presentations. -/
-theorem w_eq_of_tendsto {f : PAdicModularForms p} (hf0 : f ≠ 0)
+public theorem w_eq_of_tendsto {f : PAdicModularForms p} (hf0 : f ≠ 0)
     (S : pAdicModularFormStruct f.1) {x : X_[p]} (hx : Tendsto (fun i ↦ ι (S.w i)) atTop (𝓝 x)) :
     w f = x :=
   limit_unique (PAdicModularForms.val_eq_zero_iff.not.2 hf0) _ S (tendsto_ι_w hf0) hx

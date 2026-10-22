@@ -21,7 +21,7 @@ computes its ordinary level-one `q`-expansion. This does not make `E2` a modular
 transformation law still has the usual quasimodular correction term.
 -/
 
-@[expose] public section
+public section
 
 open UpperHalfPlane PowerSeries ArithmeticFunction sigma Function Complex
 

@@ -43,7 +43,7 @@ under Frobenius.
 * `ModularForm.modPFiltration_sub_pow_prime`: `fil (f - f ^ p) = p * fil f` when `fil f > 0`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open MvPolynomial
 open PowerSeries hiding C X
@@ -56,7 +56,7 @@ variable {p n n' : ℕ} [Fact p.Prime] {F G : MvPolynomial (Fin 2) (ZMod p)}
 
 /-- A weighted homogeneous polynomial divisible by `hasseInvPoly hp - 1` vanishes: its evaluation
 is `0`, and evaluation is injective in each fixed weight (`eq_of_evalE₄E₆ModP_eq`). -/
-theorem eq_zero_of_isWeightedHomogeneous_of_hasseInvPoly_sub_one_dvd (hp : 5 ≤ p)
+public theorem eq_zero_of_isWeightedHomogeneous_of_hasseInvPoly_sub_one_dvd (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) (hdvd : hasseInvPoly hp - 1 ∣ F) : F = 0 := by
   obtain ⟨G, rfl⟩ := hdvd
   exact eq_of_evalE₄E₆ModP_eq hp hF (isWeightedHomogeneous_zero ..)
@@ -66,7 +66,7 @@ theorem eq_zero_of_isWeightedHomogeneous_of_hasseInvPoly_sub_one_dvd (hp : 5 ≤
 weights differing by `t * (p - 1)` differ exactly by the factor `hasseInvPoly hp ^ t`: multiplying
 the lighter one by `hasseInvPoly hp ^ t` gives a polynomial of the same weight and the same
 evaluation as the heavier one, and evaluation is injective in a fixed weight. -/
-theorem eq_hasseInvPoly_pow_mul_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) {t : ℕ}
+public theorem eq_hasseInvPoly_pow_mul_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) {t : ℕ}
     (hF : IsWeightedHomogeneous E₄E₆Weights F (n + t * (p - 1)))
     (hG : IsWeightedHomogeneous E₄E₆Weights G n)
     (h : evalE₄E₆ModP F = evalE₄E₆ModP G) : F = hasseInvPoly hp ^ t * G :=
@@ -86,7 +86,7 @@ theorem evalE₄E₆ModP_ne_zero_of_not_dvd (hp : 5 ≤ p)
 /-- The filtration of a mod-`p` modular form: the least weight of a weighted homogeneous
 polynomial in `E₄`, `E₆` evaluating to it. By the `Nat.sInf` convention it takes the junk value
 `0` on power series that are not modular forms of any single weight, and the value `0` on `0`. -/
-def modPFiltration (p : ℕ) [Fact p.Prime] (f : (ZMod p)⟦X⟧) : ℕ :=
+public def modPFiltration (p : ℕ) [Fact p.Prime] (f : (ZMod p)⟦X⟧) : ℕ :=
   sInf {n | ∃ F, IsWeightedHomogeneous E₄E₆Weights F n ∧ evalE₄E₆ModP F = f}
 
 /-- The filtration is the infimum of the weights of the weighted homogeneous representatives. -/
@@ -94,22 +94,23 @@ theorem modPFiltration_def (p : ℕ) [Fact p.Prime] (f : (ZMod p)⟦X⟧) : modP
     sInf {n | ∃ F, IsWeightedHomogeneous E₄E₆Weights F n ∧ evalE₄E₆ModP F = f} := rfl
 
 @[simp]
-theorem modPFiltration_zero : modPFiltration p (0 : (ZMod p)⟦X⟧) = 0 :=
+public theorem modPFiltration_zero : modPFiltration p (0 : (ZMod p)⟦X⟧) = 0 :=
   Nat.sInf_eq_zero.2 (Or.inl ⟨0, isWeightedHomogeneous_zero .., map_zero _⟩)
 
-theorem modPFiltration_le (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
+public theorem modPFiltration_le (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     modPFiltration p (evalE₄E₆ModP F) ≤ n :=
   Nat.sInf_le ⟨F, hF, rfl⟩
 
 /-- A mod-`p` modular form has a homogeneous representative of weight its filtration. -/
-theorem exists_isWeightedHomogeneous_modPFiltration (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
+public theorem exists_isWeightedHomogeneous_modPFiltration
+    (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G (modPFiltration p (evalE₄E₆ModP F)) ∧
       evalE₄E₆ModP G = evalE₄E₆ModP F :=
   Nat.sInf_mem (s := {m | ∃ G, IsWeightedHomogeneous E₄E₆Weights G m ∧
     evalE₄E₆ModP G = evalE₄E₆ModP F}) ⟨n, F, hF, rfl⟩
 
 /-- The filtration is invariant under multiplication by a nonzero scalar. -/
-theorem modPFiltration_smul {f : (ZMod p)⟦X⟧} {c : ZMod p} (hc : c ≠ 0) :
+public theorem modPFiltration_smul {f : (ZMod p)⟦X⟧} {c : ZMod p} (hc : c ≠ 0) :
     modPFiltration p (c • f) = modPFiltration p f := by
   rw [modPFiltration_def, modPFiltration_def]
   congr 1
@@ -137,7 +138,8 @@ theorem exists_C_of_modPFiltration_eq_zero (hF : IsWeightedHomogeneous E₄E₆W
 
 /-- A form with a nonzero coefficient of positive index has positive filtration, a form of
 filtration `0` being constant. -/
-theorem modPFiltration_pos_of_coeff_ne_zero (hF : IsWeightedHomogeneous E₄E₆Weights F n) {m : ℕ}
+public theorem modPFiltration_pos_of_coeff_ne_zero (hF : IsWeightedHomogeneous E₄E₆Weights F n)
+    {m : ℕ}
     (hm : m ≠ 0) (h : coeff m (evalE₄E₆ModP F) ≠ 0) : 0 < modPFiltration p (evalE₄E₆ModP F) := by
   refine Nat.pos_of_ne_zero fun h0 ↦ h ?_
   obtain ⟨c, hc⟩ := exists_C_of_modPFiltration_eq_zero hF h0
@@ -149,7 +151,7 @@ theorem modPFiltration_pos_of_coeff_ne_zero (hF : IsWeightedHomogeneous E₄E₆
 by the Hasse invariant computes the filtration. A representative of smaller weight would, by the
 `m = 1` congruence theorem and `eq_hasseInvPoly_pow_mul_of_evalE₄E₆ModP_eq`, exhibit `F` as a
 multiple of `hasseInvPoly hp`. -/
-theorem modPFiltration_eq_of_not_dvd (hp : 5 ≤ p)
+public theorem modPFiltration_eq_of_not_dvd (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) (hA : ¬hasseInvPoly hp ∣ F) :
     modPFiltration p (evalE₄E₆ModP F) = n := by
   obtain ⟨G, hG, hGF⟩ := exists_isWeightedHomogeneous_modPFiltration hF
@@ -167,7 +169,7 @@ theorem modPFiltration_eq_of_not_dvd (hp : 5 ≤ p)
 /-- Every nonzero mod-`p` modular form has a *reduced* representative: weighted homogeneous of
 weight the filtration and not divisible by the Hasse invariant. Dividing a representative of
 minimal weight by the Hasse invariant would produce one of smaller weight. -/
-theorem exists_isWeightedHomogeneous_not_dvd (hp : 5 ≤ p)
+public theorem exists_isWeightedHomogeneous_not_dvd (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) (h0 : evalE₄E₆ModP F ≠ 0) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G (modPFiltration p (evalE₄E₆ModP F)) ∧
       evalE₄E₆ModP G = evalE₄E₆ModP F ∧ ¬hasseInvPoly hp ∣ G := by
@@ -195,7 +197,7 @@ theorem natCast_modPFiltration_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E�
 modulo `p - 1`, if `fil u < fil v` then `fil (u + v) = fil v`. At the weight `fil v`, a
 representative of `u + v` is the sum of a multiple of the Hasse invariant and a reduced
 polynomial. -/
-theorem modPFiltration_add_of_lt (hp : 5 ≤ p)
+public theorem modPFiltration_add_of_lt (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) (hG : IsWeightedHomogeneous E₄E₆Weights G n')
     (hF0 : evalE₄E₆ModP F ≠ 0) (hG0 : evalE₄E₆ModP G ≠ 0)
     (hnn' : (n : ZMod (p - 1)) = (n' : ZMod (p - 1)))
@@ -226,7 +228,7 @@ theorem modPFiltration_add_of_lt (hp : 5 ≤ p)
 /-- **The filtration is multiplied by `p` under Frobenius**: since the Hasse invariant is
 squarefree, `A ∣ G ^ p` implies `A ∣ G` (`Squarefree.dvd_pow_iff_dvd`), so the `p`-th power of a
 reduced representative stays reduced. -/
-theorem modPFiltration_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
+public theorem modPFiltration_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (h0 : evalE₄E₆ModP F ≠ 0) :
     modPFiltration p (evalE₄E₆ModP F ^ p) = p * modPFiltration p (evalE₄E₆ModP F) := by
   obtain ⟨U, hU, hUF, hUA⟩ := exists_isWeightedHomogeneous_not_dvd hp hF h0
@@ -238,7 +240,8 @@ theorem modPFiltration_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄
 `fil (f - f ^ p) = p * fil f`. Indeed `fil (f ^ p) = p * fil f > fil f` by
 `modPFiltration_pow_prime`, the two terms have the same degree modulo `p - 1` because `p ≡ 1`, and
 unequal filtrations do not cancel. -/
-theorem modPFiltration_sub_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
+public theorem modPFiltration_sub_pow_prime (hp : 5 ≤ p)
+    (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (hfil : 0 < modPFiltration p (evalE₄E₆ModP F)) :
     modPFiltration p (evalE₄E₆ModP F - evalE₄E₆ModP F ^ p) =
       p * modPFiltration p (evalE₄E₆ModP F) := by
@@ -257,7 +260,5 @@ theorem modPFiltration_sub_pow_prime (hp : 5 ≤ p) (hF : IsWeightedHomogeneous 
       rw [Nat.sub_add_cancel (show 1 ≤ p by lia)] at this
       grind
     rw [Nat.cast_add, ZMod.natCast_self, zero_add, Nat.cast_one]
-
-
 
 end ModularForm

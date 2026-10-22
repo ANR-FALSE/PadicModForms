@@ -49,7 +49,7 @@ used here.
 * `ModularForm.mem_modPWeightZeroForms_of_isIntegral`: normality of `𝓜⁰`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open MvPolynomial
 open PowerSeries hiding C X
@@ -59,7 +59,8 @@ variable {p n : ℕ} [Fact p.Prime] {F : MvPolynomial (Fin 2) (ZMod p)} {f : (ZM
 /-- The mod-`p` modular forms of degree zero: evaluations at `E₄`, `E₆` of polynomials that are
 weighted homogeneous of degree `0` for the grading by `ZMod (p - 1)`, that is, supported in
 weights divisible by `p - 1`. This is Serre's `𝓜⁰`. -/
-def modPWeightZeroForms (p : ℕ) [Fact p.Prime] : Subalgebra (ZMod p) (ZMod p)⟦X⟧ where
+@[expose]
+public def modPWeightZeroForms (p : ℕ) [Fact p.Prime] : Subalgebra (ZMod p) (ZMod p)⟦X⟧ where
   carrier := {f | ∃ F, IsWeightedHomogeneous (ModularForm.E₄E₆WeightsModPSubOne p) F 0 ∧
     ModularForm.evalE₄E₆ModP F = f}
   mul_mem' := fun ⟨F, hF, hFf⟩ ⟨G, hG, hGg⟩ ↦
@@ -70,7 +71,7 @@ def modPWeightZeroForms (p : ℕ) [Fact p.Prime] : Subalgebra (ZMod p) (ZMod p)�
   algebraMap_mem' c := ⟨C c, isWeightedHomogeneous_C _ c, aeval_C _ c⟩
 
 @[simp]
-theorem mem_modPWeightZeroForms : f ∈ modPWeightZeroForms p ↔
+public theorem mem_modPWeightZeroForms : f ∈ modPWeightZeroForms p ↔
     ∃ F, IsWeightedHomogeneous (ModularForm.E₄E₆WeightsModPSubOne p) F 0 ∧
       ModularForm.evalE₄E₆ModP F = f :=
   .rfl
@@ -81,7 +82,7 @@ namespace ModularForm
 
 /-- The evaluation of a weighted homogeneous polynomial of weight divisible by `p - 1` has degree
 zero. -/
-theorem mem_modPWeightZeroForms_of_isWeightedHomogeneous (hn : p - 1 ∣ n)
+public theorem mem_modPWeightZeroForms_of_isWeightedHomogeneous (hn : p - 1 ∣ n)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     evalE₄E₆ModP F ∈ modPWeightZeroForms p := by
   have := isWeightedHomogeneous_modPSubOne hF
@@ -89,7 +90,7 @@ theorem mem_modPWeightZeroForms_of_isWeightedHomogeneous (hn : p - 1 ∣ n)
   exact ⟨F, this, rfl⟩
 
 /-- A mod-`p` modular form of weight divisible by `p - 1` has degree zero. -/
-theorem mem_modPWeightZeroForms_of_mem_modPModularForms (hp : 5 ≤ p) (hn : p - 1 ∣ n)
+public theorem mem_modPWeightZeroForms_of_mem_modPModularForms (hp : 5 ≤ p) (hn : p - 1 ∣ n)
     (hf : f ∈ modPModularForms p n) : f ∈ modPWeightZeroForms p := by
   obtain ⟨F, hF, rfl⟩ := exists_isWeightedHomogeneous_of_mem_modPModularForms hp hf
   exact mem_modPWeightZeroForms_of_isWeightedHomogeneous hn hF
@@ -97,7 +98,7 @@ theorem mem_modPWeightZeroForms_of_mem_modPModularForms (hp : 5 ≤ p) (hn : p -
 /-- A degree-zero form is the evaluation of a *single-weight* homogeneous polynomial, of weight
 divisible by `p - 1`: multiply each monomial by a power of the Hasse invariant, raising it to the
 sum of the weights of the monomials. -/
-theorem exists_isWeightedHomogeneous_of_mem_modPWeightZeroForms (hp : 5 ≤ p)
+public theorem exists_isWeightedHomogeneous_of_mem_modPWeightZeroForms (hp : 5 ≤ p)
     (hf : f ∈ modPWeightZeroForms p) : ∃ n F, p - 1 ∣ n ∧
       IsWeightedHomogeneous E₄E₆Weights F n ∧ evalE₄E₆ModP F = f := by
   obtain ⟨F, hF, rfl⟩ := hf
@@ -213,7 +214,7 @@ turn by a power of the Hasse invariant produces a monic polynomial `R = monicOfC
 to `w ^ d * P(f) = 0`, hence vanishes, evaluation being injective in each fixed weight. So `U / W`
 is a root of the monic polynomial `R`, whence `W ∣ U`, and the quotient `V` is a homogeneous
 representative of `f` whose weight `a - b` is divisible by `p - 1`. -/
-theorem mem_modPWeightZeroForms_of_isIntegral (hp : 5 ≤ p) {f u w : (ZMod p)⟦X⟧}
+public theorem mem_modPWeightZeroForms_of_isIntegral (hp : 5 ≤ p) {f u w : (ZMod p)⟦X⟧}
     (hu : u ∈ modPWeightZeroForms p) (hw : w ∈ modPWeightZeroForms p) (hw0 : w ≠ 0)
     (hf : w * f = u) (hint : IsIntegral (modPWeightZeroForms p) f) :
     f ∈ modPWeightZeroForms p := by

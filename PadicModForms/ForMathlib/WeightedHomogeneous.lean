@@ -41,7 +41,7 @@ variable of weight one, and is multiplicative when the weights add up.
   weighted homogeneous polynomial is weighted homogeneous.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 open Finsupp Finset
 
@@ -109,7 +109,7 @@ monomial as a coefficient. A monomial of weight `n` is sent to that monomial tim
 the coefficient of `X ^ n` is the weighted homogeneous component of weight `n`
 (`coeff_toWeightPolynomial`) and evaluating at `X = 1` returns the polynomial
 (`eval_one_toWeightPolynomial`). -/
-def toWeightPolynomial : MvPolynomial σ R →+* Polynomial (MvPolynomial σ R) :=
+@[expose] def toWeightPolynomial : MvPolynomial σ R →+* Polynomial (MvPolynomial σ R) :=
   eval₂Hom (Polynomial.C.comp C) fun i ↦ Polynomial.C (X i) * Polynomial.X ^ w i
 
 -- Apply before `monomial_zero'` rewrites a constant monomial to `C`.
@@ -179,7 +179,7 @@ theorem isWeightedHomogeneous_natDegree
 /-- The weighted homogenization in degree `N`, as an `R`-linear map: an auxiliary variable of
 weight one fills each monomial up to weight `N`, so that the coefficient of `X ^ (N - n)` is the
 weighted homogeneous component of weight `n`. -/
-def weightedHomogenize (w : σ → ℕ) (N : ℕ) :
+@[expose] def weightedHomogenize (w : σ → ℕ) (N : ℕ) :
     MvPolynomial σ R →ₗ[R] Polynomial (MvPolynomial σ R) where
   toFun P := reflect N (toWeightPolynomial w P)
   map_add' P Q := by rw [map_add, reflect_add]

@@ -30,7 +30,7 @@ let `f : M →ₛₗ[σ] N` be a `σ`-semilinear map. We study when a family `b 
 
 -/
 
-@[expose] public section
+public section
 
 open Function Set Submodule Module LinearMap
 

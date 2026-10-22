@@ -15,7 +15,7 @@ import Mathlib.Tactic.NormNum.Basic
 This file contains elementary lemmas about direct sums that are missing from Mathlib.
 -/
 
-@[expose] public section
+public section
 
 namespace DirectSum
 

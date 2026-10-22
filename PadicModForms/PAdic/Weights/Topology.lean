@@ -34,7 +34,7 @@ weights of `p`-adic modular forms.
   congruent modulo every `(p - 1) p ^ (m - 1)` have the same limit.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open Filter Topology
 
@@ -53,7 +53,7 @@ postcomposition with the embedding `ℤ_[p]ˣ → ℤ_[p]` is inducing
 (`ContinuousMap.isInducing_postcomp`, `Units.isOpenEmbedding_val`), and on the compact space
 `ℤ_[p]ˣ` compact convergence is uniform convergence
 (`ContinuousMap.tendsto_iff_tendstoLocallyUniformly`). -/
-theorem tendsto_iff_tendstoUniformly : Tendsto χ l (𝓝 χ₀) ↔
+public theorem tendsto_iff_tendstoUniformly : Tendsto χ l (𝓝 χ₀) ↔
     TendstoUniformly (fun i u ↦ (χ i u : ℤ_[p])) (fun u ↦ (χ₀ u : ℤ_[p])) l := by
   rw [(ContinuousMonoidHom.isInducing_toContinuousMap (A := ℤ_[p]ˣ) (B := ℤ_[p]ˣ)).tendsto_nhds_iff,
     (ContinuousMap.isInducing_postcomp (X := ℤ_[p]ˣ) ⟨Units.val, Units.continuous_val⟩
@@ -118,7 +118,7 @@ variable {a b : ℕ → ℤ}
 /-- A sequence of integers that is Cauchy for the moduli `(p - 1) p ^ (m - 1)` has convergent
 image in `X_[p]`, by `PadicInt.norm_zpow_sub_zpow_le` and
 `exists_tendsto_of_forall_exists_norm_sub_le`. -/
-theorem exists_tendsto_ι_of_forall_exists_dvd
+public theorem exists_tendsto_ι_of_forall_exists_dvd
     (h : ∀ m : ℕ, ∃ N, ∀ i ≥ N, ∀ j ≥ N, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ a i - a j) :
     ∃ x : X_[p], Tendsto (fun i ↦ ι (a i)) atTop (𝓝 x) := by
   refine exists_tendsto_of_forall_exists_norm_sub_le fun m ↦ ?_
@@ -129,7 +129,7 @@ theorem exists_tendsto_ι_of_forall_exists_dvd
 have the same limit in `X_[p]`, if any: evaluate at each unit (`tendsto_apply`), where the
 sequences `u ^ (a i)` and `u ^ (b i)` are eventually `p ^ (-m)`-close
 (`PadicInt.norm_zpow_sub_zpow_le`), hence have the same limit in the Hausdorff space `ℤ_[p]`. -/
-theorem eq_of_tendsto_ι_of_forall_eventually_dvd {x x' : X_[p]}
+public theorem eq_of_tendsto_ι_of_forall_eventually_dvd {x x' : X_[p]}
     (hx : Tendsto (fun i ↦ ι (a i)) atTop (𝓝 x)) (hx' : Tendsto (fun i ↦ ι (b i)) atTop (𝓝 x'))
     (h : ∀ m : ℕ, ∀ᶠ i in atTop, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ a i - b i) : x = x' := by
   refine ContinuousMonoidHom.ext fun u ↦ Units.ext ?_

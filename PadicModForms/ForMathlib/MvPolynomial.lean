@@ -28,7 +28,7 @@ distinct monomials with nonzero coefficients is not a monomial, and over a field
 is irreducible when its exponents are positive and coprime.
 -/
 
-@[expose] public section
+public section
 
 namespace MvPolynomial
 

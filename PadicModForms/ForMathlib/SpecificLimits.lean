@@ -16,7 +16,7 @@ import Mathlib.Topology.MetricSpace.Bounded
 # Existence of arbitrarily small integer powers
 -/
 
-@[expose] public section
+public section
 
 -- should go to Mathlib.Analysis.SpecificLimits.Basic
 theorem exists_zpow_neg_lt {b : ℝ} (hb : 1 < b) {ε : ℝ} (hε : 0 < ε) :

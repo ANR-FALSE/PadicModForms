@@ -29,8 +29,6 @@ This file develops the coefficientwise p-adic valuation on power series and reco
 way in which a classical rational modular form gives a p-adic modular form.
 -/
 
-@[expose] public section
-
 open Filter Topology PowerSeries Padic ModularForm ArithmeticFunction sigma
 
 open scoped PowerSeriesUniformConvergence
@@ -38,7 +36,7 @@ open scoped PowerSeriesUniformConvergence
 variable {p : ℕ} [hp : Fact p.Prime] (n : ℕ) (f : ℚ_[p]⟦X⟧)
 
 /-- A classical rational modular form gives a p-adic modular form after extending scalars. -/
-theorem rationalQExpansion_isPAdicModularForm {k : ℤ} (F : rationalModularForms k) :
+public theorem rationalQExpansion_isPAdicModularForm {k : ℤ} (F : rationalModularForms k) :
     (rationalQExpansion F).map (algebraMap ℚ ℚ_[p]) |>.isPAdicModularForm p := by
   refine ⟨⟨fun _ ↦ k, fun _ ↦ F, fun u hu ↦ ?_⟩⟩
   filter_upwards with i n
@@ -52,10 +50,10 @@ noncomputable local instance : UniformSpace (ℚ_[p]⟦X⟧) := WithUniformConve
 
 /-- The additive `p`-adic valuation of the `n`-th coefficient of a power series, viewed in the
 extended integers `[-∞, ∞]`. -/
-noncomputable abbrev coeffPadicValuation : EInt := Padic.addValuation (coeff n f)
+public noncomputable abbrev coeffPadicValuation : EInt := Padic.addValuation (coeff n f)
 
 /-- The valuation on `ℚ_[p]⟦X⟧`: for `f = ∑ aₙ Xⁿ` we set `v(f) = infₙ v_p(aₙ)`. -/
-noncomputable def v : EInt := ⨅ n, coeffPadicValuation n f
+public noncomputable def v : EInt := ⨅ n, coeffPadicValuation n f
 
 theorem v_def : v f = ⨅ n, (addValuation (coeff n f) : EInt) := rfl
 
@@ -69,7 +67,7 @@ theorem le_v_iff : m ≤ v f ↔ ∀ n : ℕ, m ≤ coeffPadicValuation n f :=
 
 /-- A sequence of `p`-adic power series converges for the topology of uniform convergence of
 coefficients iff the valuations of its differences from the limit tend to `∞`. -/
-theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} :
+public theorem tendsto_iff_v_sub_tendsto_nhds_top {F : ℕ → ℚ_[p]⟦X⟧} :
     Tendsto F atTop (𝓝 f) ↔ Tendsto (fun n ↦ v (F n - f)) atTop (𝓝 (⊤ : EInt)) := by
   rw [WithUniformConvergence.tendsto_iff_tendstoUniformly,
     Metric.tendstoUniformly_iff, tendsto_eint_nhds_top_iff]
@@ -94,7 +92,7 @@ theorem v_nonneg_iff : 0 ≤ v f ↔ ∃ g : ℤ_[p]⟦X⟧, g.map (algebraMap _
 theorem v_ne_bot_iff : v f ≠ ⊥ ↔ ∃ m : ℤ, ∀ n, m ≤ coeffPadicValuation n f :=
   eint_ne_bot_iff.trans (exists_congr fun _ ↦ le_v_iff)
 
-theorem v_ne_bot_of_nonneg (hf : 0 ≤ v f) : v f ≠ ⊥ :=
+public theorem v_ne_bot_of_nonneg (hf : 0 ≤ v f) : v f ≠ ⊥ :=
   eint_ne_bot_of_nonneg hf
 
 theorem v_ne_bot_iff_norm : v f ≠ ⊥ ↔ ∃ m : ℤ, ∀ n, ‖coeff n f‖ ≤ p ^ (-m) :=
@@ -110,7 +108,7 @@ theorem v_C_ne_bot (c : ℚ_[p]) : v (C c) ≠ ⊥ := by
   refine v_ne_bot_iff.2 ⟨m, fun n ↦ ?_⟩
   rcases eq_or_ne n 0 with rfl | hn <;> simp_all [coeffPadicValuation, coeff_C]
 
-theorem v_ne_bot_add {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : v g ≠ ⊥) : v (f + g) ≠ ⊥ := by
+public theorem v_ne_bot_add {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : v g ≠ ⊥) : v (f + g) ≠ ⊥ := by
   obtain ⟨m, hm⟩ := v_ne_bot_iff_norm.1 hf
   obtain ⟨m', hm'⟩ := v_ne_bot_iff_norm.1 hg
   have hp1 : (1 : ℝ) ≤ p := mod_cast hp.1.one_lt.le
@@ -132,10 +130,10 @@ theorem v_ne_bot_mul_of_nonneg {f g : ℚ_[p]⟦X⟧} (hf : v f ≠ ⊥) (hg : 0
 
 /-! ### The ultrametric inequality -/
 
-theorem v_neg : v (-f) = v f := by
+public theorem v_neg : v (-f) = v f := by
   simp [v_def, AddValuation.map_neg]
 
-theorem v_sub_comm (g : ℚ_[p]⟦X⟧) : v (f - g) = v (g - f) := by
+public theorem v_sub_comm (g : ℚ_[p]⟦X⟧) : v (f - g) = v (g - f) := by
   rw [← neg_sub, v_neg]
 
 /-- The ultrametric inequality for `v`, coefficient by coefficient. -/
@@ -145,17 +143,17 @@ theorem min_le_v_add (g : ℚ_[p]⟦X⟧) : min (v f) (v g) ≤ v (f + g) :=
       ((WithBot.coe_min _ _).symm.trans_le (WithBot.coe_le_coe.2 (by simp)))
 
 /-- The ultrametric inequality, in the form used to bound a sum from below. -/
-theorem le_v_add {g : ℚ_[p]⟦X⟧} (hf : m ≤ v f) (hg : m ≤ v g) : m ≤ v (f + g) :=
+public theorem le_v_add {g : ℚ_[p]⟦X⟧} (hf : m ≤ v f) (hg : m ≤ v g) : m ≤ v (f + g) :=
   (le_min hf hg).trans (min_le_v_add g)
 
 /-- Adding a series of strictly larger valuation does not change the valuation. -/
-theorem v_add_eq_left_of_lt {g : ℚ_[p]⟦X⟧} (h : v f < v g) : v (f + g) = v f := by
+public theorem v_add_eq_left_of_lt {g : ℚ_[p]⟦X⟧} (h : v f < v g) : v (f + g) = v f := by
   refine le_antisymm ?_ ((min_eq_left h.le).symm.le.trans (min_le_v_add g))
   refine (min_le_iff.1 ?_).resolve_right (not_le.2 h)
   simpa [add_neg_cancel_right, v_neg] using min_le_v_add (f := f + g) (-g)
 
 /-- A power series has infinite valuation iff it is zero. -/
-theorem v_eq_top_iff : v f = ⊤ ↔ f = 0 := by
+public theorem v_eq_top_iff : v f = ⊤ ↔ f = 0 := by
   rw [v_def, iInf_eq_top, PowerSeries.ext_iff]
   refine forall_congr' fun n ↦ ?_
   rw [_root_.map_zero, ← AddValuation.top_iff addValuation, ← WithBot.coe_top, WithBot.coe_eq_coe]
@@ -169,7 +167,7 @@ theorem v_ne_top_of_coeff_ne_zero {n : ℕ} (h : coeff n f ≠ 0) : v f ≠ ⊤ 
 
 /-- Multiplying a power series by a nonzero constant shifts its valuation by the valuation of the
 constant. -/
-theorem v_C_mul {c : ℚ_[p]} (hc : c ≠ 0) : v (C c * f) = (addValuation c) + v f := by
+public theorem v_C_mul {c : ℚ_[p]} (hc : c ≠ 0) : v (C c * f) = (addValuation c) + v f := by
   obtain ⟨m, hm⟩ : ∃ m : ℤ, addValuation c = m := ⟨_, addValuation.apply hc⟩
   have hcoe : addValuation c = (m : EInt) := by rw [hm]; simp [WithBotTop.coe]
   rw [v_def, v_def, hcoe, intCast_add_iInf]
@@ -181,7 +179,7 @@ variable {f f' : ℚ⟦X⟧} {g g' : (pLocalInt p)⟦X⟧}
 
 /-- A rational power series has nonnegative `p`-adic valuation iff its coefficients come from the
 localization of `ℤ` at the prime ideal generated by `p`. -/
-theorem v_nonneg_iff_rat :
+public theorem v_nonneg_iff_rat :
     0 ≤ v (f.map (algebraMap ℚ ℚ_[p])) ↔ ∃ g : (pLocalInt p)⟦X⟧, g.map (algebraMap _ _) = f := by
   refine ⟨fun hf ↦ ?_, ?_⟩
   · have hcoeff n : coeff n f ∈ pLocalInt p :=
@@ -199,7 +197,7 @@ theorem intCast_mem_pLocalInt (m : ℤ) : (m : ℚ) ∈ pLocalInt p := by
 
 /-- A `p`-integral rational power series reduces to zero modulo `p` exactly when its valuation is
 at least `1`. See `map_toZMod_eq_iff` for the version comparing two series. -/
-theorem map_toZMod_eq_zero_iff (hg : g.map (algebraMap _ ℚ) = f) :
+public theorem map_toZMod_eq_zero_iff (hg : g.map (algebraMap _ ℚ) = f) :
     g.map pLocalInt.toZMod = 0 ↔ 1 ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
   rw [le_v_iff, PowerSeries.ext_iff]
   refine forall_congr' fun n ↦ ?_
@@ -215,7 +213,7 @@ theorem map_toZMod_eq_iff (hg : g.map (algebraMap _ ℚ) = f) (hg' : g'.map (alg
 
 /-- A `p`-integral rational power series reduces to zero modulo `p ^ m` exactly when its valuation
 is at least `m`. This is the modulus-`p ^ m` version of `map_toZMod_eq_zero_iff`. -/
-theorem map_toZModPow_eq_zero_iff (m : ℕ) (hg : g.map (algebraMap _ ℚ) = f) :
+public theorem map_toZModPow_eq_zero_iff (m : ℕ) (hg : g.map (algebraMap _ ℚ) = f) :
     g.map (pLocalInt.toZModPow m) = 0 ↔
       ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p])) := by
   rw [le_v_iff, PowerSeries.ext_iff]
@@ -225,7 +223,7 @@ theorem map_toZModPow_eq_zero_iff (m : ℕ) (hg : g.map (algebraMap _ ℚ) = f) 
 /-- Two `p`-integral rational power series are congruent modulo `p ^ m` exactly when the valuation
 of their difference is at least `m`. This is the bridge between the two phrasings of the
 hypothesis of Serre's theorem on congruences. -/
-theorem map_toZModPow_eq_iff (m : ℕ)
+public theorem map_toZModPow_eq_iff (m : ℕ)
     (hg : g.map (algebraMap _ ℚ) = f) (hg' : g'.map (algebraMap _ ℚ) = f') :
     g.map (pLocalInt.toZModPow m) = g'.map (pLocalInt.toZModPow m) ↔
       ((m : ℤ) : EInt) ≤ v (f.map (algebraMap ℚ ℚ_[p]) - f'.map (algebraMap ℚ ℚ_[p])) := by
@@ -234,7 +232,7 @@ theorem map_toZModPow_eq_iff (m : ℕ)
 
 /-- A congruence modulo `p ^ m` between power series over `pLocalInt p`, with `m ≥ 1`, implies a
 congruence modulo `p`. -/
-theorem map_toZMod_eq_of_map_toZModPow_eq {m : ℕ} (hm : 1 ≤ m)
+public theorem map_toZMod_eq_of_map_toZModPow_eq {m : ℕ} (hm : 1 ≤ m)
     (h : g.map (pLocalInt.toZModPow m) = g'.map (pLocalInt.toZModPow m)) :
     g.map pLocalInt.toZMod = g'.map pLocalInt.toZMod := by
   ext n
@@ -292,7 +290,7 @@ variable {k : ℤ} (F : rationalModularForms k)
 
 open MvPolynomial in
 /-- The p-adic valuations of the coefficients of a rational modular form are bounded below. -/
-theorem rationalQExpansion_v_ne_bot :
+public theorem rationalQExpansion_v_ne_bot :
     Padic.v ((rationalQExpansion F).map (algebraMap ℚ ℚ_[p])) ≠ ⊥ := by
   obtain ⟨P, hP⟩ := exists_qExpansion_eq_aeval F
   rw [rationalQExpansion_apply, hP]
@@ -309,7 +307,7 @@ theorem rationalQExpansion_v_ne_bot :
 
 /-- A nonzero rational modular form becomes of valuation exactly `0` after scaling by a suitable
 power of `p`. This is the normalization used in Serre's theorem on congruences. -/
-theorem rationalQExpansion_exists_zpow_smul_v_eq_zero (hF : (F : ℚ⟦X⟧) ≠ 0) :
+public theorem rationalQExpansion_exists_zpow_smul_v_eq_zero (hF : (F : ℚ⟦X⟧) ≠ 0) :
     ∃ m : ℤ, Padic.v (((p : ℚ) ^ m • (F : ℚ⟦X⟧)).map (algebraMap ℚ ℚ_[p])) = 0 :=
   Padic.exists_zpow_smul_v_eq_zero hF (by simpa using rationalQExpansion_v_ne_bot F)
 

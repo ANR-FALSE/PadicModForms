@@ -41,7 +41,7 @@ theorem on congruences of weights of modular forms:
 * `PowerSeries.iterate_Θ_sigmaSeries_one`: `Θ^[p - 2] (∑ σ₁(n) qⁿ) = ∑_{p ∤ n} σ_{p-2}(n) qⁿ`.
 -/
 
-@[expose] public section
+public section
 
 open ArithmeticFunction sigma Finset Nat
 

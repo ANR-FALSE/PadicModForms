@@ -17,7 +17,7 @@ We also record how the valuation, and the norm, see the `p`-integral rationals a
 modulo `p`.
 -/
 
-@[expose] public section
+public section
 
 variable {p : ℕ} [hp : Fact p.Prime]
 

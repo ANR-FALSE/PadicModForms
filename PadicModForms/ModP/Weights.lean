@@ -30,7 +30,7 @@ and whose degrees differ cannot both be nonzero.
   `n'` with the same nonzero evaluation satisfy `(n : ZMod (p - 1)) = n'`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open MvPolynomial
 
@@ -41,7 +41,8 @@ variable {p n n' : ℕ} [Fact p.Prime] {F G : MvPolynomial (Fin 2) (ZMod p)}
 /-- **The case `m = 1` of Serre's theorem on congruences.** Two weighted homogeneous polynomials
 with the same nonzero evaluation at `E₄` and `E₆` modulo `p` have weights congruent modulo
 `p - 1`. -/
-theorem natCast_eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n)
+public theorem natCast_eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p)
+    (hF : IsWeightedHomogeneous E₄E₆Weights F n)
     (hG : IsWeightedHomogeneous E₄E₆Weights G n') (h : evalE₄E₆ModP F = evalE₄E₆ModP G)
     (h0 : evalE₄E₆ModP F ≠ 0) : (n : ZMod (p - 1)) = n' := by
   by_contra hne
@@ -62,7 +63,8 @@ theorem natCast_eq_of_evalE₄E₆ModP_eq (hp : 5 ≤ p) (hF : IsWeightedHomogen
 /-- **The case `m = 1` of Serre's theorem on congruences, for modular forms.** A nonzero mod-`p`
 modular form has a well-defined weight modulo `p - 1`: if the same power series is a mod-`p`
 modular form of weight `k` and of weight `k'`, then `k ≡ k' mod (p - 1)`. -/
-theorem natCast_eq_of_mem_modPModularForms (hp : 5 ≤ p) {f : PowerSeries (ZMod p)} (hf : f ≠ 0)
+public theorem natCast_eq_of_mem_modPModularForms (hp : 5 ≤ p) {f : PowerSeries (ZMod p)}
+    (hf : f ≠ 0)
     (hk : f ∈ modPModularForms p n) (hk' : f ∈ modPModularForms p n') :
     (n : ZMod (p - 1)) = (n' : ZMod (p - 1)) := by
   obtain ⟨F, hFhom, hF⟩ := exists_isWeightedHomogeneous_of_mem_modPModularForms hp hk

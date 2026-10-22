@@ -8,7 +8,7 @@ module
 
 public import PadicModForms.ForMathlib.IntLocalization
 public import PadicModForms.Rational.Basic
-import PadicModForms.ForMathlib.PowerSeries
+public import PadicModForms.ForMathlib.PowerSeries
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -22,8 +22,6 @@ This file defines the `p`-integral rational modular forms of fixed weight. They 
 over `pLocalInt p` whose scalar extension to `ℚ` is the `q`-expansion of a rational modular form.
 -/
 
-@[expose] public section
-
 open PowerSeries ModularForm
 
 variable {p : ℕ} [Fact p.Prime]
@@ -32,7 +30,7 @@ namespace PowerSeries
 
 /-- A power series over `pLocalInt p` is a `p`-integral modular form of weight `k` if its scalar
 extension to `ℚ` is the `q`-expansion of a rational modular form of weight `k`. -/
-public def isPLocalIntModularForm (k : ℤ) (f : (pLocalInt p)⟦X⟧) : Prop :=
+@[expose] public def isPLocalIntModularForm (k : ℤ) (f : (pLocalInt p)⟦X⟧) : Prop :=
   ∃ F : rationalModularForms k, f.map (algebraMap _ ℚ) = rationalQExpansion F
 
 public theorem zero_isPLocalIntModularForm (k : ℤ) :
@@ -47,7 +45,7 @@ theorem one_isPLocalIntModularForm : (1 : (pLocalInt p)⟦X⟧).isPLocalIntModul
 
 include hf
 
-theorem IsPLocalIntModularForm.neg : (-f).isPLocalIntModularForm k := by
+public theorem IsPLocalIntModularForm.neg : (-f).isPLocalIntModularForm k := by
   obtain ⟨F, hF⟩ := hf
   exact ⟨-F, by simp [hF]⟩
 
@@ -57,7 +55,7 @@ public theorem IsPLocalIntModularForm.smul : (a • f).isPLocalIntModularForm k 
   ext n
   simpa using congr(a * coeff n $hF)
 
-theorem IsPLocalIntModularForm.mul (hg : g.isPLocalIntModularForm l) :
+public theorem IsPLocalIntModularForm.mul (hg : g.isPLocalIntModularForm l) :
     (f * g).isPLocalIntModularForm (k + l) := by
   obtain ⟨F, hF⟩ := hf
   obtain ⟨G, hG⟩ := hg
@@ -91,7 +89,7 @@ public theorem IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff {c : pL
 
 /-- The `p`-integral rational modular forms of weight `k`, as a submodule of power series over
 `pLocalInt p`. -/
-public def _root_.pLocalIntModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
+@[expose] public def _root_.pLocalIntModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
     Submodule (pLocalInt p) (pLocalInt p)⟦X⟧ where
   carrier := {f | f.isPLocalIntModularForm k}
   zero_mem' := zero_isPLocalIntModularForm k
@@ -101,7 +99,7 @@ public def _root_.pLocalIntModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
 omit hf hg
 
 @[simp]
-theorem mem_pLocalIntModularForms :
+public theorem mem_pLocalIntModularForms :
     f ∈ pLocalIntModularForms p k ↔ f.isPLocalIntModularForm k :=
   Iff.rfl
 
@@ -151,7 +149,7 @@ variable {i j l : ℤ} (x : pLocalIntModularForms p i) (y : pLocalIntModularForm
 
 /-- Taking a power in the graded ring of `p`-integral modular forms, with the resulting weight
 computed. -/
-theorem of_pow_eq_of {n : ℕ} (hij : n • i = j)
+public theorem of_pow_eq_of {n : ℕ} (hij : n • i = j)
     (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
     (of (fun i ↦ pLocalIntModularForms p i) i x) ^ n = of _ j y := by
   subst hij
@@ -160,7 +158,7 @@ theorem of_pow_eq_of {n : ℕ} (hij : n • i = j)
 
 /-- Multiplying in the graded ring of `p`-integral modular forms, with the resulting weight
 computed. -/
-theorem of_mul_of_eq_of (z : pLocalIntModularForms p l) (hij : i + j = l)
+public theorem of_mul_of_eq_of (z : pLocalIntModularForms p l) (hij : i + j = l)
     (hxyz : (x : (pLocalInt p)⟦X⟧) * (y : (pLocalInt p)⟦X⟧) = (z : (pLocalInt p)⟦X⟧)) :
     of (fun i ↦ pLocalIntModularForms p i) i x * of (fun i ↦ pLocalIntModularForms p i) j y =
       of (fun i ↦ pLocalIntModularForms p i) l z := by

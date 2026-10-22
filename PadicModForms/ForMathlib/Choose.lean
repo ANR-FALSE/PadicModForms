@@ -24,7 +24,7 @@ import Mathlib.Tactic.Ring.RingNF
 * `Nat.cast_choose_three`: `n.choose 3 = n (n - 1) (n - 2) / 6`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nat
 

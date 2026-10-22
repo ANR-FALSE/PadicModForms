@@ -24,7 +24,7 @@ topology (`MvPowerSeries.WithPiTopology`), which is strictly coarser.
 
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 
@@ -40,7 +40,7 @@ variable {R : Type*} [Ring R]
 variable (R) in
 /-- The coefficient map `f ↦ (n ↦ coeff n f)` as an additive monoid homomorphism
 `R⟦X⟧ →+ (ℕ →ᵤ R)`. -/
-@[simps]
+@[expose, simps]
 noncomputable def coeffAddMonoidHom : R⟦X⟧ →+ UniformFun ℕ R where
   toFun f := UniformFun.ofFun fun n ↦ coeff n f
   map_zero' := rfl

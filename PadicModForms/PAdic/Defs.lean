@@ -27,44 +27,46 @@ sequence of classical rational modular forms whose coefficients converge uniform
 `f`; a `p`-adic power series is a p-adic modular form when it admits a presentation.
 -/
 
-public section
-
 open UpperHalfPlane PowerSeries ModularFormClass Filter ModularForm
 
 open scoped MatrixGroups Topology
 
 variable {p : ℕ} [Fact p.Prime]
 
+public section
+
 /-- The p-adic weight space. -/
 notation "X_[" p "]" => ContinuousMonoidHom ℤ_[p]ˣ ℤ_[p]ˣ
 
+end
+
 /-- The classical integral weight `n`, regarded as a p-adic weight: the character `u ↦ u ^ n`
 (`ι_apply`). -/
-noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop⟩
+public noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop⟩
 
 @[simp]
-theorem ι_apply (n : ℤ) (u : ℤ_[p]ˣ) : ι n u = u ^ n := by
+public theorem ι_apply (n : ℤ) (u : ℤ_[p]ˣ) : ι n u = u ^ n := by
   rw [ι]
   exact zpowGroupHom_apply n u
 
 @[simp]
-theorem ι_zero : ι (p := p) 0 = 1 := ContinuousMonoidHom.ext fun u ↦ by simp
+public theorem ι_zero : ι (p := p) 0 = 1 := ContinuousMonoidHom.ext fun u ↦ by simp
 
 /-- `ι` is a homomorphism from the integers to weight space. -/
 @[simp]
-theorem ι_add (m n : ℤ) : ι (p := p) (m + n) = ι m * ι n :=
+public theorem ι_add (m n : ℤ) : ι (p := p) (m + n) = ι m * ι n :=
   ContinuousMonoidHom.ext fun u ↦ by simp [zpow_add]
 
 @[simp]
-theorem ι_neg (n : ℤ) : ι (p := p) (-n) = (ι n)⁻¹ :=
+public theorem ι_neg (n : ℤ) : ι (p := p) (-n) = (ι n)⁻¹ :=
   ContinuousMonoidHom.ext fun u ↦ by simp [zpow_neg]
 
 @[simp]
-theorem ι_sub (m n : ℤ) : ι (p := p) (m - n) = ι m / ι n :=
+public theorem ι_sub (m n : ℤ) : ι (p := p) (m - n) = ι m / ι n :=
   ContinuousMonoidHom.ext fun u ↦ by simp [zpow_sub, div_eq_mul_inv]
 
 /-- `ι` is injective: the unit `1 + p` of `ℤ_[p]` has infinite order. -/
-theorem ι_injective : Function.Injective (ι (p := p)) := by
+public theorem ι_injective : Function.Injective (ι (p := p)) := by
   intro m n h
   have h2 : (PadicInt.isUnit_one_add_natCast (p := p)).unit ^ (m - n) = 1 := by
     rw [zpow_sub, mul_inv_eq_one]
@@ -75,11 +77,11 @@ theorem ι_injective : Function.Injective (ι (p := p)) := by
   lia
 
 @[simp]
-theorem ι_inj {m n : ℤ} : ι (p := p) m = ι n ↔ m = n := ι_injective.eq_iff
+public theorem ι_inj {m n : ℤ} : ι (p := p) m = ι n ↔ m = n := ι_injective.eq_iff
 
 /-- A presentation of a p-adic modular form by classical rational modular forms whose
 coefficients converge uniformly. -/
-structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
+public structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
   /-- The weights of the classical modular forms of the presentation. -/
   w : ℕ → ℤ
   /-- The classical rational modular forms of the presentation, `F i` having weight `w i`. -/
@@ -92,26 +94,26 @@ variable (p)
 /-- A `p`-adic power series is a `p`-adic modular form if it admits a presentation by classical
 rational modular forms. -/
 @[expose]
-def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct f)
+public def PowerSeries.isPAdicModularForm (f : ℚ_[p]⟦X⟧) := Nonempty (pAdicModularFormStruct f)
 
 /-- The type of p-adic modular forms. -/
 @[expose]
-def PAdicModularForms := {f // PowerSeries.isPAdicModularForm p f}
+public def PAdicModularForms := {f // PowerSeries.isPAdicModularForm p f}
 
 namespace PAdicModularForms
 
 variable {p}
 
 /-- The zero power series is a `p`-adic modular form, presented by the zero form of weight `0`. -/
-noncomputable instance : Zero (PAdicModularForms p) :=
+public noncomputable instance : Zero (PAdicModularForms p) :=
   ⟨⟨0, ⟨⟨fun _ ↦ 0, fun _ ↦ 0, fun u hu ↦ by
     filter_upwards with i n
     simpa using refl_mem_uniformity hu⟩⟩⟩⟩
 
 @[simp]
-theorem val_zero : (0 : PAdicModularForms p).1 = 0 := rfl
+public theorem val_zero : (0 : PAdicModularForms p).1 = 0 := rfl
 
-theorem val_eq_zero_iff {f : PAdicModularForms p} : f.1 = 0 ↔ f = 0 :=
+public theorem val_eq_zero_iff {f : PAdicModularForms p} : f.1 = 0 ↔ f = 0 :=
   ⟨fun h ↦ Subtype.ext (h.trans val_zero.symm), fun h ↦ h ▸ rfl⟩
 
 end PAdicModularForms

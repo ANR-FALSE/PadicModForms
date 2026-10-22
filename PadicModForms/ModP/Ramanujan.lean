@@ -31,7 +31,7 @@ weight.
   `12 Θ E₆ = 6E₂E₆ - 6E₄²`
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open PowerSeries ModularForm
 
@@ -40,35 +40,36 @@ variable {p : ℕ} [Fact p.Prime]
 namespace EisensteinSeries
 
 /-- The reduction of `E₂_int` modulo `p`. This is Serre's `P`. -/
-def E₂ModP : (ZMod p)⟦X⟧ := E₂_int.map pLocalInt.toZMod
+@[expose] public def E₂ModP : (ZMod p)⟦X⟧ := E₂_int.map pLocalInt.toZMod
 
-theorem E₂ModP_def : E₂ModP (p := p) = E₂_int.map pLocalInt.toZMod := rfl
+public theorem E₂ModP_def : E₂ModP (p := p) = E₂_int.map pLocalInt.toZMod := rfl
 
 /-- `E₂ModP` is a mod-`p` modular form of weight `p + 1`, by Serre's congruence. -/
-theorem E₂ModP_mem_modPModularForms (hp5 : 5 ≤ p) : E₂ModP ∈ modPModularForms p ((p + 1 : ℕ) : ℤ) :=
+public theorem E₂ModP_mem_modPModularForms (hp5 : 5 ≤ p) : E₂ModP ∈ modPModularForms p
+    ((p + 1 : ℕ) : ℤ) :=
   E₂_int_map_toZMod_mem_modPModularForms hp5
 
 /-- **Ramanujan's identity** for `E₂` modulo `p`: `12 Θ E₂ = E₂² - E₄`. -/
-theorem Θ_E₂ModP : 12 * Θ (R := ZMod p) E₂ModP = E₂ModP * E₂ModP - E₄ModP := by
+public theorem Θ_E₂ModP : 12 * Θ (R := ZMod p) E₂ModP = E₂ModP * E₂ModP - E₄ModP := by
   simpa [E₂ModP, E₄ModP, map_Θ, map_ofNat] using congr(map (pLocalInt.toZMod (p := p)) $Θ_E₂_int)
 
 /-- **Ramanujan's identity** for `E₄` modulo `p`: `3 Θ E₄ = E₂E₄ - E₆`. -/
-theorem Θ_E₄ModP : 3 * Θ (R := ZMod p) E₄ModP = E₂ModP * E₄ModP - E₆ModP := by
+public theorem Θ_E₄ModP : 3 * Θ (R := ZMod p) E₄ModP = E₂ModP * E₄ModP - E₆ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
     congr(map (pLocalInt.toZMod (p := p)) $Θ_E₄_int)
 
 /-- **Ramanujan's identity** for `E₆` modulo `p`: `2 Θ E₆ = E₂E₆ - E₄²`. -/
-theorem Θ_E₆ModP : 2 * Θ (R := ZMod p) E₆ModP = E₂ModP * E₆ModP - E₄ModP * E₄ModP := by
+public theorem Θ_E₆ModP : 2 * Θ (R := ZMod p) E₆ModP = E₂ModP * E₆ModP - E₄ModP * E₄ModP := by
   simpa [E₂ModP, E₄ModP, E₆ModP, map_Θ, map_ofNat] using
     congr(PowerSeries.map (pLocalInt.toZMod (p := p)) $Θ_E₆_int)
 
 /-- `12 Θ E₄ = 4E₂E₄ - 4E₆`, weight-normalized. -/
-theorem twelve_Θ_E₄ModP : 12 * Θ (R := ZMod p) E₄ModP = 4 * (E₂ModP * E₄ModP) - 4 * E₆ModP :=
+public theorem twelve_Θ_E₄ModP : 12 * Θ (R := ZMod p) E₄ModP = 4 * (E₂ModP * E₄ModP) - 4 * E₆ModP :=
   calc _ = 4 * (3 * Θ (R := ZMod p) E₄ModP) := by ring
     _ = _ := by rw [Θ_E₄ModP]; ring
 
 /-- `12 Θ E₆ = 6E₂E₆ - 6E₄²`, weight-normalized. -/
-theorem twelve_Θ_E₆ModP :
+public theorem twelve_Θ_E₆ModP :
     12 * Θ (R := ZMod p) E₆ModP = 6 * (E₂ModP * E₆ModP) - 6 * (E₄ModP * E₄ModP) :=
   calc _ = 6 * (2 * Θ (R := ZMod p) E₆ModP) := by ring
     _ = _ := by rw [Θ_E₆ModP]; ring

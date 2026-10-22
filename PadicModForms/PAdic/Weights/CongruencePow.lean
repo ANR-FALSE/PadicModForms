@@ -55,7 +55,7 @@ forms, contradicting `ModularForm.sigmaSeries_notMem_modPWeightZeroForms`. Hence
   `k' ≡ k mod (p - 1) p ^ (m - 1)`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open EisensteinSeries PowerSeries PowerSeries.Padic pLocalInt
 
@@ -114,7 +114,7 @@ positive multiple of `p - 1`, congruent modulo `p ^ m` with nonzero common reduc
 `φ_h = ḡ f̄ ^ (p - 2) / f̄ ^ (p - 1)` as a quotient of degree-zero forms, integral over them by the
 Artin–Schreier identity, hence a degree-zero form by normality — contradicting
 `sigmaSeries_notMem_modPWeightZeroForms`. -/
-theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h)
+public theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h)
     (hf : f ∈ pLocalIntModularForms p k) (hf' : f' ∈ pLocalIntModularForms p (k + h))
     (h0 : f.map toZMod ≠ 0) (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     p ^ (m - 1) ∣ h := by
@@ -157,7 +157,7 @@ modular forms of weights `k` and `k'`, congruent modulo `p ^ m`, whose common re
 `p - 1 ∣ k' - k`. The hypotheses are symmetric in `f` and `f'`, whose reductions modulo `p` agree,
 so one may assume `k ≤ k'`; then `pow_dvd_of_map_toZModPow_eq` applies to `h = k' - k`, and
 `p - 1` and `p ^ (m - 1)` are coprime. -/
-theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k' : ℕ}
+public theorem natCast_eq_of_map_toZModPow_eq (hp : 5 ≤ p) (hm : 1 ≤ m) {k' : ℕ}
     (hf : f ∈ pLocalIntModularForms p k) (hf' : f' ∈ pLocalIntModularForms p k')
     (h0 : f.map toZMod ≠ 0) (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     (k : ZMod ((p - 1) * p ^ (m - 1))) = (k' : ZMod ((p - 1) * p ^ (m - 1))) := by
@@ -209,7 +209,7 @@ of weights `k` and `k'` with `v (f - f') ≥ v f + m`, then `k' ≡ k mod (p - 1
 scale-invariant hypothesis reduces to the normalized one by multiplying both forms by a power of
 `p` with `v (c f) = 0` (`PowerSeries.rationalQExpansion_exists_zpow_smul_v_eq_zero`). The case
 `m = 1` is `ModularForm.natCast_eq_of_v_sub_le`. -/
-theorem natCast_eq_of_v_sub_le_pow (hp : 5 ≤ p) (hm : 1 ≤ m) {k k' : ℤ}
+public theorem natCast_eq_of_v_sub_le_pow (hp : 5 ≤ p) (hm : 1 ≤ m) {k k' : ℤ}
     (f : rationalModularForms k) (f' : rationalModularForms k') (hf : (f : ℚ⟦X⟧) ≠ 0)
     (h : v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p])) + (m : ℤ) ≤
       v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]) - (f' : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]))) :

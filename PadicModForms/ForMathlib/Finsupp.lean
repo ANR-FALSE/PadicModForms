@@ -22,7 +22,7 @@ import Mathlib.Tactic.FinCases
   by a nonzero common multiple of `u` and `v`, which is at least `Nat.lcm u v`.
 -/
 
-@[expose] public section
+public section
 
 namespace Finsupp
 

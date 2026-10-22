@@ -23,7 +23,7 @@ Swinnerton-Dyer's theorem states that `hasseInvPoly hp - 1` generates the whole 
 `evalE₄E₆ModP`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open DirectSum EisensteinSeries MvPolynomial PowerSeries
 
@@ -35,13 +35,13 @@ variable {p : ℕ} [Fact p.Prime]
 
 /-- The Hasse invariant `Ẽ_{p-1}`, written as a weighted homogeneous polynomial of weight
 `p - 1` in `E₄` and `E₆` with coefficients in `ZMod p`. -/
-def hasseInvPoly (hp : 5 ≤ p) : MvPolynomial (Fin 2) (ZMod p) :=
+public def hasseInvPoly (hp : 5 ≤ p) : MvPolynomial (Fin 2) (ZMod p) :=
   (((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
       ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩ : MvPolynomial _ _)).map
         pLocalInt.toZMod
 
 /-- The Hasse invariant is weighted homogeneous of weight `p - 1`. -/
-theorem hasseInvPoly_isWeightedHomogeneous (hp : 5 ≤ p) :
+public theorem hasseInvPoly_isWeightedHomogeneous (hp : 5 ≤ p) :
     IsWeightedHomogeneous E₄E₆Weights (hasseInvPoly hp) (p - 1) := fun d hd ↦
   ((evalE₄E₆IntAtWeightEquiv hp (p - 1)).symm
     ⟨ModP.E hp, ModP.E_mem_pLocalIntModularForms hp⟩).property
@@ -49,20 +49,22 @@ theorem hasseInvPoly_isWeightedHomogeneous (hp : 5 ≤ p) :
 
 /-- Evaluating the Hasse invariant at `E₄` and `E₆` gives `1`: this is the congruence
 `E_{p-1} ≡ 1 mod p`, and it is the defining relation of the algebra of mod-`p` modular forms. -/
-theorem evalE₄E₆ModP_hasseInvPoly (hp : 5 ≤ p) : evalE₄E₆ModP (hasseInvPoly hp) = 1 := by
+public theorem evalE₄E₆ModP_hasseInvPoly (hp : 5 ≤ p) : evalE₄E₆ModP (hasseInvPoly hp) = 1 := by
   rw [hasseInvPoly, evalE₄E₆ModP_map, ← pLocalIntQExpansionAlgHom_evalE₄E₆Int,
     evalE₄E₆Int_symm_apply, pLocalIntQExpansionAlgHom_of, E_p_sub_one_mod_p hp]
 
 /-- Multiplying by a power of the Hasse invariant does not change the evaluation. -/
 @[simp]
-theorem evalE₄E₆ModP_hasseInvPoly_pow_mul (hp : 5 ≤ p) (t : ℕ) (F : MvPolynomial (Fin 2) (ZMod p)) :
+public theorem evalE₄E₆ModP_hasseInvPoly_pow_mul (hp : 5 ≤ p) (t : ℕ) (F : MvPolynomial (Fin 2)
+    (ZMod p)) :
     evalE₄E₆ModP (hasseInvPoly hp ^ t * F) = evalE₄E₆ModP F := by
   rw [map_mul, map_pow, evalE₄E₆ModP_hasseInvPoly, one_pow, one_mul]
 
 /-- Multiplying a weighted homogeneous polynomial by a power of the Hasse invariant raises its
 weight by a multiple of `p - 1` without changing its evaluation
 (`evalE₄E₆ModP_hasseInvPoly_pow_mul`). -/
-theorem isWeightedHomogeneous_hasseInvPoly_pow_mul (hp : 5 ≤ p) {F : MvPolynomial (Fin 2) (ZMod p)}
+public theorem isWeightedHomogeneous_hasseInvPoly_pow_mul (hp : 5 ≤ p) {F : MvPolynomial (Fin 2)
+    (ZMod p)}
     {n : ℕ} (hF : IsWeightedHomogeneous E₄E₆Weights F n) (t : ℕ) :
     IsWeightedHomogeneous E₄E₆Weights (hasseInvPoly hp ^ t * F) (n + t * (p - 1)) := by
   have := ((hasseInvPoly_isWeightedHomogeneous hp).pow t).mul hF
@@ -70,13 +72,13 @@ theorem isWeightedHomogeneous_hasseInvPoly_pow_mul (hp : 5 ≤ p) {F : MvPolynom
 
 /-- The Hasse invariant minus one lies in the kernel of `evalE₄E₆ModP`. Swinnerton-Dyer's theorem
 states that it generates that kernel. -/
-theorem hasseInvPoly_sub_one_mem_ker (hp : 5 ≤ p) :
+public theorem hasseInvPoly_sub_one_mem_ker (hp : 5 ≤ p) :
     hasseInvPoly hp - 1 ∈ RingHom.ker evalE₄E₆ModP := by
   simp [RingHom.mem_ker, evalE₄E₆ModP_hasseInvPoly hp]
 
 /-- Its two terms having weights `p - 1` and `0`, the polynomial `hasseInvPoly hp - 1` is
 homogeneous of degree `0` for the grading modulo `p - 1`. -/
-theorem isWeightedHomogeneous_hasseInvPoly_sub_one_modPSubOne (hp : 5 ≤ p) :
+public theorem isWeightedHomogeneous_hasseInvPoly_sub_one_modPSubOne (hp : 5 ≤ p) :
     IsWeightedHomogeneous (E₄E₆WeightsModPSubOne p) (hasseInvPoly hp - 1) 0 := by
   refine IsWeightedHomogeneous.sub ?_ (isWeightedHomogeneous_one _ _)
   simpa using isWeightedHomogeneous_modPSubOne (hasseInvPoly_isWeightedHomogeneous hp)

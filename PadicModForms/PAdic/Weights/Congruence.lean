@@ -41,7 +41,7 @@ either under Serre's normalization `v(f) = 0` or in the scale-invariant form
   normalization.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open PowerSeries PowerSeries.Padic
 
@@ -52,7 +52,8 @@ variable {p : ℕ} [Fact p.Prime] {k k' : ℤ} {f : rationalModularForms k}
 
 /-- A rational modular form with a `p`-integral lift that does not reduce to `0` modulo `p` is
 nonzero, so its weight is a natural number. -/
-theorem exists_natCast_eq_of_map_toZMod_ne_zero (hg : g.map (algebraMap _ ℚ) = rationalQExpansion f)
+public theorem exists_natCast_eq_of_map_toZMod_ne_zero (hg : g.map
+    (algebraMap _ ℚ) = rationalQExpansion f)
     (h0 : g.map pLocalInt.toZMod ≠ 0) : ∃ n : ℕ, k = n := by
   refine ⟨k.toNat, ?_⟩
   have hgne : g ≠ 0 := fun hzero ↦ h0 (by rw [hzero, _root_.map_zero])
@@ -63,7 +64,7 @@ theorem exists_natCast_eq_of_map_toZMod_ne_zero (hg : g.map (algebraMap _ ℚ) =
 /-- **The case `m = 1` of Serre's theorem on congruences, for rational modular forms.** Two
 rational modular forms of weights `k` and `k'` admitting `p`-integral lifts with the same nonzero
 reduction modulo `p` satisfy `k ≡ k' mod (p - 1)`. -/
-theorem natCast_eq_of_map_toZMod_eq (hp : 5 ≤ p)
+public theorem natCast_eq_of_map_toZMod_eq (hp : 5 ≤ p)
     (hg : g.map (algebraMap _ ℚ) = rationalQExpansion f)
     (hg' : g'.map (algebraMap _ ℚ) = rationalQExpansion f')
     (h0 : g.map pLocalInt.toZMod ≠ 0) (h : g.map pLocalInt.toZMod = g'.map pLocalInt.toZMod) :
@@ -78,7 +79,8 @@ variable (f f')
 /-- **The case `m = 1` of Serre's theorem on congruences, in Serre's normalized form.** If `f` has
 valuation `0` and `f - f'` has valuation at least `1`, then the weights of `f` and `f'` are
 congruent modulo `p - 1`. -/
-theorem natCast_eq_of_v_eq_zero (hp : 5 ≤ p) (hv : v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p])) = 0)
+public theorem natCast_eq_of_v_eq_zero (hp : 5 ≤ p) (hv : v ((f : ℚ⟦X⟧).map
+    (algebraMap ℚ ℚ_[p])) = 0)
     (h : 1 ≤ v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]) - (f' : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]))) :
     (k : ZMod (p - 1)) = (k' : ZMod (p - 1)) := by
   rw [← map_sub] at h
@@ -92,7 +94,7 @@ theorem natCast_eq_of_v_eq_zero (hp : 5 ≤ p) (hv : v ((f : ℚ⟦X⟧).map (al
 rational modular form of weight `k`, `f'` one of weight `k'`, and `f` and `f'` are congruent
 modulo `p` relative to the valuation of `f`, that is `v (f - f') ≥ v f + 1`, then the weights of
 `f` and `f'` are congruent modulo `p - 1`. -/
-theorem natCast_eq_of_v_sub_le (hp : 5 ≤ p) (hf : (f : ℚ⟦X⟧) ≠ 0)
+public theorem natCast_eq_of_v_sub_le (hp : 5 ≤ p) (hf : (f : ℚ⟦X⟧) ≠ 0)
     (h : v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p])) + 1 ≤
       v ((f : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]) - (f' : ℚ⟦X⟧).map (algebraMap ℚ ℚ_[p]))) :
     (k : ZMod (p - 1)) = (k' : ZMod (p - 1)) := by

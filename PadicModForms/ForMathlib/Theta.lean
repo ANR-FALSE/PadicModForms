@@ -29,7 +29,7 @@ from the `Derivation` API instead of being reproved coefficientwise.
 * `PowerSeries.map_Θ`: `Θ` commutes with coefficientwise ring maps.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 namespace PowerSeries
 

@@ -28,7 +28,7 @@ space `Hom_cont(ℤ_[p]ˣ, ℤ_[p]ˣ)`:
   `k ↦ (u ↦ u ^ k)` from the integers to weight space.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 open Filter Topology
 

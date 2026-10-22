@@ -14,7 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 This file contains elementary lemmas about power series that are missing from Mathlib.
 -/
 
-@[expose] public section
+public section
 
 namespace PowerSeries
 

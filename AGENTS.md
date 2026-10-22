@@ -37,19 +37,29 @@ are no legacy files, and a new file must not introduce one. Visibility is explic
 - `public import Foo` — re-exported to downstream modules; `import Foo` — private to this file.
   Use a private `import` for anything needed only inside proofs (e.g. `Rational/Basic.lean` keeps
   `DimensionFormula` private).
-- `@[expose] public section` after the module docstring is the default idiom: it makes subsequent
-  declarations public *and* their bodies visible for defeq/`simp`. Files needing `noncomputable`
-  everywhere use `@[expose] public noncomputable section`, or plain `noncomputable section` with
-  `public` written per declaration (`Rational/Basic.lean`, `Rational/Graded.lean`,
-  `Rational/Eisenstein.lean`).
-- Inside a non-exposed section, mark each intended-public declaration (`public def`,
-  `public theorem`). Helper lemmas are deliberately left non-`public`.
-- A file may also open a plain `public section` and put `@[expose]` only on the definitions whose
-  unfolding is part of the API: `PAdic/Defs.lean` exposes `isPAdicModularForm` and
-  `PAdicModularForms`, whose bodies downstream files see through (`f.1`, `f.2`, `⟨S⟩`), but not
-  `ι`, which is used only through `ι_apply` and the other `ι_…` lemmas. Instances are exposed by
-  default. An exported theorem proved by a bare `rfl` cannot unfold a non-exposed definition, so
-  the one lemma that looks inside such a definition is proved by `rw` with it.
+- Outside `ForMathlib/`, nothing is public or exposed by default: a file has no `public section`
+  (only `noncomputable section` when it needs it), every declaration meant for other files is
+  marked `public` (`public def`, `public theorem`, `@[simp]` then `public theorem`,
+  `public instance`), and helper lemmas are left non-`public`. "Meant for other files" means: used
+  in another file or in the Verso document, listed under `## Main results`, an instance, or carrying
+  an attribute such as `@[simp]`, since simp lemmas must be public to act downstream.
+- `@[expose]` (written `@[expose] public def`, or merged into an existing attribute list as
+  `@[expose, simps]`) is added only when the body of a definition is needed elsewhere: a public
+  lemma proved by `rfl` about it, because an exported `rfl` theorem cannot unfold a hidden
+  definition; a downstream proof that unfolds it, where the error says "definitions were not
+  unfolded because their definition is not exposed"; or a public `@[simps]` definition with proof
+  fields, whose generated lemmas refer to the auxiliary proofs. About thirty definitions are
+  exposed: the predicates `is…ModularForm`, the submodules of forms, `PAdicModularForms`, the
+  evaluation maps at `E₄`, `E₆`, `E_int`, `E₂ModP`, `E₄ModP`, `E₆ModP` and `w`.
+- A public statement may only mention public declarations and publicly imported modules, and so
+  may an exposed body. When the error says a declaration "is imported privately", turn that
+  `import` into `public import`.
+- `ForMathlib/` files are destined for Mathlib, so they use a blanket `public section` (or
+  `public noncomputable section`) with no blanket `@[expose]`; `@[expose]` is added per definition
+  on the same grounds. `ForMathlib/38813.lean` keeps `@[expose] public noncomputable section`
+  untouched until the Mathlib PR lands.
+- `notation` takes no `public` modifier, so the notation `X_[p]` in `PAdic/Defs.lean` sits in a
+  small `public section … end`.
 
 When adding a file, copy the header of a neighbouring file in the same directory rather than
 inventing a layout, and add it to the root `PadicModForms.lean` as `public import` (alphabetical,

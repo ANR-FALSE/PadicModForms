@@ -23,8 +23,6 @@ This file defines modular forms modulo `p` and gives the modular forms of fixed 
 linear structure.
 -/
 
-@[expose] public section
-
 open PowerSeries ModularForm
 
 variable {p : ℕ} [Fact p.Prime]
@@ -33,7 +31,7 @@ variable {p : ℕ} [Fact p.Prime]
 
 /-- For `p ≥ 5`, an element of `ZMod p` of the form `2 ^ a * 3 ^ b` is nonzero, hence invertible.
 This covers the denominators `12` and `24` of the theory of modular forms. -/
-theorem ZMod.ne_zero_of_eq_two_pow_mul_three_pow (hp : 5 ≤ p) (a b : ℕ) {x : ZMod p}
+public theorem ZMod.ne_zero_of_eq_two_pow_mul_three_pow (hp : 5 ≤ p) (a b : ℕ) {x : ZMod p}
     (hx : x = 2 ^ a * 3 ^ b) : x ≠ 0 := by
   rw [hx]
   exact_mod_cast (ZMod.natCast_eq_zero_iff _ _).not.2
@@ -45,12 +43,12 @@ namespace PowerSeries
 
 /-- The modulus is zero as a constant power series over `ZMod n`. -/
 @[simp]
-theorem natCast_zmod_self (n : ℕ) : (n : (ZMod n)⟦X⟧) = 0 := by
+public theorem natCast_zmod_self (n : ℕ) : (n : (ZMod n)⟦X⟧) = 0 := by
   rw [← map_natCast (algebraMap (ZMod n) (ZMod n)⟦X⟧)]
   simp
 
 @[simp]
-theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
+public theorem natCast_p_sub_one : ((p - 1 : ℕ) : (ZMod p)⟦X⟧) = -1 := by
   simp [Nat.cast_sub (Nat.Prime.one_le (Fact.out : p.Prime))]
 
 theorem natCast_p_add_one : ((p + 1 : ℕ) : (ZMod p)⟦X⟧) = 1 := by
@@ -61,7 +59,7 @@ theorem natCast_p_add_one : ((p + 1 : ℕ) : (ZMod p)⟦X⟧) = 1 := by
 /-- A power series with coefficients in `ℤ/pℤ` is a mod-`p` modular form of weight `k` if it is
 the reduction of a power series with coefficients in the localization of `ℤ` at `p` whose base
 change to `ℚ` is a modular form of weight `k`. -/
-public def isModPModularForm (k : ℤ) (f : (ZMod p)⟦X⟧) : Prop :=
+@[expose] public def isModPModularForm (k : ℤ) (f : (ZMod p)⟦X⟧) : Prop :=
   ∃ (g : (pLocalInt p)⟦X⟧) (F : rationalModularForms k),
     g.map (algebraMap _ _) = rationalQExpansion F ∧ g.map pLocalInt.toZMod = f
 
@@ -77,7 +75,7 @@ theorem one_isModPModularForm : (1 : (ZMod p)⟦X⟧).isModPModularForm 0 :=
 
 include hf
 
-theorem IsModPModularForm.neg : (-f).isModPModularForm k := by
+public theorem IsModPModularForm.neg : (-f).isModPModularForm k := by
   obtain ⟨f', F, hf'Q, hf'p⟩ := hf
   exact ⟨-f', -F, by simp [hf'Q], by simp [hf'p]⟩
 
@@ -94,7 +92,8 @@ public theorem IsModPModularForm.smul (a : ZMod p) : (a • f).isModPModularForm
     rw [coeff_map] at hn
     simp [smul_eq_mul, map_mul, hn]
 
-theorem IsModPModularForm.mul (hg : g.isModPModularForm l) : (f * g).isModPModularForm (k + l) := by
+public theorem IsModPModularForm.mul (hg : g.isModPModularForm l) : (f * g).isModPModularForm
+    (k + l) := by
   obtain ⟨f', F, hf'Q, hf'p⟩ := hf
   obtain ⟨g', G, hg'Q, hg'p⟩ := hg
   exact ⟨f' * g', GradedMonoid.GMul.mul (A := fun n ↦ rationalModularForms n) F G,
@@ -109,7 +108,7 @@ public theorem IsModPModularForm.add : (f + g).isModPModularForm k := by
 
 /-- The mod-`p` modular forms of weight `k`, as a `ℤ/pℤ`-submodule of power series over
 `ℤ/pℤ`. -/
-public def _root_.modPModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
+@[expose] public def _root_.modPModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
     Submodule (ZMod p) (ZMod p)⟦X⟧ where
   carrier := {f | f.isModPModularForm k}
   zero_mem' := zero_isModPModularForm k
@@ -119,11 +118,11 @@ public def _root_.modPModularForms (p : ℕ) [Fact p.Prime] (k : ℤ) :
 omit hf hg
 
 @[simp]
-theorem mem_modPModularForms : f ∈ modPModularForms p k ↔ f.isModPModularForm k := .rfl
+public theorem mem_modPModularForms : f ∈ modPModularForms p k ↔ f.isModPModularForm k := .rfl
 
 /-- The reduction modulo `p` of a `p`-integral modular form is a mod-`p` modular form of the same
 weight. -/
-theorem map_toZMod_mem_modPModularForms {f : (pLocalInt p)⟦X⟧}
+public theorem map_toZMod_mem_modPModularForms {f : (pLocalInt p)⟦X⟧}
     (hf : f ∈ pLocalIntModularForms p k) : f.map pLocalInt.toZMod ∈ modPModularForms p k := by
   obtain ⟨F, hF⟩ := hf
   exact ⟨f, F, hF, rfl⟩

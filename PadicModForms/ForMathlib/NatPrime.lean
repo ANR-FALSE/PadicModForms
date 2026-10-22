@@ -17,7 +17,7 @@ divides no number of the form `2 ^ a * 3 ^ b`. This is the only arithmetic input
 invertibility of `12`, `24` and `1728` modulo `p` and in the localization of `ℤ` at `p`.
 -/
 
-@[expose] public section
+public section
 
 namespace Nat.Prime
 

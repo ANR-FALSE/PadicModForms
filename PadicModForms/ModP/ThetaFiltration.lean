@@ -40,7 +40,7 @@ computation feeding the non-modularity of the divisor-sum series in
   `j ≤ p - 2`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open EisensteinSeries MvPolynomial
 open PowerSeries hiding C X
@@ -53,7 +53,7 @@ variable {p n : ℕ} [Fact p.Prime] {F : MvPolynomial (Fin 2) (ZMod p)}
 `12 Θ (ev F) = ev (n (δA) F + A (δF))`. This eliminates `E₂ModP` from
 `twelve_Θ_evalE₄E₆ModP` using `evalE₄E₆ModP_δModP_hasseInvPoly` and
 `evalE₄E₆ModP_hasseInvPoly`. -/
-theorem twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP (hp : 5 ≤ p)
+public theorem twelve_Θ_evalE₄E₆ModP_eq_evalE₄E₆ModP (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     12 * Θ (evalE₄E₆ModP F) = evalE₄E₆ModP
       ((n : MvPolynomial (Fin 2) (ZMod p)) * δModP (hasseInvPoly hp) * F +
@@ -77,7 +77,7 @@ theorem isWeightedHomogeneous_δModP_hasseInvPoly_mul_add (hp : 5 ≤ p)
 /-- `Θ` sends mod-`p` modular forms to mod-`p` modular forms, raising the weight by `p + 1`:
 `Θ (ev F)` is the evaluation of `12⁻¹ • (n (δA) F + A (δF))`, which is weighted homogeneous of
 weight `n + (p + 1)`. -/
-theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
+public theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G (n + (p + 1)) ∧
       evalE₄E₆ModP G = Θ (evalE₄E₆ModP F) := by
@@ -90,7 +90,7 @@ theorem exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP (hp : 5 ≤ p)
     map_one, one_mul]
 
 /-- **The theta filtration bound**: `fil (Θ f) ≤ fil f + p + 1`. -/
-theorem modPFiltration_Θ_le (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
+public theorem modPFiltration_Θ_le (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆Weights F n) :
     modPFiltration p (Θ (evalE₄E₆ModP F)) ≤ modPFiltration p (evalE₄E₆ModP F) + (p + 1) := by
   obtain ⟨G, hG, hGF⟩ := exists_isWeightedHomogeneous_modPFiltration hF
   obtain ⟨H, hH, hHG⟩ := exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP hp hG
@@ -120,7 +120,7 @@ theorem modPFiltration_Θ_eq (hp : 5 ≤ p) (hF : IsWeightedHomogeneous E₄E₆
 /-- `Θ^[j] E₂ModP` is a mod-`p` modular form of weight `(j + 1)(p + 1)`, by induction on the
 representative `δModP (hasseInvPoly hp)` of `E₂ModP` through
 `exists_isWeightedHomogeneous_Θ_evalE₄E₆ModP`. -/
-theorem exists_isWeightedHomogeneous_iterate_Θ_E₂ModP (hp : 5 ≤ p) (j : ℕ) :
+public theorem exists_isWeightedHomogeneous_iterate_Θ_E₂ModP (hp : 5 ≤ p) (j : ℕ) :
     ∃ G, IsWeightedHomogeneous E₄E₆Weights G ((j + 1) * (p + 1)) ∧
       evalE₄E₆ModP G = (Θ (R := ZMod p))^[j] E₂ModP := by
   induction j with
@@ -142,7 +142,7 @@ theorem modPFiltration_E₂ModP (hp : 5 ≤ p) : modPFiltration p (E₂ModP (p :
 /-- **The filtration of the iterates of `Θ` on `E₂`**: `fil (Θ^[j] E₂) = (j + 1)(p + 1)` for
 `j ≤ p - 2`. In this range `(j + 1)(p + 1) ≡ j + 1 ≢ 0 mod p`, so the sharp theta formula applies
 at every step of the induction. -/
-theorem modPFiltration_iterate_Θ_E₂ModP (hp : 5 ≤ p) {j : ℕ} (hj : j ≤ p - 2) :
+public theorem modPFiltration_iterate_Θ_E₂ModP (hp : 5 ≤ p) {j : ℕ} (hj : j ≤ p - 2) :
     modPFiltration p ((Θ (R := ZMod p))^[j] E₂ModP) = (j + 1) * (p + 1) := by
   induction j with
   | zero => simpa using modPFiltration_E₂ModP hp

@@ -37,7 +37,7 @@ of Serre's proof of his Theorem 1.
 * `ModularForm.sigmaSeries_notMem_modPWeightZeroForms`: `φ_h ∉ 𝓜⁰`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open ArithmeticFunction sigma EisensteinSeries MvPolynomial
 open PowerSeries hiding C X
@@ -56,7 +56,7 @@ theorem E₂ModP_eq_one_sub_sigmaSeries : E₂ModP = 1 - 24 * sigmaSeries (ZMod 
 
 /-- Serre's `ψ` as an iterate of `Θ` on `E₂`: `Θ^[p - 2] E₂ = -24 ψ`, the constant term of `E₂`
 being killed by the first application of `Θ`. -/
-theorem iterate_Θ_E₂ModP (hp : 3 ≤ p) :
+public theorem iterate_Θ_E₂ModP (hp : 3 ≤ p) :
     (Θ)^[p - 2] E₂ModP = -24 * sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
   rw [← iterate_Θ_sigmaSeries_one (by lia), E₂ModP_eq_one_sub_sigmaSeries,
     ← map_ofNat PowerSeries.C]
@@ -79,7 +79,7 @@ theorem sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP (hp : 5 ≤ p) :
 
 /-- `ψ` is a degree-zero mod-`p` modular form: `Θ^[p - 2] E₂` has a homogeneous representative of
 weight `(p - 1)(p + 1)`, which is divisible by `p - 1`, and `-24` is invertible. -/
-theorem sigmaSeriesPrimeTo_mem_modPWeightZeroForms (hp : 5 ≤ p) :
+public theorem sigmaSeriesPrimeTo_mem_modPWeightZeroForms (hp : 5 ≤ p) :
     sigmaSeriesPrimeTo (ZMod p) p (p - 2) ∈ modPWeightZeroForms p := by
   obtain ⟨G, hG, hGE⟩ := exists_isWeightedHomogeneous_iterate_Θ_E₂ModP hp (p - 2)
   rw [sigmaSeriesPrimeTo_eq_smul_iterate_Θ_E₂ModP hp, ← hGE]
@@ -102,7 +102,7 @@ of `p - 1`, `φ_h - φ_h ^ p = ψ`. This holds for every prime `p`, and combines
 `PowerSeries.sigmaSeries_sub_pow_prime` with the reduction of the exponent
 `h - 1 ≡ p - 2 mod (p - 1)`. For `p ≥ 3` the hypothesis `2 ≤ h` just says that `h` is a positive
 multiple of `p - 1`. -/
-theorem sigmaSeries_sub_pow_eq (hh : 2 ≤ h) (hhd : p - 1 ∣ h) :
+public theorem sigmaSeries_sub_pow_eq (hh : 2 ≤ h) (hhd : p - 1 ∣ h) :
     sigmaSeries (ZMod p) (h - 1) - sigmaSeries (ZMod p) (h - 1) ^ p =
       sigmaSeriesPrimeTo (ZMod p) p (p - 2) := by
   have hp2 : 2 ≤ p := (Fact.out : p.Prime).two_le
@@ -116,7 +116,7 @@ Were it one, its filtration `a` would be positive because the coefficient of `q`
 (`modPFiltration_pos_of_coeff_ne_zero`), so `fil (φ_h - φ_h ^ p) = p a` by the Frobenius
 difference formula `modPFiltration_sub_pow_prime`, and the Artin–Schreier identity would give
 `p a = p² - 1`, which is impossible modulo `p`. -/
-theorem sigmaSeries_notMem_modPWeightZeroForms (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) :
+public theorem sigmaSeries_notMem_modPWeightZeroForms (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd : p - 1 ∣ h) :
     sigmaSeries (ZMod p) (h - 1) ∉ modPWeightZeroForms p := fun hmem ↦ by
   obtain ⟨n, F, -, hF, hFφ⟩ := exists_isWeightedHomogeneous_of_mem_modPWeightZeroForms hp hmem
   have ha : 0 < modPFiltration p (evalE₄E₆ModP F) := modPFiltration_pos_of_coeff_ne_zero hF

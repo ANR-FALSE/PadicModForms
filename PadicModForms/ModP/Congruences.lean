@@ -34,8 +34,6 @@ and Serre's congruence `E₂ ≡ E_{p+1}` modulo `p`.
   modular form of weight `p + 1`, although `E₂` itself is not modular.
 -/
 
-@[expose] public section
-
 open PowerSeries ArithmeticFunction sigma
 
 variable {p k m : ℕ} [Hp : Fact p.Prime]
@@ -57,13 +55,13 @@ theorem E_int_map_eq_one {R : Type*} [CommRing R] (φ : pLocalInt p →+* R) (hk
 
 /-- If `p - 1 ∣ k`, then the normalized Eisenstein series of weight `k` is congruent to `1`
 modulo `p`. -/
-theorem E_int_mod_p (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 ∣ k) :
+public theorem E_int_mod_p (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 ∣ k) :
     (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk)).map pLocalInt.toZMod = 1 :=
   E_int_map_eq_one _ hk hk2 _ <| by
     rw [map_mul, toZMod_inv_bernoulli_eq_zero hk hk2 hpk, mul_zero]
 
 /-- If `(p - 1) * p ^ (m - 1) ∣ k`, then `E_k` is congruent to `1` modulo `p ^ m`. -/
-theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
+public theorem E_int_mod_p_pow_of_dvd (hm : 1 ≤ m) (hk : 3 ≤ k) (hk2 : Even k)
   (hkm : (p - 1) * p ^ (m - 1) ∣ k) :
     (E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 ((dvd_mul_right _ _).trans hkm))).map
       (pLocalInt.toZModPow m) = 1 := by
@@ -92,7 +90,7 @@ theorem E_int_mod_two_pow_of_dvd (hm : 2 ≤ m) (hk : 3 ≤ k) (hk2 : Even k) (h
     _ = _ := by rw [show m - 2 + 2 = m by lia]; ring
 
 /-- The normalized Eisenstein series of weight `p - 1` is congruent to `1` modulo `p`. -/
-theorem E_p_sub_one_mod_p (hp : 5 ≤ p) : (E hp).map pLocalInt.toZMod = 1 :=
+public theorem E_p_sub_one_mod_p (hp : 5 ≤ p) : (E hp).map pLocalInt.toZMod = 1 :=
   E_int_mod_p (by lia) (Hp.out.even_sub_one (by lia)) (by rfl)
 
 /-! ### Serre's congruence `E₂ ≡ E_{p+1}` modulo `p` -/
@@ -108,7 +106,7 @@ theorem even_p_add_one : Even (p + 1) :=
   (Hp.out.odd_of_ne_two (by lia)).add_one
 
 /-- The normalized Eisenstein series of weight `p + 1` over the localization of `ℤ` at `p`. -/
-noncomputable def E_p_add_one : (pLocalInt p)⟦X⟧ :=
+public noncomputable def E_p_add_one : (pLocalInt p)⟦X⟧ :=
   E_int (by lia) (even_p_add_one hp5) (inv_bernoulli_p_add_one_mem_pLocalInt hp5)
 
 /-- `E_{p+1}` is a `p`-integral modular form of weight `p + 1`. -/
@@ -119,7 +117,7 @@ omit hp5
 
 /-- The nonconstant coefficients of `E₂_int`. -/
 @[simp]
-theorem coeff_E₂_int_of_ne_zero {n : ℕ} (hn : n ≠ 0) :
+public theorem coeff_E₂_int_of_ne_zero {n : ℕ} (hn : n ≠ 0) :
     coeff n E₂_int = -24 * (σ 1 n : pLocalInt p) :=
   Subtype.ext <| by simp [hn]
 
@@ -127,7 +125,7 @@ include hp5
 
 /-- **Serre's congruence**: `E₂ ≡ E_{p+1}` modulo `p`. Consequently the reduction of `E₂` is a
 mod-`p` modular form of weight `p + 1`, which is what makes `Θ` raise weights by `p + 1`. -/
-theorem E₂_int_map_toZMod :
+public theorem E₂_int_map_toZMod :
     (E₂_int : (pLocalInt p)⟦X⟧).map pLocalInt.toZMod = (E_p_add_one hp5).map pLocalInt.toZMod := by
   ext n
   rcases eq_or_ne n 0 with rfl | hn
@@ -137,7 +135,8 @@ theorem E₂_int_map_toZMod :
       show (24 : ZMod p) = 2 * 12 by norm_num]
 
 /-- The reduction of `E₂` modulo `p` is a mod-`p` modular form of weight `p + 1`. -/
-theorem E₂_int_map_toZMod_mem_modPModularForms : (E₂_int : (pLocalInt p)⟦X⟧).map pLocalInt.toZMod ∈
+public theorem E₂_int_map_toZMod_mem_modPModularForms : (E₂_int :
+    (pLocalInt p)⟦X⟧).map pLocalInt.toZMod ∈
       modPModularForms p ((p + 1 : ℕ) : ℤ) := by
   rw [mem_modPModularForms, E₂_int_map_toZMod hp5]
   obtain ⟨F, hF⟩ := E_p_add_one_mem_pLocalIntModularForms hp5
@@ -149,7 +148,7 @@ end E₂
 
 /-- The nonconstant part of `Eₖ` is the divisor-sum series `Φₖ = ∑ σ_{k-1}(n) qⁿ` scaled by the
 coefficient `-2k / Bₖ`. -/
-theorem E_int_sub_one_eq_smul_sigmaSeries (hk : 3 ≤ k) (hk2 : Even k)
+public theorem E_int_sub_one_eq_smul_sigmaSeries (hk : 3 ≤ k) (hk2 : Even k)
     (hB : (bernoulli k)⁻¹ ∈ pLocalInt p) :
     E_int hk hk2 hB - 1 = (-(2 * k) * ⟨_, hB⟩ : pLocalInt p) • sigmaSeries _ (k - 1) := by
   ext n
@@ -162,7 +161,7 @@ theorem E_int_sub_one_eq_smul_sigmaSeries (hk : 3 ≤ k) (hk2 : Even k)
 `-2k / Bₖ` of `Eₖ` is `p ^ (v_p(k) + 1)` times a unit of `ℤ₍ₚ₎`. Indeed `p Bₖ` is a unit by von
 Staudt–Clausen, and writing `k = p ^ v k'` with `p ∤ k'` the coefficient is
 `p ^ (v + 1) · (-2 k' / (p Bₖ))`, where `-2 k'` is a unit because `p` is odd and `p ∤ k'`. -/
-theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
+public theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) :
     Associated ((p : pLocalInt p) ^ (padicValNat p k + 1))
       (-(2 * k) * ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) := by
@@ -193,7 +192,7 @@ theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 ≤ k) 
 there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. In
 particular `Eₖ ≡ 1` modulo `p^r`, and modulo no higher power of `p` since the coefficient of `q`
 in `Φₖ` is `1`. -/
-theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
+public theorem E_int_sub_one_eq_unit_smul_sigmaSeries (hp2 : p ≠ 2) (hk : 3 ≤ k) (hk2 : Even k)
     (hpk : p - 1 ∣ k) :
     ∃ u : (pLocalInt p)ˣ, E_int hk hk2 (inv_bernoulli_mem_pLocalInt hk hk2 hpk) - 1 =
       ((p : pLocalInt p) ^ (padicValNat p k + 1) * u) • sigmaSeries (pLocalInt p) (k - 1) := by

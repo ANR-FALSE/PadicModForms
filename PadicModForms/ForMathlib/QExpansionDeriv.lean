@@ -27,7 +27,7 @@ of the algebraic operator `PowerSeries.Θ`.
   whose hypotheses come from its `ModularFormClass` instance.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 open UpperHalfPlane hiding I
 open Complex Filter Function Derivative PowerSeries Periodic

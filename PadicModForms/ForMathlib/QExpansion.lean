@@ -14,7 +14,7 @@ public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 This file contains results about `q`-expansions.
 -/
 
-@[expose] public noncomputable section
+public noncomputable section
 
 open UpperHalfPlane MatrixGroups CongruenceSubgroup DirectSum Polynomial Set
 

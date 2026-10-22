@@ -16,7 +16,7 @@ records this for the product (`ContinuousMonoidHom.mul_apply`); this file record
 inverse and the quotient.
 -/
 
-@[expose] public section
+public section
 
 namespace ContinuousMonoidHom
 

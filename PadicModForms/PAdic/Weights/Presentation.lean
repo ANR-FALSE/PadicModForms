@@ -33,7 +33,7 @@ The first part, about limits of sequences of `p`-adic power series, is stated in
   eventually congruent weights.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open Filter Topology PowerSeries PowerSeries.Padic ModularForm WithUniformConvergence
 
@@ -174,13 +174,14 @@ variable (S : pAdicModularFormStruct f)
 
 /-- **The weights of a presentation are Cauchy** for the moduli `(p - 1) p ^ (m - 1)`, for
 `p ≥ 5`: Théorème 1 along the presentation (`ModularForm.exists_forall_dvd_sub_of_tendsto`). -/
-theorem exists_forall_dvd_sub (hp : 5 ≤ p) (hf : f ≠ 0) (m : ℕ) :
+public theorem exists_forall_dvd_sub (hp : 5 ≤ p) (hf : f ≠ 0) (m : ℕ) :
     ∃ N, ∀ i ≥ N, ∀ j ≥ N, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ S.w i - S.w j :=
   ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S.tendsto_map m
 
 /-- **Two presentations of the same nonzero form have eventually congruent weights**, modulo
 every `(p - 1) p ^ (m - 1)`, for `p ≥ 5`: Théorème 1 along the two presentations. -/
-theorem eventually_dvd_sub (hp : 5 ≤ p) (S' : pAdicModularFormStruct f) (hf : f ≠ 0) (m : ℕ) :
+public theorem eventually_dvd_sub (hp : 5 ≤ p) (S' : pAdicModularFormStruct f) (hf : f ≠ 0)
+    (m : ℕ) :
     ∀ᶠ i in atTop, (((p - 1) * p ^ (m - 1) : ℕ) : ℤ) ∣ S.w i - S'.w i := by
   obtain ⟨N, hN⟩ :=
     ModularForm.exists_forall_dvd_sub_of_tendsto hp hf S.tendsto_map S'.tendsto_map m

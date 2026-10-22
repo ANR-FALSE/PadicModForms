@@ -20,7 +20,7 @@ import Mathlib.Topology.MetricSpace.Bounded
 Order facts about `EInt = WithBotTop ℤ` and the topology of `EInt`.
 -/
 
-@[expose] public section
+public section
 
 open Filter Topology
 
@@ -61,7 +61,6 @@ theorem intCast_add_iInf {α : Sort*} (m : ℤ) (g : α → EInt) :
   refine le_iInf fun n ↦ ?_
   calc _ ≤ (-m : ℤ) + (m + g n) := add_le_add le_rfl (iInf_le _ n)
        _ = g n := by rw [← add_assoc, ← WithBotTop.coe_add]; simp [WithBotTop.coe]
-
 
 -- should go to Mathlib.Topology.Instances.EInt (new file, analogous to
 -- Mathlib.Topology.Instances.ENat)

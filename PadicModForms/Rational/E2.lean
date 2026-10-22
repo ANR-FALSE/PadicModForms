@@ -19,7 +19,7 @@ This file identifies the Fourier and ordinary level-one `q`-expansions of `E2` w
 extension of `E₂Rat`.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open UpperHalfPlane PowerSeries ArithmeticFunction sigma ModularForm
 
@@ -33,7 +33,7 @@ theorem E2_eq_tsum_E₂Rat (z : ℍ) :
     ← tsum_neg, mul_assoc]
 
 /-- The ordinary level-one `q`-expansion of `E2` is the scalar extension of `E₂Rat` to `ℂ`. -/
-theorem qExpansion_E2_eq_E₂Rat_map : qExpansion 1 EisensteinSeries.E2 =
+public theorem qExpansion_E2_eq_E₂Rat_map : qExpansion 1 EisensteinSeries.E2 =
     E₂Rat.map (algebraMap ℚ ℂ) := by
   ext m
   rw [coeff_map, E2_qExpansion_coeff]

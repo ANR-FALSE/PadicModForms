@@ -18,7 +18,7 @@ then `w ∣ u`. This is `Polynomial.isInteger_of_is_root_of_monic` with the root
 fraction, which avoids mentioning the fraction field.
 -/
 
-@[expose] public section
+public section
 
 namespace Polynomial
 

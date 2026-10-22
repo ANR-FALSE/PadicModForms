@@ -32,7 +32,7 @@ the inductive step needed to prove that `E₄_int` and `E₆_int` generate the g
   `p`-integral modular forms.
 -/
 
-@[expose] public noncomputable section
+noncomputable section
 
 open UpperHalfPlane MatrixGroups DirectSum EisensteinSeries PowerSeries GradedMonoid
 
@@ -42,7 +42,7 @@ namespace ModularForm
 
 /-! ### Inverting `1728` -/
 
-theorem not_dvd_1728 (hp : 5 ≤ p) : ¬ p ∣ 1728 := by
+public theorem not_dvd_1728 (hp : 5 ≤ p) : ¬ p ∣ 1728 := by
   simpa using (Fact.out : p.Prime).not_dvd_two_pow_mul_three_pow hp 6 3
 
 theorem inv_1728_mem_pLocalInt (hp : 5 ≤ p) : (1728 : ℚ)⁻¹ ∈ pLocalInt p := by
@@ -50,45 +50,46 @@ theorem inv_1728_mem_pLocalInt (hp : 5 ≤ p) : (1728 : ℚ)⁻¹ ∈ pLocalInt 
 
 /-- For `p ≥ 5` the element `1728` is a unit of `pLocalInt p`. This is the whole reason the
 modular discriminant is `p`-integral. -/
-theorem isUnit_1728 (hp : 5 ≤ p) : IsUnit (1728 : pLocalInt p) :=
+public theorem isUnit_1728 (hp : 5 ≤ p) : IsUnit (1728 : pLocalInt p) :=
   pLocalInt.isUnit_ofNat 1728 (not_dvd_1728 hp)
 
 /-- The inverse of `1728`, as an element of `ℚ`. -/
 @[simp]
-theorem coe_isUnit_1728_unit_inv (hp : 5 ≤ p) : (isUnit_1728 hp).unit⁻¹ = (1728 : ℚ)⁻¹ :=
+public theorem coe_isUnit_1728_unit_inv (hp : 5 ≤ p) : (isUnit_1728 hp).unit⁻¹ = (1728 : ℚ)⁻¹ :=
   (inv_eq_of_mul_eq_one_right (congrArg (pLocalInt p).subtype (isUnit_1728 hp).mul_val_inv)).symm
 
 /-! ### The discriminant as an integral power series -/
 
 /-- The modular discriminant over `pLocalInt p`, defined by `(E₄_int³ - E₆_int²) / 1728`. -/
-def discriminant_int (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
+public def discriminant_int (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
   (↑(isUnit_1728 hp).unit⁻¹ : pLocalInt p) • (E₄_int ^ 3 - E₆_int ^ 2)
 
-theorem smul_discriminant_int (hp : 5 ≤ p) :
+public theorem smul_discriminant_int (hp : 5 ≤ p) :
     (1728 : pLocalInt p) • discriminant_int hp = E₄_int ^ 3 - E₆_int ^ 2 := by
   simp [discriminant_int, smul_smul, (isUnit_1728 hp).mul_val_inv]
 
 @[simp]
-theorem constantCoeff_discriminant_int (hp : 5 ≤ p) : constantCoeff (discriminant_int hp) = 0 := by
+public theorem constantCoeff_discriminant_int (hp : 5 ≤ p) : constantCoeff
+    (discriminant_int hp) = 0 := by
   simp [discriminant_int]
 
 @[simp]
-theorem coeff_discriminant_int_zero (hp : 5 ≤ p) : coeff 0 (discriminant_int hp) = 0 :=
+public theorem coeff_discriminant_int_zero (hp : 5 ≤ p) : coeff 0 (discriminant_int hp) = 0 :=
   (coeff_zero_eq_constantCoeff_apply _).trans (constantCoeff_discriminant_int hp)
 
 @[simp]
-theorem coeff_discriminant_int_one (hp : 5 ≤ p) : coeff 1 (discriminant_int hp) = 1 :=
+public theorem coeff_discriminant_int_one (hp : 5 ≤ p) : coeff 1 (discriminant_int hp) = 1 :=
   Subtype.ext <| by
     simp [discriminant_int, coeff_one_pow, smul_eq_mul, coe_isUnit_1728_unit_inv hp]; norm_num
 
 /-! ### `Δ` is `X` times a unit -/
 
 /-- The unit factor in the decomposition `discriminant_int hp = discriminantUnitSeries hp * X`. -/
-def discriminantUnitSeries (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
+public def discriminantUnitSeries (hp : 5 ≤ p) : (pLocalInt p)⟦X⟧ :=
   .mk fun n ↦ coeff (n + 1) (discriminant_int hp)
 
 @[simp]
-theorem constantCoeff_discriminantUnitSeries (hp : 5 ≤ p) :
+public theorem constantCoeff_discriminantUnitSeries (hp : 5 ≤ p) :
     constantCoeff (discriminantUnitSeries hp) = 1 := by
   simp [discriminantUnitSeries]
 
@@ -96,11 +97,11 @@ theorem isUnit_discriminantUnitSeries (hp : 5 ≤ p) : IsUnit (discriminantUnitS
   isUnit_iff_constantCoeff.mpr (by simp)
 
 /-- The unit associated to `discriminantUnitSeries hp`. -/
-def discriminantUnit (hp : 5 ≤ p) : ((pLocalInt p)⟦X⟧)ˣ :=
+public def discriminantUnit (hp : 5 ≤ p) : ((pLocalInt p)⟦X⟧)ˣ :=
   (isUnit_discriminantUnitSeries hp).unit
 
 @[simp]
-theorem coe_discriminantUnit (hp : 5 ≤ p) :
+public theorem coe_discriminantUnit (hp : 5 ≤ p) :
     (discriminantUnit hp : (pLocalInt p)⟦X⟧) = discriminantUnitSeries hp :=
   IsUnit.unit_spec _
 
@@ -123,7 +124,7 @@ theorem qExpansion_discriminant : qExpansion 1 discriminant =
   simpa using congr(qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL $h)
 
 /-- Extending `discriminant_int` to `ℂ` gives the `q`-expansion of the modular discriminant. -/
-theorem discriminant_int_map_complex (hp : 5 ≤ p) :
+public theorem discriminant_int_map_complex (hp : 5 ≤ p) :
     ((discriminant_int hp).map (algebraMap _ ℚ)).map (algebraMap ℚ ℂ) =
       qExpansion 1 discriminant := by
   simp [discriminant_int_map_rat, qExpansion_discriminant,smul_eq_C_mul, ERat_map_complex
@@ -160,7 +161,7 @@ theorem evalE₄E₆Int_discriminantPoly_int (hp : 5 ≤ p) : evalE₄E₆Int (d
 /-! ### Division by the discriminant -/
 
 /-- Divide a power series with vanishing constant coefficient by `discriminant_int`. -/
-def divDiscriminant_int (hp : 5 ≤ p) (f : (pLocalInt p)⟦X⟧) : (pLocalInt p)⟦X⟧ :=
+public def divDiscriminant_int (hp : 5 ≤ p) (f : (pLocalInt p)⟦X⟧) : (pLocalInt p)⟦X⟧ :=
   (.mk fun n ↦ coeff (n + 1) f) * (discriminantUnit hp)⁻¹
 
 theorem discriminant_int_mul_divDiscriminant_int (hp : 5 ≤ p) {f : (pLocalInt p)⟦X⟧}
@@ -169,7 +170,7 @@ theorem discriminant_int_mul_divDiscriminant_int (hp : 5 ≤ p) {f : (pLocalInt 
     eq_shift_mul_X ((coeff_zero_eq_constantCoeff_apply f).symm.trans hf₀)]
 
 /-- Division by the discriminant preserves `p`-integrality and lowers the weight by `12`. -/
-theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : ℤ}
+public theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : ℤ}
     {f : (pLocalInt p)⟦X⟧} (hf : f.isPLocalIntModularForm k) (hf₀ : coeff 0 f = 0) :
     (divDiscriminant_int hp f).isPLocalIntModularForm (k - 12) := by
   obtain ⟨F, hF⟩ := hf
@@ -272,7 +273,7 @@ theorem evalE₄E₆Int_bijective (hp : 5 ≤ p) : Function.Bijective (evalE₄E
 
 /-- For `p ≥ 5` evaluation at `E₄_int` and `E₆_int` identifies the polynomial ring in two
 variables over `pLocalInt p` with the graded ring of `p`-integral modular forms. -/
-def pLocalIntModularFormsEquivMvPolynomial (hp : 5 ≤ p) :
+public def pLocalIntModularFormsEquivMvPolynomial (hp : 5 ≤ p) :
     MvPolynomial (Fin 2) (pLocalInt p) ≃ₐ[pLocalInt p] ⨁ i, pLocalIntModularForms p i :=
   .ofBijective evalE₄E₆Int (evalE₄E₆Int_bijective hp)
 
@@ -280,30 +281,30 @@ def pLocalIntModularFormsEquivMvPolynomial (hp : 5 ≤ p) :
 
 /-- For `p ≥ 5`, every `p`-integral modular form of weight `k` is the evaluation of a polynomial
 that is weighted homogeneous of weight `k`. -/
-theorem evalE₄E₆IntAtWeight_surjective (hp : 5 ≤ p) {k : ℕ} :
+public theorem evalE₄E₆IntAtWeight_surjective (hp : 5 ≤ p) {k : ℕ} :
     Function.Surjective (evalE₄E₆IntAtWeight (p := p) k) := fun f ↦ by
   obtain ⟨P, hP⟩ := evalE₄E₆Int_surjective hp (of _ (k : ℤ) f)
   exact ⟨⟨_, MvPolynomial.weightedHomogeneousComponent_isWeightedHomogeneous k P⟩, by
     simpa [evalE₄E₆Int_component_eq] using congr($hP k)⟩
 
-theorem evalE₄E₆IntAtWeight_bijective (hp : 5 ≤ p) {k : ℕ} :
+public theorem evalE₄E₆IntAtWeight_bijective (hp : 5 ≤ p) {k : ℕ} :
     Function.Bijective (evalE₄E₆IntAtWeight (p := p) k) :=
   ⟨evalE₄E₆IntAtWeight_injective, evalE₄E₆IntAtWeight_surjective hp⟩
 
 /-- For `p ≥ 5` the `p`-integral modular forms of weight `k` are exactly the weighted homogeneous
 polynomials of weight `k` in `E₄_int` and `E₆_int`. -/
-def evalE₄E₆IntAtWeightEquiv (hp : 5 ≤ p) (k : ℕ) :
+@[expose] public def evalE₄E₆IntAtWeightEquiv (hp : 5 ≤ p) (k : ℕ) :
     E₄E₆WeightedHomogeneous k (pLocalInt p) ≃ₗ[pLocalInt p] pLocalIntModularForms p k :=
   .ofBijective _ (evalE₄E₆IntAtWeight_bijective (k := k) hp)
 
 @[simp]
-theorem evalE₄E₆IntAtWeightEquiv_apply (hp : 5 ≤ p) (k : ℕ)
+public theorem evalE₄E₆IntAtWeightEquiv_apply (hp : 5 ≤ p) (k : ℕ)
     (P : E₄E₆WeightedHomogeneous k (pLocalInt p)) :
     evalE₄E₆IntAtWeightEquiv hp k P = evalE₄E₆IntAtWeight k P := rfl
 
 /-- The weighted homogeneous polynomial of weight `k` attached to a `p`-integral modular form of
 weight `k` evaluates back to the form. -/
-theorem evalE₄E₆Int_symm_apply (hp : 5 ≤ p) {k : ℕ} (f : pLocalIntModularForms p k) :
+public theorem evalE₄E₆Int_symm_apply (hp : 5 ≤ p) {k : ℕ} (f : pLocalIntModularForms p k) :
     evalE₄E₆Int ((evalE₄E₆IntAtWeightEquiv hp k).symm f :
         MvPolynomial _ (pLocalInt p)) = of _ (k : ℤ) f := by
   rw [evalE₄E₆Int_eq_of_apply]

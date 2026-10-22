@@ -33,7 +33,7 @@ instance `k = p + 1` of Kummer's congruence.
 * `toZMod_inv_bernoulli_p_add_one`: the form used for Eisenstein series, `B_{p+1}⁻¹ ≡ 12`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Ideal Nat
 
@@ -263,6 +263,5 @@ theorem toZMod_inv_bernoulli_p_add_one (hp5 : 5 ≤ p) :
         Subtype.ext (by push_cast; field_simp), map_one]
     grind
   exact bernoulli_ne_zero_of_even (by lia) ⟨(p + 1) / 2, by lia⟩
-
 
 end Kummer
