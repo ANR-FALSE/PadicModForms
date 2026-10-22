@@ -11,6 +11,7 @@ set_option pp.rawOnError true
 
 #doc (Manual) "Introduction" =>
 %%%
+tag := "introduction"
 htmlSplit := .never
 %%%
 
@@ -44,6 +45,9 @@ reducing to the previous one, so that results can be transported from one coeffi
 another.
 
 # Normalization of the Eisenstein series
+%%%
+tag := "normalization-eisenstein-series"
+%%%
 
 Let $`k \geq 4` be even. We use the two normalizations
 
@@ -57,6 +61,9 @@ $`E_2 = 1 - 24 \sum \sigma_1(n) q^n` is given by the formula for $`E_k` with $`k
 modular form.
 
 # Naming conventions
+%%%
+tag := "naming-conventions"
+%%%
 
 The same mathematical object appears once per coefficient ring, with a suffix naming the ring: the
 Eisenstein series $`E_2` is {name EisensteinSeries.E₂Rat}`E₂Rat` over $`\mathbb{Q}`,

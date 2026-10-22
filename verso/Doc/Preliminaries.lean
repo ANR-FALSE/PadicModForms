@@ -11,10 +11,14 @@ set_option pp.rawOnError true
 
 #doc (Manual) "Preliminaries" =>
 %%%
+tag := "preliminaries"
 htmlSplit := .never
 %%%
 
 # Modular forms as power series
+%%%
+tag := "modular-forms-as-power-series"
+%%%
 
 Let $`R` be one of the rings $`\mathbb{Q}`, $`\mathbb{Z}_{(p)}`, $`\mathbb{F}_p`. For every
 $`k \in \mathbb{Z}` we define a predicate on $`R\llbracket X\rrbracket` expressing that a power
@@ -35,9 +39,9 @@ $`R`-algebra. The $`R`-algebra homomorphism
 $$`\bigoplus_{k \in \mathbb{Z}} M_k(R) \longrightarrow R\llbracket X\rrbracket`
 
 sending a family of forms to the sum of the corresponding power series is called the
-$`q`-expansion map. For $`R = \mathbb{Q}` and $`R = \mathbb{Z}_{(p)}` the $`q`-expansion map is
-injective; in the code, injectivity is proved for the $`q`-expansion map of level-one modular
-forms over $`\mathbb{C}`
+{deftech}[$`q`-expansion map]. For $`R = \mathbb{Q}` and $`R = \mathbb{Z}_{(p)}` the
+$`q`-expansion map is injective; in the code, injectivity is proved for the $`q`-expansion map of
+level-one modular forms over $`\mathbb{C}`
 ({name ModularForm.levelOne_qExpansionRingHom_injective}`levelOne_qExpansionRingHom_injective`).
 For $`R = \mathbb{F}_p` and $`p \geq 5` it is not injective: since $`E_{p-1} \equiv 1 \pmod{p}`
 ({name EisensteinSeries.E_p_sub_one_mod_p}`E_p_sub_one_mod_p`), the element of
@@ -71,6 +75,9 @@ series whose coefficients lie in $`\mathbb{Z}_{(p)}` defines a power series over
 $`\mathbb{Z}_{(p)}`.
 
 # Operators on power series
+%%%
+tag := "operators-on-power-series"
+%%%
 
 Let $`R` be a commutative semiring. We define $`\Theta = q\,\frac{d}{dq}` on
 $`R\llbracket X\rrbracket` as $`X` times the formal derivative.
@@ -91,6 +98,9 @@ With this notation, Serre's series $`\varphi_h` and $`\psi` are `sigmaSeries (ZM
 and `sigmaSeriesPrimeTo (ZMod p) p (p - 2)`.
 
 # Uniform convergence of power series
+%%%
+tag := "uniform-convergence-of-power-series"
+%%%
 
 Let $`R` be a uniform space. We endow $`R\llbracket X\rrbracket` with the uniform structure
 induced by the map $`f \mapsto (n \mapsto \operatorname{coeff}_n f)` to the space of functions
@@ -99,12 +109,16 @@ $`\mathbb{N} \to R` with the uniform structure of uniform convergence.
 {docstring PowerSeries.WithUniformConvergence.uniformSpace}
 
 # Weighted homogeneous polynomials
+%%%
+tag := "weighted-homogeneous-polynomials"
+%%%
 
 Let $`R` be a commutative semiring. We grade $`R[X_0, X_1]` by giving $`X_0` weight $`4` and
 $`X_1` weight $`6`, the weights of $`E_4` and $`E_6`: a polynomial that is weighted homogeneous of
 weight $`k` for this grading evaluates at $`X_0 = E_4`, $`X_1 = E_6` to a modular form of weight
-$`k`. We denote by $`R[X_0, X_1]_k` the $`R`-submodule of polynomials that are weighted
-homogeneous of weight $`k` for this grading, in the sense of
+$`k` ({ref "rational-structure-theorem"}[the structure theorem]). We denote by $`R[X_0, X_1]_k`
+the $`R`-submodule of polynomials that are weighted homogeneous of weight $`k` for this grading, in
+the sense of
 {name MvPolynomial.IsWeightedHomogeneous}`MvPolynomial.IsWeightedHomogeneous`.
 
 {docstring ModularForm.E₄E₆Weights}

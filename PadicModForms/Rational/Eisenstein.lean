@@ -32,14 +32,14 @@ namespace EisensteinSeries
 /-! ### The `q`-expansions as power series -/
 
 /-- The auxiliary rational `q`-series underlying the Eisenstein series of weight `k`. -/
-def ERatAux := mk fun n ↦ if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n
+public def ERatAux := mk fun n ↦ if n = 0 then 1 else -(2 * k / bernoulli k) * σ (k - 1) n
 
 /-- The rational `q`-expansion of the weight-two Eisenstein series. -/
 public def E₂Rat : ℚ⟦X⟧ := ERatAux 2
 
 /-- The rational `q`-expansion of Serre's Eisenstein series `G_k`, normalized so that its
 coefficient of `q` is one. -/
-def G_rat := mk fun n ↦ if n = 0 then -(bernoulli k / (2 * k)) else σ (k - 1) n
+public def G_rat := mk fun n ↦ if n = 0 then -(bernoulli k / (2 * k)) else σ (k - 1) n
 
 @[simp]
 theorem coeff_ERatAux : coeff n (ERatAux k) =
@@ -62,7 +62,8 @@ variable {k}
 include hk2
 
 /-- If `k ≥ 3` is even, then `ERatAux k` maps to the `q`-expansion of `E hk`. -/
-theorem qExpansion_E_eq_ERatAux_map : qExpansion 1 (E hk) = (ERatAux k).map (algebraMap ℚ ℂ) := by
+public theorem qExpansion_E_eq_ERatAux_map :
+    qExpansion 1 (E hk) = (ERatAux k).map (algebraMap ℚ ℂ) := by
   ext n
   rw [PowerSeries.coeff_map, EisensteinSeries.E_qExpansion_coeff hk hk2 n]
   by_cases hn : n = 0 <;> simp [ERatAux, hn]

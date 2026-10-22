@@ -183,7 +183,8 @@ theorem isWeightedHomogeneous_map_rat {k} {p : MvPolynomial (Fin 2) ℚ}
 
 /-- Evaluation at `E₄` and `E₆` over `ℚ`, restricted to weighted homogeneous polynomials of
 weight `k`. -/
-noncomputable def evalE₄E₆RatAtWeight : E₄E₆WeightedHomogeneous k ℚ →ₗ[ℚ] rationalModularForms k :=
+public noncomputable def evalE₄E₆RatAtWeight :
+    E₄E₆WeightedHomogeneous k ℚ →ₗ[ℚ] rationalModularForms k :=
   (DirectSum.component ℚ ℤ (fun k ↦ rationalModularForms k) k).comp
     (evalE₄E₆Rat.toLinearMap.comp (E₄E₆WeightedHomogeneous k ℚ).subtype)
 
@@ -297,7 +298,7 @@ public theorem exists_qExpansion_eq_aeval (F : rationalModularForms n) :
 
 /-- The rational modular forms `E₄` and `E₆` generate the graded ring of rational modular
 forms as a `ℚ`-algebra. -/
-theorem E₄E₆Rat_generate :
+public theorem E₄E₆Rat_generate :
     Algebra.adjoin ℚ ({of _ 4 E₄Rat, of _ 6 E₆Rat} : Set (⨁ i, rationalModularForms i)) = ⊤ := by
   rw [show ({of _ 4 E₄Rat, of _ 6 E₆Rat} : Set (⨁ i, rationalModularForms i)) =
     Set.range ![of _ 4 E₄Rat, of _ 6 E₆Rat] by ext x; simp [or_comm], ← aeval_range, ← evalE₄E₆Rat]
