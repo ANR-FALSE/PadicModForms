@@ -22,8 +22,10 @@ tag := "modular-forms-as-power-series"
 
 Let $`R` be one of the rings $`\mathbb{Q}`, $`\mathbb{Z}_{(p)}`, $`\mathbb{F}_p`. For every
 $`k \in \mathbb{Z}` we define a predicate on $`R\llbracket X\rrbracket` expressing that a power
-series is a modular form of weight $`k` over $`R`, and we denote by $`M_k(R)` the $`R`-submodule
-of $`R\llbracket X\rrbracket` of power series satisfying it. The variable $`X` plays the role of
+series is a modular form of weight $`k` over $`R` ({ref "rational-definition"}[$`R = \mathbb{Q}`],
+{ref "pint-definition"}[$`R = \mathbb{Z}_{(p)}`], {ref "modp-definition"}[$`R = \mathbb{F}_p`]),
+and we denote by $`M_k(R)` the $`R`-submodule of $`R\llbracket X\rrbracket` of power series
+satisfying it. The variable $`X` plays the role of
 $`q`. The three predicates are defined one from the other, starting from the definition of modular
 forms over $`\mathbb{C}` in Mathlib: a power series over $`\mathbb{Q}` is a modular form of weight
 $`k` if its image in $`\mathbb{C}\llbracket X\rrbracket` is the $`q`-expansion of a modular form
@@ -74,28 +76,18 @@ the inclusion $`\mathbb{Z}_{(p)} \subseteq \mathbb{Q}` to its coefficients, and 
 series whose coefficients lie in $`\mathbb{Z}_{(p)}` defines a power series over
 $`\mathbb{Z}_{(p)}`.
 
-# Operators on power series
+# The divisor-sum series
 %%%
-tag := "operators-on-power-series"
+tag := "divisor-sum-series"
 %%%
 
-Let $`R` be a commutative semiring. We define $`\Theta = q\,\frac{d}{dq}` on
-$`R\llbracket X\rrbracket` as $`X` times the formal derivative.
+Let $`R` be a semiring. For $`k \in \mathbb{N}` we define the power series
 
-{docstring PowerSeries.Θ}
-
-For $`k \in \mathbb{N}` and a prime $`p` we define the power series
-
-$$`\sum_{n \geq 1} \sigma_k(n)\, q^n \qquad \text{and} \qquad \sum_{p \nmid n} \sigma_k(n)\, q^n`
+$$`\sum_{n \geq 1} \sigma_k(n)\, q^n`
 
 over $`R`. Here $`\sigma_k(n) = \sum_{d \mid n} d^k` for $`n \geq 1` and $`\sigma_k(0) = 0`.
 
 {docstring PowerSeries.sigmaSeries}
-
-{docstring PowerSeries.sigmaSeriesPrimeTo}
-
-With this notation, Serre's series $`\varphi_h` and $`\psi` are `sigmaSeries (ZMod p) (h - 1)`
-and `sigmaSeriesPrimeTo (ZMod p) p (p - 2)`.
 
 # Uniform convergence of power series
 %%%

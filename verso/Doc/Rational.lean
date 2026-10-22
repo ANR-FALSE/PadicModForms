@@ -115,22 +115,3 @@ $`\mathbb{Q}`-algebra.
 The restriction of {name ModularForm.evalE₄E₆Rat}`evalE₄E₆Rat` to $`\mathbb{Q}[X_0, X_1]_k`,
 with values in $`M_k(\mathbb{Q})`, is
 {name ModularForm.evalE₄E₆RatAtWeight}`evalE₄E₆RatAtWeight`.
-
-# Ramanujan's identities
-%%%
-tag := "ramanujan-identities"
-%%%
-
-In $`\mathbb{Q}\llbracket X\rrbracket` we have $`12\,\Theta E_2 = E_2^2 - E_4`,
-$`3\,\Theta E_4 = E_2E_4 - E_6` and $`2\,\Theta E_6 = E_2E_6 - E_4^2`.
-
-{docstring EisensteinSeries.Θ_E₂Rat}
-
-{docstring EisensteinSeries.Θ_E₄Rat}
-
-{docstring EisensteinSeries.Θ_E₆Rat}
-
-These identities are deduced from the corresponding identities of Mathlib for the derivative
-$`(2\pi i)^{-1} \frac{d}{dz}` of functions on the upper half plane, which acts as $`\Theta` on
-$`q`-expansions
-({name UpperHalfPlane.qExpansion_normalizedDeriv_levelOne}`qExpansion_normalizedDeriv_levelOne`).

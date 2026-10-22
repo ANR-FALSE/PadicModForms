@@ -4,6 +4,9 @@ import Doc.TitleMath
 import Doc.Introduction
 import Doc.Preliminaries
 import Doc.Rational
+import Doc.PLocalInt
+import Doc.ModP
+import Doc.PAdic
 
 open Verso.Genre Manual
 open Doc
@@ -20,3 +23,9 @@ authors := ["Riccardo Brasca"]
 {include 1 Doc.Preliminaries}
 
 {include 1 Doc.Rational}
+
+{include 1 Doc.PLocalInt}
+
+{include 1 Doc.ModP}
+
+{include 1 Doc.PAdic}

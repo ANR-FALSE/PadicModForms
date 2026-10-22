@@ -42,8 +42,11 @@ noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop
 /-- A presentation of a p-adic modular form by classical rational modular forms whose
 coefficients converge uniformly. -/
 structure pAdicModularFormStruct (f : ℚ_[p]⟦X⟧) where
+  /-- The weights of the classical modular forms of the presentation. -/
   w : ℕ → ℤ
+  /-- The classical rational modular forms of the presentation, `F i` having weight `w i`. -/
   F : (i : ℕ) → rationalModularForms (w i)
+  /-- The coefficients of `F i` converge to those of `f` in `ℚ_[p]`, uniformly in the degree. -/
   tendsTo : TendstoUniformly (fun i n ↦ ↑(coeff n (rationalQExpansion (F i)))) (coeff · f) atTop
 
 variable (p)
