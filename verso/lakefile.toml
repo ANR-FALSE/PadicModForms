@@ -7,7 +7,7 @@ defaultTargets = ["Doc"]
 [[require]]
 name = "verso"
 git = "https://github.com/leanprover/verso"
-rev = "v4.36.0-rc1"
+rev = "v4.36.0-rc2"
 
 [[require]]
 name = "PadicModForms"

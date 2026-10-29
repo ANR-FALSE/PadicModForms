@@ -43,7 +43,7 @@ def Θ : Derivation R R⟦X⟧ R⟦X⟧ := (X : R⟦X⟧) • derivative
 variable (f : R⟦X⟧)
 
 theorem Θ_apply : Θ f = X * derivative f := by
-  rw [Θ, Derivation.smul_apply, smul_eq_mul]
+  rw [Θ, smul_apply, smul_eq_mul]
 
 @[simp]
 theorem Θ_C (a : R) : Θ (C a) = 0 := by

@@ -116,7 +116,7 @@ to `E₆`. -/
 /-- The scalar-extension square for evaluation at `E₄` and `E₆` commutes. -/
 theorem rationalModularFormsToComplex_evalE₄E₆Rat (P : MvPolynomial (Fin 2) ℚ) :
     rationalModularFormsToComplex (evalE₄E₆Rat P) = evalE₄E₆ (P.map (algebraMap ℚ ℂ)) := by
-  rw [evalE₄E₆Rat, comp_aeval_apply, evalE₄E₆, aeval_map_algebraMap]
+  rw [evalE₄E₆Rat, comp_aeval_apply, evalE₄E₆_eq_aeval, aeval_map_algebraMap]
   congr 2
   funext i
   fin_cases i <;> simp
@@ -162,14 +162,15 @@ theorem evalE₄E₆AtWeight_apply (p : E₄E₆WeightedHomogeneous k ℂ) :
 theorem evalE₄E₆AtWeight_injective : Function.Injective (evalE₄E₆AtWeight k) := fun p q hpq ↦ by
   ext : 1
   apply evalE₄E₆_injective
-  rw [evalE₄E₆_eq_of_apply k p p.property, evalE₄E₆_eq_of_apply k q q.property,
+  rw [evalE₄E₆_eq_of_isWeightedHomogeneous p.property,
+    evalE₄E₆_eq_of_isWeightedHomogeneous q.property,
     show (evalE₄E₆ p) k = (evalE₄E₆ q) k by exact hpq]
 
 theorem evalE₄E₆AtWeight_surjective : Function.Surjective (evalE₄E₆AtWeight k) := by
   intro f
   obtain ⟨p, hp⟩ := evalE₄E₆_surjective (.of _ (k : ℤ) f)
   refine ⟨⟨_, weightedHomogeneousComponent_isWeightedHomogeneous k p⟩, ?_⟩
-  simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_component_eq] using congr($hp k)
+  simpa [evalE₄E₆AtWeight_apply, evalE₄E₆_weightedHomogeneousComponent_apply] using congr($hp k)
 
 /-- The complex modular forms of weight `k` are exactly the weighted homogeneous polynomials of
 weight `k` in `E₄` and `E₆`. -/
@@ -255,8 +256,9 @@ theorem evalE₄E₆Rat_eq_of_apply (p : E₄E₆WeightedHomogeneous k ℚ) :
     have hsquare : rationalModularFormToComplex ((evalE₄E₆Rat p) j) =
         (evalE₄E₆ (p.1.map (algebraMap ℚ ℂ))) j := by
       simpa using congr($(rationalModularFormsToComplex_evalE₄E₆Rat p) j)
-    rw [hsquare, map_zero, evalE₄E₆_eq_of_apply k _
-      (isWeightedHomogeneous_map_rat p.property), DirectSum.of_eq_of_ne _ _ _ hj]
+    rw [hsquare, map_zero,
+      evalE₄E₆_eq_of_isWeightedHomogeneous (isWeightedHomogeneous_map_rat p.property),
+      DirectSum.of_eq_of_ne _ _ _ hj]
 
 /-! ### The structure theorem -/
 

@@ -147,9 +147,10 @@ with the literature.
 
 Staging area for material destined for mathlib; it must not depend on the rest of the project.
 Several files carry a `-- should go to Mathlib.X` comment naming their target. `38813.lean`
-backports mathlib PR #38813 and should be deleted once that PR lands upstream. Write these files to
-mathlib's standards (full generality, complete docstrings), since they are meant to be upstreamed
-verbatim.
+backports the part of mathlib PR #38813 that has not landed yet (the injectivity of
+`ModularForm.evalE₄E₆`; its definition and surjectivity are in mathlib) and should be deleted once
+that PR lands upstream. Write these files to mathlib's standards (full generality, complete
+docstrings), since they are meant to be upstreamed verbatim.
 
 ## The Verso document (`verso/`)
 

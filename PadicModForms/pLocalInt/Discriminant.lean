@@ -208,7 +208,7 @@ private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
     exact ⟨0, by simp [hf]⟩
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
   clear hkNeg
-  induction n using Nat.strong_induction_on with | h n ih => ?_
+  induction n using Nat.strong_induction_on with | ind n ih => ?_
   by_cases hnOdd : Odd (n : ℤ)
   · have hf : f = 0 :=
       eq_zero_of_rationalModularForms_eq_bot f (rationalModularForms_eq_bot_of_odd hnOdd)

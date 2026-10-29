@@ -88,9 +88,9 @@ theorem hasBasis_nhds_zero :
     (𝓝 (0 : R⟦X⟧)).HasBasis (· ∈ 𝓝 (0 : R)) ({f | ∀ n, coeff n f ∈ ·}) := by
   rw [nhds_zero_eq_comap_coeffAddMonoidHom]
   refine ((UniformFun.hasBasis_nhds ℕ R 0).comap _).to_hasBasis
-    (fun V hV ↦ ⟨_, UniformSpace.ball_mem_nhds 0 hV, fun f hf ↦ fun n ↦ hf n⟩) (fun W hW ↦ ?_?_)
+    (fun V hV ↦ ⟨_, mem_nhds_left 0 hV, fun f hf ↦ fun n ↦ hf n⟩) (fun W hW ↦ ?_?_)
   obtain ⟨V, hV, hVW⟩ := UniformSpace.mem_nhds_iff.1 hW
-  exact ⟨V, hV, fun f hf n ↦ hVW (hf n)⟩
+  exact ⟨Prod.swap ⁻¹' V, symm_le_uniformity hV, fun f hf n ↦ hVW (hf n)⟩
 
 -- should go to Mathlib.RingTheory.PowerSeries.UniformConvergence (new file)
 /-- For each neighbourhood `W` of `0` in `R`, the set of power series with all coefficients in `W`

@@ -42,7 +42,7 @@ end
 
 /-- The classical integral weight `n`, regarded as a p-adic weight: the character `u ↦ u ^ n`
 (`ι_apply`). -/
-public noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, by fun_prop⟩
+public noncomputable def ι : ℤ → X_[p] := fun n ↦ ⟨zpowGroupHom n, continuous_zpow n⟩
 
 @[simp]
 public theorem ι_apply (n : ℤ) (u : ℤ_[p]ˣ) : ι n u = u ^ n := by

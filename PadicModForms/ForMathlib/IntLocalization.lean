@@ -123,7 +123,7 @@ noncomputable def pLocalInt.toZMod : pLocalInt p →+* ZMod p :=
 noncomputable def pLocalInt.toZModPow (m : ℕ) : pLocalInt p →+* ZMod (p ^ m) :=
   IsLocalization.lift (M := (span {(p : ℤ)}).primeCompl)
     (g := Int.castRingHom (ZMod (p ^ m))) fun y ↦ by
-      refine (ZMod.coe_int_isUnit_iff_isCoprime _ _).2 (Int.isCoprime_iff_nat_coprime.2 ?_)
+      refine (ZMod.isUnit_intCast_iff_isCoprime _ _).2 (Int.isCoprime_iff_nat_coprime.2 ?_)
       exact Nat.Coprime.pow_left _ <| hp.out.coprime_iff_not_dvd.mpr fun hpy ↦
         y.2 <| mem_span_singleton.2 (by rwa [Int.natCast_dvd])
 

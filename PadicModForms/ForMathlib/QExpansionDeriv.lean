@@ -86,7 +86,7 @@ theorem analyticAt_deriv_cuspFunction : AnalyticAt ℂ (deriv (cuspFunction h f)
 theorem cuspFunction_normalizedDeriv_of_ne_zero {w : ℂ} (hw : ‖w‖ < 1) (hw0 : w ≠ 0) :
     cuspFunction h (D f) w = (h : ℂ)⁻¹ * (w * deriv (cuspFunction h f) w) := by
   have him := im_invQParam_pos_of_norm_lt_one hh hw hw0
-  rw [cuspFunction, cuspFunction_eq_of_nonzero _ _ hw0, comp_apply, ofComplex_apply_of_im_pos him]
+  rw [cuspFunction, cuspFunction_eq_of_ne_zero _ _ hw0, comp_apply, ofComplex_apply_of_im_pos him]
   simpa [qParam_right_inv hh.ne' hw0]
     using normalizedDerivOfComplex_eq hh hfper hfhol hfbdd ⟨_, him⟩
 
