@@ -7,6 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.Order.Monoid.Unbundled.WithTop
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.Order.WithBotTop
 public import Mathlib.Topology.Order.WithTop
 public import Mathlib.Order.Int.ConditionallyCompleteOrder
@@ -52,15 +53,8 @@ theorem WithBotTop.coe_add {ι : Type*} [AddMonoid ι] (a b : ι) :
 /-- Adding a finite element of `EInt` commutes with taking an infimum: translation by an integer
 is an order isomorphism of `EInt`. -/
 theorem intCast_add_iInf {α : Sort*} (m : ℤ) (g : α → EInt) :
-    (m : EInt) + ⨅ n, g n = ⨅ n, ((m : EInt) + g n) := by
-  refine le_antisymm (le_iInf fun n ↦ add_le_add le_rfl (iInf_le _ n)) ?_
-  suffices (-m : ℤ) + ⨅ n, m + g n ≤ ⨅ n, g n by
-    calc _ = m + ((-m : ℤ) + ⨅ n, (m + g n)) := by
-          rw [← add_assoc, ← WithBotTop.coe_add]; simp [WithBotTop.coe]
-         _ ≤ _ := add_le_add le_rfl this
-  refine le_iInf fun n ↦ ?_
-  calc _ ≤ (-m : ℤ) + (m + g n) := add_le_add le_rfl (iInf_le _ n)
-       _ = g n := by rw [← add_assoc, ← WithBotTop.coe_add]; simp [WithBotTop.coe]
+    (m : EInt) + ⨅ n, g n = ⨅ n, ((m : EInt) + g n) :=
+  ((OrderIso.addLeft m).withTopCongr.withBotCongr).map_iInf g
 
 -- should go to Mathlib.Topology.Instances.EInt (new file, analogous to
 -- Mathlib.Topology.Instances.ENat)

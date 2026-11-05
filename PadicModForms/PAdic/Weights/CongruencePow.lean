@@ -119,7 +119,8 @@ public theorem pow_dvd_of_map_toZModPow_eq (hp : 5 ≤ p) (hh0 : h ≠ 0) (hhd :
     (h0 : f.map toZMod ≠ 0) (hcong : f.map (toZModPow m) = f'.map (toZModPow m)) :
     p ^ (m - 1) ∣ h := by
   by_contra hndvd
-  have hr : padicValNat p h + 1 < m := by grind [(padicValNat_dvd_iff_le hh0).not.1 hndvd]
+  have hr : padicValNat p h + 1 < m := by
+    grind [Nat.padicValNat_def, (multiplicity_dvd_iff_le hh0).not.1 hndvd]
   have hh3 : 3 ≤ h := by grind [Nat.le_of_dvd (Nat.pos_of_ne_zero hh0) hhd]
   obtain ⟨g, hg, hgφ⟩ := exists_map_toZMod_eq_mul_sigmaSeries (by lia) hh3 hhd hr hf hf' hcong
   -- `w = f̄ ^ (p - 1)` is a nonzero degree-zero form.

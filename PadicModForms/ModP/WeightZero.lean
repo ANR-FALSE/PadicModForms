@@ -167,7 +167,7 @@ private theorem eval₂_monicOfCoeffs_eq_zero {P : Polynomial (modPWeightZeroFor
     Polynomial.eval₂ evalE₄E₆ModP.toRingHom f (monicOfCoeffs d c) = 0 := by
   have hmap : (monicOfCoeffs d c).map evalE₄E₆ModP.toRingHom =
       P.map (algebraMap (modPWeightZeroForms p) (ZMod p)⟦X⟧) := by
-    refine Polynomial.ext fun i ↦ ?_
+    ext i : 2
     rw [Polynomial.coeff_map, Polynomial.coeff_map]
     rcases lt_trichotomy i d with hi | hi | hi
     · rw [coeff_monicOfCoeffs_of_lt d c hi]

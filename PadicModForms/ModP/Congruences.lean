@@ -168,11 +168,8 @@ public theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 
   have hp0 : (p : ℚ) ≠ 0 := Nat.cast_ne_zero.2 Hp.out.ne_zero
   have hB0 : bernoulli k ≠ 0 := bernoulli_ne_zero_of_even hk hk2
   -- Write `k = p ^ v * k'` with `p ∤ k'`.
-  obtain ⟨v, hv⟩ : ∃ v, padicValNat p k = v := ⟨_, rfl⟩
-  obtain ⟨k', hk'⟩ := (padicValNat_dvd_iff_le (p := p) (by lia : k ≠ 0)).2 (le_refl _)
-  rw [hv] at hk'
-  have hpk' : ¬p ∣ k' := fun ⟨c, hc⟩ ↦ pow_succ_padicValNat_not_dvd (p := p) (by lia : k ≠ 0)
-    ⟨c, by rw [hv, hk', hc]; ring⟩
+  have hfin : FiniteMultiplicity p k := Nat.finiteMultiplicity_iff.2 ⟨Hp.out.ne_one, by lia⟩
+  obtain ⟨k', hk', hpk'⟩ := hfin.exists_eq_pow_mul_and_not_dvd
   have hp2k' : ¬p ∣ 2 * k' := fun h ↦ (Hp.out.dvd_mul.1 h).elim
     (fun h2 ↦ hp2 ((Nat.prime_dvd_prime_iff_eq Hp.out Nat.prime_two).1 h2)) hpk'
   -- The unit is `-2 k' / (p Bₖ)`.
@@ -180,13 +177,11 @@ public theorem associated_pow_neg_two_mul_inv_bernoulli (hp2 : p ≠ 2) (hk : 3 
     simpa using (pLocalInt.isUnit_natCast hp2k').neg
   have hβ := isUnit_mul_bernoulli (p := p) (by lia) hk2 hpk
   refine ⟨h2k'.unit * hβ.unit⁻¹, ?_⟩
-  have hkQ : (k : ℚ) = p ^ v * k' := by exact_mod_cast hk'
-  rw [hv]
+  have hkQ : (k : ℚ) = p ^ multiplicity p k * k' := by exact_mod_cast hk'
+  rw [Nat.padicValNat_def]
   ext
   push_cast [Units.val_mul, IsUnit.unit_spec, pLocalInt.coe_units_inv]
-  rw [hkQ]
-  field_simp
-  ring
+  grind
 
 /-- **The exact Eisenstein quotient**: for `p` odd and `p - 1 ∣ k`, writing `r = v_p(k) + 1`,
 there is a unit `λ` of `ℤ₍ₚ₎` with `Eₖ - 1 = p^r λ Φₖ`, where `Φₖ = ∑ σ_{k-1}(n) qⁿ`. In

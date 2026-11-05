@@ -132,11 +132,8 @@ theorem coeff_toWeightPolynomial (n : ℕ) :
     (toWeightPolynomial w P).coeff n = weightedHomogeneousComponent w n P := by
   induction P using induction_on' with
   | monomial d r =>
-    rw [toWeightPolynomial_monomial, Polynomial.coeff_monomial]
-    split_ifs with h
-    · exact (isWeightedHomogeneous_monomial w d r h).weightedHomogeneousComponent_same.symm
-    · exact ((isWeightedHomogeneous_monomial w d r rfl).weightedHomogeneousComponent_ne n
-        (symm h)).symm
+    grind [toWeightPolynomial_monomial, Polynomial.coeff_monomial_apply,
+      weightedHomogeneousComponent_of_mem (isWeightedHomogeneous_monomial w d r rfl)]
   | add p q hp hq => simp [hp, hq]
 
 variable {P}
@@ -150,14 +147,13 @@ variable {w}
 degree `n`. -/
 theorem toWeightPolynomial_eq_monomial_iff :
     toWeightPolynomial w P = Polynomial.monomial n P ↔ IsWeightedHomogeneous w P n := by
-  refine ⟨fun h ↦ ?_, fun hP ↦ Polynomial.ext fun k ↦ ?_⟩
+  refine ⟨fun h ↦ ?_, fun hP ↦ ?_⟩
   · have hn : weightedHomogeneousComponent w n P = P := by
-      simpa [coeff_toWeightPolynomial] using congr(Polynomial.coeff $h n)
+      simpa [coeff_toWeightPolynomial] using congr(($h).coeff n)
     exact hn ▸ weightedHomogeneousComponent_isWeightedHomogeneous ..
-  · rw [coeff_toWeightPolynomial, Polynomial.coeff_monomial]
-    split_ifs with hk
-    · exact hk ▸ hP.weightedHomogeneousComponent_same
-    · exact hP.weightedHomogeneousComponent_ne k (symm hk)
+  · ext k
+    grind [coeff_toWeightPolynomial, Polynomial.coeff_monomial_apply,
+      weightedHomogeneousComponent_of_mem hP]
 
 open Polynomial
 

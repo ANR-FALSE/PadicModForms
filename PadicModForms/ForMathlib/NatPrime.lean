@@ -26,9 +26,8 @@ variable {p m n : ℕ}
 -- should go to Mathlib.Data.Nat.Prime.Basic
 /-- A prime dividing neither `m` nor `n` divides no product `m ^ a * n ^ b`. -/
 theorem not_dvd_pow_mul_pow (hp : p.Prime) (hm : ¬p ∣ m) (hn : ¬p ∣ n) (a b : ℕ) :
-    ¬p ∣ m ^ a * n ^ b := by
-  rw [hp.dvd_mul]
-  rintro (h | h) <;> grind [hp.dvd_of_dvd_pow]
+    ¬p ∣ m ^ a * n ^ b :=
+  hp.not_dvd_mul (mt hp.dvd_of_dvd_pow hm) (mt hp.dvd_of_dvd_pow hn)
 
 -- should go to Mathlib.Data.Nat.Prime.Basic
 /-- A prime `p ≥ 5` divides no number of the form `2 ^ a * 3 ^ b`. -/
