@@ -9,6 +9,7 @@ module
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import PadicModForms.ForMathlib.IntLocalization
 public import Mathlib.Order.WithBotTop
+import Mathlib.NumberTheory.Padics.WithVal
 
 /-!
 # Auxiliary results on the additive valuation on `ℚ_[p]`
@@ -61,8 +62,7 @@ variable (x : pLocalInt p)
 -- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
 /-- A `p`-integral rational has `p`-adic norm at most `1`. -/
 theorem norm_coe_le_one : ‖(x : ℚ_[p])‖ ≤ 1 :=
-  (zero_le_addValuation_iff_norm_le_one _).1
-    ((zero_le_addValuation_ratCast_iff p _).2 ((mem_pLocalInt_iff _).1 x.2))
+  Padic.norm_rat_le_one ((mem_pLocalInt_iff p).1 x.2)
 
 variable {x}
 
@@ -78,31 +78,19 @@ theorem norm_coe_eq_one (hx : pLocalInt.toZMod x ≠ 0) : ‖(x : ℚ_[p])‖ = 
     rw [← norm_mul, mul_inv_cancel₀ hx0, norm_one]
   nlinarith [norm_nonneg (x : ℚ_[p]), norm_coe_le_one x]
 
+/-- A `p`-integral rational with nonzero reduction modulo `p ^ m` has `p`-adic norm larger than
+`(p ^ m)⁻¹`: if `‖x‖ ≤ (p ^ m)⁻¹` then `x / p ^ m` is `p`-integral, so `p ^ m` divides `x`. -/
 theorem pow_lt_norm_coe {m : ℕ} (hx : pLocalInt.toZModPow m x ≠ 0) :
     ((p : ℝ) ^ m)⁻¹ < ‖(x : ℚ_[p])‖ := by
-  by_cases hxzero : x = 0
-  · simp [hxzero] at hx
   contrapose! hx
-  rw [← zpow_natCast, ← zpow_neg, ← intCast_le_addValuation_iff_norm_le_pow,
-    Padic.addValuation.apply (mod_cast hxzero), WithBotTop.coe, Function.comp_apply,
-    WithBot.coe_le_coe, WithTop.coe_le_coe, valuation_ratCast] at hx
-  obtain ⟨y, z, hy⟩ := IsLocalization.exists_mk'_eq (Ideal.span {(p : ℤ)}).primeCompl x
-  have heq : x * z = y := by simpa using IsLocalization.eq_mk'_iff_mul_eq.mp hy.symm
-  have hvaleq : padicValRat p x + padicValRat p z = padicValRat p y := by
-    rw [← padicValRat.mul (by simp [hxzero])]
-    · congr; norm_cast
-    simp only [ne_eq, Int.cast_eq_zero]
-    exact fun h ↦ (h ▸ (Ideal.mem_primeCompl_iff.mp z.property)) (Ideal.span {(p : ℤ)}).zero_mem
-  simp only [padicValRat.of_int] at hvaleq
-  have hvaly : m ≤ padicValInt p y := by
-    rw [← Nat.cast_le (α := ℤ), ← hvaleq]
-    linarith
-  have hdvdy : (p : (pLocalInt p)) ^ m ∣ y := by
-    obtain ⟨b, hb⟩ := (padicValInt_dvd_iff m y).mpr (Or.inr hvaly)
-    exact ⟨b, by rw [hb]; push_cast; ring⟩
-  rw [← heq] at hdvdy
-  rw [pLocalInt.toZModPow_eq_zero_iff]
-  exact (IsLocalization.map_units (pLocalInt p) z).dvd_mul_right.mp hdvdy
+  refine pLocalInt.toZModPow_eq_zero_of_dvd ⟨⟨x / p ^ m, ?_⟩, ?_⟩
+  · rw [mem_pLocalInt_iff, ← Rat.padicValuation_le_one_iff,
+      ← Padic.norm_rat_le_one_iff_padicValuation_le_one]
+    push_cast
+    rw [norm_div, norm_pow, Padic.norm_p, inv_pow]
+    exact div_le_one_of_le₀ hx (by positivity)
+  · ext
+    exact (mul_div_cancel₀ _ (pow_ne_zero m (Nat.cast_ne_zero.2 hp.out.ne_zero))).symm
 
 variable (x)
 

@@ -7,6 +7,7 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 import Mathlib.Data.ZMod.Units
 import Mathlib.RingTheory.Int.Basic
@@ -67,6 +68,13 @@ theorem mem_pLocalInt_iff {q : ℚ} : q ∈ pLocalInt p ↔ ¬ p ∣ q.den := by
   rw [pLocalInt_eq_valuationSubring, Valuation.mem_valuationSubring_iff,
     Rat.valuation_le_one_iff_den]
   simp [heightOneSpec, mem_span_singleton, Int.natCast_dvd_natCast]
+
+-- should go to Mathlib.NumberTheory.Padics.HeightOneSpectrum
+/-- A rational number is `p`-integral exactly when its `p`-adic valuation is at most `1`: the
+valuation subring of `Rat.padicValuation p` is `pLocalInt p`. -/
+theorem mem_pLocalInt_iff_padicValuation_le_one {q : ℚ} :
+    q ∈ pLocalInt p ↔ Rat.padicValuation p q ≤ 1 := by
+  rw [mem_pLocalInt_iff, Rat.padicValuation_le_one_iff]
 
 variable {p}
 

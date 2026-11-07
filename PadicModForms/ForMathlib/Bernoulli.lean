@@ -35,11 +35,11 @@ instance `k = p + 1` of Kummer's congruence.
 
 public section
 
-open Finset Ideal Nat
+open Finset Nat
 
 variable {k : ℕ}
 
-/-! ### Nonvanishing and denominators -/
+/-! ### Nonvanishing -/
 
 theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k ≠ 0 :=
     fun h ↦ by
@@ -50,48 +50,39 @@ theorem bernoulli_ne_zero_of_even (hk : 3 ≤ k) (hk2 : Even k) : bernoulli k �
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-/-- If `k` is positive and even, and `p - 1 ∣ k`, then the denominator of `Bₖ⁻¹` is
-not divisible by `p`. -/
-theorem not_dvd_den_inv_bernoulli (hk : 0 < k) (hk2 : Even k)
-    (hpk : p - 1 ∣ k) : ¬ p ∣ (bernoulli k)⁻¹.den := by
-  obtain ⟨m, rfl⟩ := hk2
-  rw [← two_mul] at hk hpk ⊢
-  have hnum : ¬ p ∣ (bernoulli (2 * m)).num.natAbs :=
-    Int.natCast_dvd.not.1 (Bernoulli.not_dvd_num_bernoulli (by lia) hpk)
-  rwa [Rat.den_inv_of_ne_zero fun h ↦ hnum (by simp [h])]
-
-/-- If `k` is positive and even, and `p - 1 ∣ k`, then `p` divides the numerator of `Bₖ⁻¹`:
-by von Staudt–Clausen `p` divides the denominator of `Bₖ`. -/
-theorem dvd_num_inv_bernoulli (hk : 0 < k) (hk2 : Even k)
-    (hpk : p - 1 ∣ k) : (p : ℤ) ∣ (bernoulli k)⁻¹.num := by
-  obtain ⟨m, rfl⟩ := hk2
-  rw [← two_mul] at hk hpk ⊢
-  rw [Rat.num_inv]
-  exact dvd_mul_of_dvd_right (mod_cast Bernoulli.dvd_den_bernoulli (by lia) hpk) _
-
 /-! ### Integrality of `Bₖ⁻¹` at `p` -/
 
-/-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral. -/
+/-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` is `p`-integral: by von
+Staudt–Clausen, `Bₖ` has `p`-adic valuation `-1`, i.e. `Rat.padicValuation p Bₖ = exp 1`
+(`Bernoulli.padicValuation_bernoulli`). -/
 theorem inv_bernoulli_mem_pLocalInt (hk : 3 ≤ k) (hk2 : Even k)
-    (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p :=
-  (mem_pLocalInt_iff p).2 <| not_dvd_den_inv_bernoulli (by lia) hk2 hpk
+    (hpk : p - 1 ∣ k) : (bernoulli k)⁻¹ ∈ pLocalInt p := by
+  obtain ⟨m, rfl⟩ := hk2
+  rw [← two_mul] at hk hpk ⊢
+  rw [mem_pLocalInt_iff_padicValuation_le_one, map_inv₀,
+    Bernoulli.padicValuation_bernoulli (by lia) hpk]
+  simp
+
+/-- If `p - 1 ∣ k`, then `p` divides `Bₖ⁻¹` in the localization of `ℤ` at `p`: the quotient
+`Bₖ⁻¹ / p` has `p`-adic valuation `0` (`Bernoulli.padicValuation_bernoulli`), so it is
+`p`-integral. -/
+theorem p_dvd_inv_bernoulli (hk : 3 ≤ k) (hk2 : Even k)
+    (hpk : p - 1 ∣ k) : (p : pLocalInt p) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ := by
+  refine ⟨⟨(bernoulli k)⁻¹ / p, ?_⟩, ?_⟩
+  · obtain ⟨m, rfl⟩ := hk2
+    rw [← two_mul] at hk hpk ⊢
+    rw [mem_pLocalInt_iff_padicValuation_le_one, map_div₀, map_inv₀,
+      Bernoulli.padicValuation_bernoulli (by lia) hpk, Rat.padicValuation_natCast,
+      Int.padicValuation_self]
+    simp
+  · ext
+    exact (mul_div_cancel₀ _ (Nat.cast_ne_zero.2 hp.out.ne_zero)).symm
 
 /-- If `p` is prime, `k ≥ 3` is even, and `p - 1 ∣ k`, then `Bₖ⁻¹` reduces to zero
 modulo `p`. -/
 theorem toZMod_inv_bernoulli_eq_zero (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 ∣ k) :
-    pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 := by
-  let qden : (span {(p : ℤ)}).primeCompl := ⟨(bernoulli k)⁻¹.den, fun h ↦
-    not_dvd_den_inv_bernoulli (by lia) hk2 hpk (by exact_mod_cast mem_span_singleton.mp h)⟩
-  rw [show (⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ : pLocalInt p) =
-        IsLocalization.mk' (pLocalInt p) (bernoulli k)⁻¹.num qden from
-      IsLocalization.eq_mk'_iff_mul_eq.2 (Subtype.ext (Rat.mul_den_eq_num _)),
-    pLocalInt.toZMod, IsLocalization.lift_mk'_spec]
-  simpa using (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).2 (dvd_num_inv_bernoulli (by lia) hk2 hpk)
-
-/-- If `p - 1 ∣ k`, then `p` divides `Bₖ⁻¹` in the localization of `ℤ` at `p`. -/
-theorem p_dvd_inv_bernoulli (hk : 3 ≤ k) (hk2 : Even k)
-    (hpk : p - 1 ∣ k) : (p : pLocalInt p) ∣ ⟨_, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ :=
-  pLocalInt.dvd_of_toZMod_eq_zero (toZMod_inv_bernoulli_eq_zero hk hk2 hpk)
+    pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 :=
+  pLocalInt.toZMod_eq_zero_iff.2 (p_dvd_inv_bernoulli hk hk2 hpk)
 
 /-! ### Small values -/
 
