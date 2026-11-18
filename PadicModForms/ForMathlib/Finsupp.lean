@@ -36,17 +36,14 @@ theorem weight_fin_two (w : Fin 2 → ℕ) (d : Fin 2 →₀ ℕ) : weight w d =
 private theorem eq_of_mul_add_mul_eq_aux {a b a' b' : ℕ} (hu : 0 < u) (hv : 0 < v) (hle : a ≤ a')
     (h : a * u + b * v = a' * u + b' * v) (hlt : a * u + b * v < Nat.lcm u v) :
     a = a' ∧ b = b' := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hle
-  rw [add_mul] at h
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le
-    (Nat.le_of_mul_le_mul_right (show b' * v ≤ b * v by omega) hv)
-  rw [add_mul] at h hlt
-  have hmk : m * v = k * u := by omega
-  have hmv : m * v = 0 := Nat.eq_zero_of_dvd_of_lt
-    (Nat.lcm_dvd ⟨k, by rw [hmk, mul_comm]⟩ ⟨m, mul_comm m v⟩) (by omega)
-  have hk : k = 0 := by rcases Nat.mul_eq_zero.1 (show k * u = 0 by omega) with h | h <;> omega
-  have hm : m = 0 := by rcases Nat.mul_eq_zero.1 hmv with h | h <;> omega
-  grind
+  have hk : (a' - a) * u = (b - b') * v := by rw [Nat.sub_mul, Nat.sub_mul]; lia
+  have h0 : (a' - a) * u = 0 := Nat.eq_zero_of_dvd_of_lt
+    (Nat.lcm_dvd ⟨_, mul_comm _ u⟩ ⟨_, hk.trans (mul_comm _ v)⟩) (by rw [Nat.sub_mul]; lia)
+  rcases Nat.mul_eq_zero.1 h0 with ha | rfl
+  · have ha' : a' = a := by lia
+    subst ha'
+    exact ⟨rfl, Nat.mul_right_cancel hv (by lia)⟩
+  · lia
 
 /-- Below `Nat.lcm u v`, an exponent vector in two variables of weights `u` and `v` is determined
 by its weight. -/

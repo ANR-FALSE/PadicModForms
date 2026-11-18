@@ -7,9 +7,11 @@ Authors: Riccardo Brasca
 module
 
 public import Mathlib.Algebra.DirectSum.Internal
+public import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+import Mathlib.NumberTheory.ModularForms.QExpansionInjective
 import PadicModForms.ForMathlib.LinearIndependent
 import Mathlib.Algebra.Module.LinearMap.Rat
 import Mathlib.CategoryTheory.Category.Init
@@ -136,8 +138,8 @@ public theorem linearIndependent_rationalModularFormToComplex {κ : Type*}
     (v : κ → rationalModularForms n) (hv : LinearIndependent ℚ v) :
     LinearIndependent ℂ (rationalModularFormToComplex ∘ v) := by
   have hvq : LinearIndependent ℚ (fun i ↦ (v i : ℚ⟦X⟧)) := by
-    simpa [Function.comp_def] using hv.map' (rationalModularForms n).subtype
-      (LinearMap.ker_eq_bot_of_injective Subtype.val_injective)
+    simpa [Function.comp_def] using
+      hv.map' (rationalModularForms n).subtype (Submodule.ker_subtype _)
   have hvc : LinearIndependent ℂ (fun i ↦ (v i : ℚ⟦X⟧).map (algebraMap ℚ ℂ)) :=
     linearIndependent_map (fun i ↦ (v i : ℚ⟦X⟧)) hvq
   let := (qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL).toLinearMap.comp
@@ -240,5 +242,24 @@ public theorem rationalQExpansionAlgHom_of :
 @[simp]
 public theorem rationalQExpansion_apply : rationalQExpansion f = f :=
   rationalQExpansionAlgHom_of f
+
+public theorem qExpansionAlgHom_map_rationalModularFormToComplex
+    (F : ⨁ i, rationalModularForms i) :
+    qExpansionAlgHom 1 one_pos one_mem_strictPeriods_SL
+        (DirectSum.map (fun _ ↦ rationalModularFormToComplex.toAddMonoidHom) F) =
+      (rationalQExpansionAlgHom F).map (algebraMap ℚ ℂ) := by
+  induction F using DirectSum.induction_on with
+  | zero => simp
+  | of k f => simp
+  | add F G hF hG => simp [hF, hG]
+
+/-- The `q`-expansion homomorphism on the graded ring of rational modular forms is injective:
+rational modular forms of distinct weights are linearly independent as power series. -/
+public theorem rationalQExpansionAlgHom_injective :
+    Function.Injective rationalQExpansionAlgHom := fun F G hFG ↦
+  (DirectSum.map_injective (fun _ ↦ rationalModularFormToComplex.toAddMonoidHom)).2
+    rationalModularFormToComplex_injective <|
+      qExpansionAlgHom_injective one_pos one_mem_strictPeriods_SL <| by
+        simp [qExpansionAlgHom_map_rationalModularFormToComplex, hFG]
 
 end ModularForm

@@ -139,31 +139,33 @@ public theorem pLocalIntQExpansionAlgHom_of {k : ℤ} (f : pLocalIntModularForms
     pLocalIntQExpansionAlgHom (of _ k f) = f :=
   coeAlgHom_of ..
 
+noncomputable def pLocalIntModularFormToRatAddHom (k : ℤ) :
+    pLocalIntModularForms p k →+ rationalModularForms k where
+  toFun f := ⟨(f : (pLocalInt p)⟦X⟧).map (algebraMap _ ℚ), by
+    obtain ⟨F, hF⟩ := f.2
+    rw [hF, rationalQExpansion_apply]
+    exact F.2⟩
+  map_zero' := Subtype.ext (by simp)
+  map_add' _ _ := Subtype.ext (by simp)
+
+theorem pLocalIntModularFormToRatAddHom_injective (k : ℤ) :
+    Function.Injective (pLocalIntModularFormToRatAddHom (p := p) k) := fun _ _ h ↦
+  Subtype.ext <| map_injective _ pLocalInt.algebraMap_injective congr(($h).1)
+
+theorem rationalQExpansionAlgHom_map_pLocalInt (F : ⨁ i, pLocalIntModularForms p i) :
+    rationalQExpansionAlgHom (DirectSum.map pLocalIntModularFormToRatAddHom F) =
+      (pLocalIntQExpansionAlgHom F).map (algebraMap _ ℚ) := by
+  induction F using DirectSum.induction_on with
+  | zero => simp
+  | of k f => simp [pLocalIntModularFormToRatAddHom]
+  | add F G hF hG => simp [hF, hG]
+
+/-- The `q`-expansion homomorphism on the graded ring of `p`-integral modular forms is injective:
+`p`-integral modular forms of distinct weights are linearly independent as power series. -/
+public theorem pLocalIntQExpansionAlgHom_injective :
+    Function.Injective (pLocalIntQExpansionAlgHom (p := p)) := fun F G hFG ↦
+  (DirectSum.map_injective pLocalIntModularFormToRatAddHom).2
+    pLocalIntModularFormToRatAddHom_injective <| rationalQExpansionAlgHom_injective <| by
+      simp [rationalQExpansionAlgHom_map_pLocalInt, hFG]
+
 end ModularForm
-
-namespace pLocalIntModularForms
-
-open DirectSum
-
-variable {i j l : ℤ} (x : pLocalIntModularForms p i) (y : pLocalIntModularForms p j)
-
-/-- Taking a power in the graded ring of `p`-integral modular forms, with the resulting weight
-computed. -/
-public theorem of_pow_eq_of {n : ℕ} (hij : n • i = j)
-    (hxy : (x : (pLocalInt p)⟦X⟧) ^ n = (y : (pLocalInt p)⟦X⟧)) :
-    (of (fun i ↦ pLocalIntModularForms p i) i x) ^ n = of _ j y := by
-  subst hij
-  simpa [ofPow] using congr(of (fun i ↦ pLocalIntModularForms p i) (n • i) $((Subtype.ext hxy :
-    GradedMonoid.GMonoid.gnpow (A := fun i ↦ ↥(pLocalIntModularForms p i)) n x = y)))
-
-/-- Multiplying in the graded ring of `p`-integral modular forms, with the resulting weight
-computed. -/
-public theorem of_mul_of_eq_of (z : pLocalIntModularForms p l) (hij : i + j = l)
-    (hxyz : (x : (pLocalInt p)⟦X⟧) * (y : (pLocalInt p)⟦X⟧) = (z : (pLocalInt p)⟦X⟧)) :
-    of (fun i ↦ pLocalIntModularForms p i) i x * of (fun i ↦ pLocalIntModularForms p i) j y =
-      of (fun i ↦ pLocalIntModularForms p i) l z := by
-  subst hij
-  simpa [of_mul_of] using congr(of (fun i ↦ pLocalIntModularForms p i) (i + j) $((Subtype.ext hxyz :
-    GradedMonoid.GMul.mul (A := fun i ↦ ↥(pLocalIntModularForms p i)) x y = z)))
-
-end pLocalIntModularForms

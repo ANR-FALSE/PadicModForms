@@ -165,12 +165,8 @@ public theorem E₄_int_map : E₄_int.map (algebraMap (pLocalInt p) ℚ) = rati
   ext; simp [rationalQExpansion_apply, coeff_E₄Rat]
 
 /-- `E₄_int` is a `p`-integral modular form of weight `4`. -/
-public theorem E₄_int_mem_pLocalIntModularForms :  E₄_int ∈ pLocalIntModularForms p 4 :=
+public theorem E₄_int_mem_pLocalIntModularForms : E₄_int ∈ pLocalIntModularForms p 4 :=
   ⟨E₄Rat, E₄_int_map⟩
-
-/-- `E₄_int ^ 3` is a `p`-integral modular form of weight `12`. -/
-public theorem E₄_int_pow_three_mem : E₄_int ^ 3 ∈ pLocalIntModularForms p 12 := by
-  simpa using pow_mem_graded 3 (E₄_int_mem_pLocalIntModularForms (p := p))
 
 /-! ### `E₆` -/
 
@@ -215,10 +211,6 @@ public theorem E₆_int_map :
 /-- `E₆_int` is a `p`-integral modular form of weight `6`. -/
 public theorem E₆_int_mem_pLocalIntModularForms : E₆_int ∈ pLocalIntModularForms p 6 :=
   ⟨E₆Rat, E₆_int_map⟩
-
-/-- `E₆_int ^ 2` is a `p`-integral modular form of weight `12`. -/
-public theorem E₆_int_pow_two_mem : E₆_int ^ 2 ∈ pLocalIntModularForms p 12 := by
-  simpa using pow_mem_graded 2 (E₆_int_mem_pLocalIntModularForms (p := p))
 
 /-! ### Monomials in `E₄` and `E₆` -/
 

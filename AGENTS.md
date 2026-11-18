@@ -25,7 +25,7 @@ There are no tests: correctness is the build. CI (`.github/workflows/lean_action
 bumped by `leanprover-community/mathlib-update-action` (manual `workflow_dispatch`), which opens a PR
 on success and an issue on failure.
 
-Toolchain: `lean-toolchain` (currently `v4.35.0-rc2`) — mathlib's revision in `lake-manifest.json`
+Toolchain: `lean-toolchain` (currently `v4.36.0`) — mathlib's revision in `lake-manifest.json`
 must match it, so never edit one without the other.
 
 ## Module system (important)
@@ -56,14 +56,13 @@ are no legacy files, and a new file must not introduce one. Visibility is explic
   `import` into `public import`.
 - `ForMathlib/` files are destined for Mathlib, so they use a blanket `public section` (or
   `public noncomputable section`) with no blanket `@[expose]`; `@[expose]` is added per definition
-  on the same grounds. `ForMathlib/38813.lean` keeps `@[expose] public noncomputable section`
-  untouched until the Mathlib PR lands.
+  on the same grounds.
 - `notation` takes no `public` modifier, so the notation `X_[p]` in `PAdic/Defs.lean` sits in a
   small `public section … end`.
 
 When adding a file, copy the header of a neighbouring file in the same directory rather than
 inventing a layout, and add it to the root `PadicModForms.lean` as `public import` (alphabetical,
-`«…»` quoting for names starting with a digit, e.g. `PadicModForms.ForMathlib.«38813»`).
+`«…»` quoting for names starting with a digit).
 
 Stragglers are found with
 
@@ -146,11 +145,9 @@ with the literature.
 ### `ForMathlib/`
 
 Staging area for material destined for mathlib; it must not depend on the rest of the project.
-Several files carry a `-- should go to Mathlib.X` comment naming their target. `38813.lean`
-backports the part of mathlib PR #38813 that has not landed yet (the injectivity of
-`ModularForm.evalE₄E₆`; its definition and surjectivity are in mathlib) and should be deleted once
-that PR lands upstream. Write these files to mathlib's standards (full generality, complete
-docstrings), since they are meant to be upstreamed verbatim.
+Several files carry a `-- should go to Mathlib.X` comment naming their target. Write these files to
+mathlib's standards (full generality, complete docstrings), since they are meant to be upstreamed
+verbatim.
 
 ## The Verso document (`verso/`)
 

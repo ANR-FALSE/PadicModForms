@@ -14,10 +14,9 @@ import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 import PadicModForms.ForMathlib.Choose
 
 /-!
-# Values and `p`-adic properties of Bernoulli numbers
+# `p`-adic properties of Bernoulli numbers
 
-Explicit values of `bernoulli'` and `bernoulli` beyond the ones computed in mathlib, together with
-the consequences of von Staudt–Clausen describing the behaviour of `Bₖ` at a prime `p`, and the
+Consequences of von Staudt–Clausen describing the behaviour of `Bₖ` at a prime `p`, and the
 instance `k = p + 1` of Kummer's congruence.
 
 ## Main results
@@ -84,32 +83,6 @@ theorem toZMod_inv_bernoulli_eq_zero (hk : 3 ≤ k) (hk2 : Even k) (hpk : p - 1 
     pLocalInt.toZMod ⟨(bernoulli k)⁻¹, inv_bernoulli_mem_pLocalInt hk hk2 hpk⟩ = 0 :=
   pLocalInt.toZMod_eq_zero_iff.2 (p_dvd_inv_bernoulli hk hk2 hpk)
 
-/-! ### Small values -/
-
--- should go to Mathlib.NumberTheory.Bernoulli
-@[simp]
-theorem bernoulli'_five : bernoulli' 5 = 0 :=
-  bernoulli'_eq_zero_of_odd (by decide) (by decide)
-
--- should go to Mathlib.NumberTheory.Bernoulli
-@[simp]
-theorem bernoulli'_six : bernoulli' 6 = 1 / 42 := by
-  have h₂ : choose 6 2 = 15 := by decide
-  have h₃ : choose 6 3 = 20 := by decide
-  have h₄ : choose 6 4 = 15 := by decide
-  rw [bernoulli'_def]
-  norm_num [sum_range_succ, sum_range_zero, h₂, h₃, h₄]
-
--- should go to Mathlib.NumberTheory.Bernoulli
-@[simp]
-theorem bernoulli_four : bernoulli 4 = -1 / 30 := by
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by norm_num), bernoulli'_four]
-
--- should go to Mathlib.NumberTheory.Bernoulli
-@[simp]
-theorem bernoulli_six : bernoulli 6 = 1 / 42 := by
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by norm_num), bernoulli'_six]
-
 /-! ### von Staudt–Clausen: `p`-integrality of `Bₖ` -/
 
 section Kummer
@@ -128,7 +101,7 @@ theorem bernoulli_mem_pLocalInt (hpk : ¬ (p - 1) ∣ k) : bernoulli k ∈ pLoca
     rw [mem_pLocalInt_iff, show ((1 : ℚ) / q).den = q from by simp [hq.2.1.ne_zero]]
     exact fun h ↦ hqp ((prime_dvd_prime_iff_eq hp.out hq.2.1).mp h).symm
   · rcases eq_or_ne k 1 with rfl | hk1
-    · rw [bernoulli_one, mem_pLocalInt_iff, show ((-1 / 2 : ℚ)).den = 2 from by norm_num]
+    · rw [bernoulli_one, mem_pLocalInt_iff, show ((-2⁻¹ : ℚ)).den = 2 by norm_num]
       exact fun h ↦ hpk (by simp [(prime_dvd_prime_iff_eq hp.out prime_two).mp h])
     · rw [bernoulli_eq_zero_of_odd hk2 (by rcases hk2 with ⟨j, rfl⟩; lia)]
       exact zero_mem _

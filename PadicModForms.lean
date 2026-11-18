@@ -22,7 +22,6 @@ public import PadicModForms.ForMathlib.SigmaSeries
 public import PadicModForms.ForMathlib.SpecificLimits
 public import PadicModForms.ForMathlib.Theta
 public import PadicModForms.ForMathlib.WeightedHomogeneous
-public import PadicModForms.ForMathlib.«38813»
 public import PadicModForms.ModP.ArtinSchreier
 public import PadicModForms.ModP.Basic
 public import PadicModForms.ModP.Congruences

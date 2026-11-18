@@ -79,22 +79,16 @@ public theorem evalE₄E₆ModPAtWeight_apply (P : E₄E₆WeightedHomogeneous n
 
 private theorem eq_zero_of_evalE₄E₆ModP_eq_zero (hp : 5 ≤ p) {F : MvPolynomial (Fin 2) (ZMod p)}
     (hF : IsWeightedHomogeneous E₄E₆Weights F n) (hzero : evalE₄E₆ModP F = 0) : F = 0 := by
-  obtain ⟨G, hGhom, hGmap⟩ := exists_map_eq_of_isWeightedHomogeneous pLocalInt.toZMod_surjective hF
-  set f : pLocalIntModularForms p n := evalE₄E₆IntAtWeight n ⟨G, hGhom⟩ with hf
-  have hdvd m : (p : pLocalInt p) ∣ coeff m (f : (pLocalInt p)⟦X⟧) := by
-    refine pLocalInt.dvd_of_toZMod_eq_zero ?_
-    suffices (evalE₄E₆IntSeries G).map pLocalInt.toZMod = 0 by
-      rw [hf, coe_evalE₄E₆IntAtWeight]
-      simpa using congr(coeff m $this)
-    rw [← evalE₄E₆ModP_map, hGmap, hzero]
-  obtain ⟨g, hgmem, hpg⟩ :=
-    IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff f.2  pLocalInt.natCast_ne_zero hdvd
+  obtain ⟨G, hGhom, rfl⟩ := exists_map_eq_of_isWeightedHomogeneous pLocalInt.toZMod_surjective hF
+  have hdvd m : (p : pLocalInt p) ∣ coeff m (evalE₄E₆IntSeries G) :=
+    pLocalInt.dvd_of_toZMod_eq_zero <| by
+      simpa [evalE₄E₆ModP_map] using congr(coeff m $hzero)
+  obtain ⟨g, hgmem, hpg⟩ := IsPLocalIntModularForm.exists_smul_eq_of_forall_dvd_coeff
+    (evalE₄E₆IntSeries_mem hGhom) pLocalInt.natCast_ne_zero hdvd
   obtain ⟨H, hH⟩ := evalE₄E₆IntAtWeight_surjective hp ⟨g, hgmem⟩
-  suffices G = (p : pLocalInt p) • (H : MvPolynomial (Fin 2) (pLocalInt p)) by
-    simp [← hGmap, this, MvPolynomial.smul_eq_C_mul, map_mul]
-  suffices ⟨G, hGhom⟩ = (p : pLocalInt p) • H by
-    simpa using congr(Subtype.val $this)
-  exact evalE₄E₆IntAtWeight_injective (by simpa [hH, ← hf] using Subtype.ext hpg.symm)
+  have hGH : G = (p : pLocalInt p) • (H : MvPolynomial (Fin 2) (pLocalInt p)) :=
+    evalE₄E₆IntSeries_injective <| by simpa [← coe_evalE₄E₆IntAtWeight, hH] using hpg.symm
+  simp [hGH, MvPolynomial.smul_eq_C_mul]
 
 /-- Evaluation modulo `p` is injective on weighted homogeneous polynomials of a fixed weight.
 This is the mod-`p` analogue of `evalE₄E₆Int_injective`. -/

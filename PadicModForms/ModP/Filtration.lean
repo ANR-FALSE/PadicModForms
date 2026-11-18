@@ -249,10 +249,6 @@ public theorem modPFiltration_sub_pow_prime (hp : 5 ≤ p)
   have hGfil : modPFiltration p (evalE₄E₆ModP (-(F ^ p))) =
       p * modPFiltration p (evalE₄E₆ModP F) := by
     rw [map_neg, map_pow, modPFiltration_neg, modPFiltration_pow_prime hp hF h0]
-  -- have hp1 : ((p : ℕ) : ZMod (p - 1)) = 1 := by
-  --   have : ((p - 1 + 1 : ℕ) : ZMod (p - 1)) = 1 := by
-  --     rw [Nat.cast_add, ZMod.natCast_self, zero_add, Nat.cast_one]
-  --   rwa [Nat.sub_add_cancel (show 1 ≤ p by lia)] at this
   have key := modPFiltration_add_of_lt hp hF ((hF.pow p).neg) h0 (by grind [(pow_ne_zero _ h0)])
     ?_ (hGfil ▸ lt_mul_left hfil (by lia))
   · rwa [hGfil, map_neg, map_pow, ← sub_eq_add_neg] at key

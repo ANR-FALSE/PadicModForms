@@ -133,30 +133,13 @@ public theorem discriminant_int_map_complex (hp : 5 ≤ p) :
 theorem qExpansion_discriminant_ne_zero : qExpansion 1 discriminant ≠ 0 := fun h ↦ by
   simpa [discriminant_qExpansion_coeff_one] using congr(coeff 1 $h)
 
-/-- The rational modular form underlying `discriminant_int`. -/
-def discriminantRat (hp : 5 ≤ p) : rationalModularForms 12 :=
-  ⟨(discriminant_int hp).map (algebraMap (pLocalInt p) ℚ),
-    CuspForm.discriminant, CuspForm.coe_discriminant ▸ (discriminant_int_map_complex hp).symm⟩
-
-/-- The modular discriminant as a `p`-integral modular form of weight `12`. -/
-def discriminantIntModularForm (hp : 5 ≤ p) : pLocalIntModularForms p 12 :=
-  ⟨discriminant_int hp, discriminantRat hp, by simp [discriminantRat]⟩
-
 /-- The polynomial `(X₀³ - X₁²) / 1728` over `pLocalInt p`. -/
 def discriminantPoly_int (hp : 5 ≤ p) : MvPolynomial (Fin 2) (pLocalInt p) :=
-  MvPolynomial.C (↑(isUnit_1728 hp).unit⁻¹ : pLocalInt p) *
-    (MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2)
+  (↑(isUnit_1728 hp).unit⁻¹ : pLocalInt p) • (MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2)
 
-theorem evalE₄E₆Int_discriminantPoly_int (hp : 5 ≤ p) : evalE₄E₆Int (discriminantPoly_int hp) =
-      of (fun i ↦ pLocalIntModularForms p i) 12 (discriminantIntModularForm hp) := by
-  rw [discriminantPoly_int, map_mul, map_sub, map_pow, map_pow, MvPolynomial.algHom_C]
-  simp only [evalE₄E₆Int, MvPolynomial.aeval_X, Matrix.cons_val_zero, Matrix.cons_val_one]
-  rw [Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
-    pLocalIntModularForms.of_pow_eq_of _ ⟨_, E₄_int_pow_three_mem⟩ (by norm_num) rfl,
-    pLocalIntModularForms.of_pow_eq_of _ ⟨_, E₆_int_pow_two_mem⟩ (by norm_num) rfl,
-    ← map_sub, ← of_smul]
-  exact congr(of (fun i ↦ pLocalIntModularForms p i) 12 $(Subtype.ext (by
-    simp [discriminantIntModularForm, discriminant_int])))
+theorem evalE₄E₆IntSeries_discriminantPoly_int (hp : 5 ≤ p) :
+    evalE₄E₆IntSeries (discriminantPoly_int hp) = discriminant_int hp := by
+  simp [discriminantPoly_int, evalE₄E₆IntSeries, discriminant_int]
 
 /-! ### Division by the discriminant -/
 
@@ -186,77 +169,62 @@ public theorem divDiscriminant_int_isPLocalIntModularForm (hp : 5 ≤ p) {k : �
 
 /-! ### `E₄_int` and `E₆_int` generate -/
 
-private theorem eq_zero_of_rationalModularForms_eq_bot {k : ℤ} (f : pLocalIntModularForms p k)
+theorem eq_zero_of_rationalModularForms_eq_bot {k : ℤ} (f : pLocalIntModularForms p k)
     (h : rationalModularForms k = ⊥) : f = 0 :=
   Subtype.ext <| (Submodule.eq_bot_iff _).1 (pLocalIntModularForms_eq_bot h) _ f.2
 
 /-- Every even natural number other than `2` is of the form `4a + 6b`. -/
-private theorem exists_E₄E₆_monomial_weight {n : ℕ} (hnEven : Even n) (hnTwo : n ≠ 2) :
+theorem exists_E₄E₆_monomial_weight {n : ℕ} (hnEven : Even n) (hnTwo : n ≠ 2) :
     ∃ a b : ℕ, 4 * a + 6 * b = n := by
   obtain ⟨m, rfl⟩ := hnEven
   rcases Nat.even_or_odd m with ⟨a, ha⟩ | ⟨b, hb⟩
   · exact ⟨a, 0, by lia⟩
   · exact ⟨b - 1, 1, by lia⟩
 
-private theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) :
-    ∀ k (f : pLocalIntModularForms p k), ∃ P : MvPolynomial (Fin 2) (pLocalInt p),
-      evalE₄E₆Int P = DirectSum.of (fun i ↦ pLocalIntModularForms p i) k f := by
+theorem exists_evalE₄E₆IntSeries_eq (hp : 5 ≤ p) :
+    ∀ k (f : pLocalIntModularForms p k),
+      ∃ P : MvPolynomial (Fin 2) (pLocalInt p), evalE₄E₆IntSeries P = f := by
   intro k f
   by_cases hkNeg : k < 0
-  · have hf : f = 0 :=
-      eq_zero_of_rationalModularForms_eq_bot f (rationalModularForms_eq_bot_of_neg hkNeg)
-    exact ⟨0, by simp [hf]⟩
+  · exact ⟨0, by simp [eq_zero_of_rationalModularForms_eq_bot f
+      (rationalModularForms_eq_bot_of_neg hkNeg)]⟩
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n := ⟨k.toNat, by lia⟩
   clear hkNeg
   induction n using Nat.strong_induction_on with | ind n ih => ?_
   by_cases hnOdd : Odd (n : ℤ)
-  · have hf : f = 0 :=
-      eq_zero_of_rationalModularForms_eq_bot f (rationalModularForms_eq_bot_of_odd hnOdd)
-    exact ⟨0, by simp [hf]⟩
-  rw [Int.not_odd_iff_even] at hnOdd
-  have hnEven : Even n := by exact_mod_cast hnOdd
-  by_cases hnTwo : n = 2
-  · subst n
-    have hf : f = 0 :=
-      eq_zero_of_rationalModularForms_eq_bot f (by simpa using rationalModularForms_two_eq_bot)
-    exact ⟨0, by simp [hf]⟩
+  · exact ⟨0, by simp [eq_zero_of_rationalModularForms_eq_bot f
+      (rationalModularForms_eq_bot_of_odd hnOdd)]⟩
+  have hnEven : Even n := mod_cast Int.not_odd_iff_even.1 hnOdd
+  rcases eq_or_ne n 2 with rfl | hnTwo
+  · exact ⟨0, by simp [eq_zero_of_rationalModularForms_eq_bot f
+      (by simpa using rationalModularForms_two_eq_bot)]⟩
   obtain ⟨a, b, hab⟩ := exists_E₄E₆_monomial_weight hnEven hnTwo
-  let mn : pLocalIntModularForms p n := ⟨_, E₄_int_pow_mul_E₆_int_pow_mem hab⟩
-  let c := coeff 0 (f : (pLocalInt p)⟦X⟧); let f₀ := f - c • mn
-  have hf₀ : coeff 0 (f₀ : (pLocalInt p)⟦X⟧) = 0 := by
-    simp [f₀, c, mn]
-  have hfDecomp : f = f₀ + c • mn := by simp [f₀]
-  have hmonomial : evalE₄E₆Int (MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b)) =
-      of (fun i ↦ pLocalIntModularForms p i) n (c • mn) := by
-    rw [map_mul, MvPolynomial.algHom_C, evalE₄E₆Int_X_pow_mul, Algebra.algebraMap_eq_smul_one,
-      smul_mul_assoc, one_mul,
-      pLocalIntModularForms.of_pow_eq_of _ ⟨_, SetLike.pow_mem_graded a
-        E₄_int_mem_pLocalIntModularForms⟩ rfl rfl,
-      pLocalIntModularForms.of_pow_eq_of _ ⟨_, SetLike.pow_mem_graded b
-        E₆_int_mem_pLocalIntModularForms⟩ rfl rfl,
-      pLocalIntModularForms.of_mul_of_eq_of _ _ mn (by push_cast [← hab]; ring) rfl, ← of_smul]
+  let c := coeff 0 (f : (pLocalInt p)⟦X⟧)
+  let f₀ : (pLocalInt p)⟦X⟧ := (f : (pLocalInt p)⟦X⟧) - c • (E₄_int ^ a * E₆_int ^ b)
+  have hf₀mem : f₀ ∈ pLocalIntModularForms p n :=
+    sub_mem f.2 (Submodule.smul_mem _ _ (E₄_int_pow_mul_E₆_int_pow_mem hab))
+  have hf₀ : coeff 0 f₀ = 0 := by simp [f₀, c]
+  have hgmem := divDiscriminant_int_isPLocalIntModularForm hp hf₀mem hf₀
   by_cases hnTwelve : 12 ≤ n
-  · let g : pLocalIntModularForms p ((n - 12 : ℕ)) := ⟨divDiscriminant_int hp f₀, by
-      simpa [show ((n : ℤ) - 12) = ((n - 12 : ℕ)) by lia] using
-      divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
-    obtain ⟨Q, hQ⟩ := ih (n - 12) (by lia) g
-    have hprod : evalE₄E₆Int (discriminantPoly_int hp) * evalE₄E₆Int Q =
-        of (fun i ↦ pLocalIntModularForms p i) n f₀ := by
-      simpa [evalE₄E₆Int_discriminantPoly_int, hQ] using pLocalIntModularForms.of_mul_of_eq_of
-        _ _ _ (by lia) (discriminant_int_mul_divDiscriminant_int hp hf₀)
-    refine ⟨discriminantPoly_int hp * Q +
-      MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b), ?_⟩
-    rw [map_add, map_mul, hprod, hmonomial, ← map_add, ← hfDecomp]
-  · let g : pLocalIntModularForms p (n - 12) :=
-      ⟨_, divDiscriminant_int_isPLocalIntModularForm hp f₀.property hf₀⟩
-    have hg : g = 0 :=
-      eq_zero_of_rationalModularForms_eq_bot g (rationalModularForms_eq_bot_of_neg (by lia))
-    have hgVal : divDiscriminant_int hp f₀ = 0 := by simpa [g] using congr(Subtype.val $hg)
-    have hf₀Zero : f₀ = 0 := Subtype.ext <| by
-      simpa [hgVal] using (discriminant_int_mul_divDiscriminant_int hp hf₀).symm
-    have hfScalar : f = c • mn := by simpa [hf₀Zero] using hfDecomp
-    exact ⟨MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b),
-      hmonomial.trans congr(of (fun i ↦ pLocalIntModularForms p i) n $(hfScalar.symm))⟩
+  · obtain ⟨Q, hQ⟩ := ih (n - 12) (by lia) ⟨divDiscriminant_int hp f₀, by
+      simpa [show ((n - 12 : ℕ) : ℤ) = (n : ℤ) - 12 by lia] using hgmem⟩
+    refine ⟨discriminantPoly_int hp * Q + c • (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b), ?_⟩
+    rw [map_add, map_mul, evalE₄E₆IntSeries_discriminantPoly_int, hQ]
+    simp [discriminant_int_mul_divDiscriminant_int hp hf₀, evalE₄E₆IntSeries, f₀]
+  · have hg0 : divDiscriminant_int hp f₀ = 0 :=
+      (Submodule.eq_bot_iff _).1
+        (pLocalIntModularForms_eq_bot (rationalModularForms_eq_bot_of_neg (by lia))) _ hgmem
+    have hf₀0 : f₀ = 0 := by
+      simpa [hg0] using (discriminant_int_mul_divDiscriminant_int hp hf₀).symm
+    refine ⟨c • (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b), ?_⟩
+    simpa [evalE₄E₆IntSeries] using (sub_eq_zero.1 hf₀0).symm
+
+theorem evalE₄E₆Int_surjective_of_weight (hp : 5 ≤ p) (k : ℤ)
+    (f : pLocalIntModularForms p k) : ∃ P : MvPolynomial (Fin 2) (pLocalInt p),
+      evalE₄E₆Int P = DirectSum.of (fun i ↦ pLocalIntModularForms p i) k f := by
+  obtain ⟨P, hP⟩ := exists_evalE₄E₆IntSeries_eq hp k f
+  exact ⟨P, pLocalIntQExpansionAlgHom_injective
+    (by simp [pLocalIntQExpansionAlgHom_evalE₄E₆Int, hP])⟩
 
 theorem evalE₄E₆Int_surjective (hp : 5 ≤ p) : Function.Surjective (evalE₄E₆Int (p := p)) := by
   intro F

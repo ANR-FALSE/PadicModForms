@@ -42,9 +42,11 @@ $$`\bigoplus_{k \in \mathbb{Z}} M_k(R) \longrightarrow R\llbracket X\rrbracket`
 
 sending a family of forms to the sum of the corresponding power series is called the
 {deftech}[$`q`-expansion map]. For $`R = \mathbb{Q}` and $`R = \mathbb{Z}_{(p)}` the
-$`q`-expansion map is injective; in the code, injectivity is proved for the $`q`-expansion map of
-level-one modular forms over $`\mathbb{C}`
-({name ModularForm.levelOne_qExpansionRingHom_injective}`levelOne_qExpansionRingHom_injective`).
+$`q`-expansion map is injective
+({name ModularForm.rationalQExpansionAlgHom_injective}`rationalQExpansionAlgHom_injective`,
+{name ModularForm.pLocalIntQExpansionAlgHom_injective}`pLocalIntQExpansionAlgHom_injective`), by
+injectivity of the $`q`-expansion map of modular forms over $`\mathbb{C}`
+({name ModularForm.qExpansionAlgHom_injective}`qExpansionAlgHom_injective`).
 For $`R = \mathbb{F}_p` and $`p \geq 5` it is not injective: since $`E_{p-1} \equiv 1 \pmod{p}`
 ({name EisensteinSeries.E_p_sub_one_mod_p}`E_p_sub_one_mod_p`), the element of
 $`\bigoplus_k M_k(\mathbb{F}_p)` whose components are $`1` in weight $`0` and $`-1` in weight
